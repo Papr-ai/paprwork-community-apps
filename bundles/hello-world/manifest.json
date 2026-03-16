@@ -7,6 +7,8 @@
   "createdBy": "paprwork-team",
   "minPaprworkVersion": "2.0.0",
   "description": "Minimal starter template for building Paprwork mini-apps. Demonstrates HTML structure, styling, and the Papr DB API.",
+  "icon": "<svg width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M12 2L2 7l10 5 10-5-10-5z\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M2 17l10 5 10-5\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M2 12l10 5 10-5\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+  "requirements": [],
   "app": {
     "id": "hello-world",
     "name": "Hello World",

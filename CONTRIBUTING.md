@@ -62,6 +62,8 @@ Your manifest must include at minimum:
   "createdAt": "2026-01-01T00:00:00.000Z",
   "minPaprworkVersion": "2.0.0",
   "description": "Brief description of your app",
+  "icon": "<svg ...>your app icon</svg>",
+  "requirements": ["OpenAI API key"],
   "app": {
     "id": "your-app-id",
     "name": "Your App Name",
@@ -80,25 +82,20 @@ Your manifest must include at minimum:
 }
 ```
 
+**Fields to note:**
+- `icon` — Inline SVG string displayed in the app card. Keep it simple (24x24 viewBox, stroke-only).
+- `requirements` — Array of API keys or external dependencies needed. Use `[]` if no keys are needed. Examples: `["OpenAI API key"]`, `["Stripe API key", "SendGrid API key"]`.
+
 ---
 
 ## Step 3: Submit a Pull Request
 
 1. **Fork** this repository
 2. Copy your bundle folder into `bundles/your-bundle-id/`
-3. Add an entry to `registry.json`:
+3. Regenerate the registry (this reads all manifests and builds `registry.json` automatically):
 
-```json
-{
-  "bundleId": "your-bundle-id",
-  "name": "Your App Name",
-  "description": "Brief description",
-  "version": "1.0.0",
-  "author": "your-github-username",
-  "tags": ["relevant", "tags"],
-  "minPaprworkVersion": "2.0.0",
-  "path": "bundles/your-bundle-id"
-}
+```bash
+node scripts/generate-registry.mjs
 ```
 
 4. Open a pull request with:
