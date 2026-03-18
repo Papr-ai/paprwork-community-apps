@@ -189,6 +189,16 @@ function autoSave(): void {
   }, 1500);
 }
 
+// Find linked CalEvent: first by explicit meeting_id, then by title+date fuzzy match
+function findLinkedCalEvent(m: Meeting): CalEvent | undefined {
+  const byId = calEvents.find(e => e.meeting_id === m.id);
+  if (byId) return byId;
+  if (!m.date) return undefined;
+  return calEvents.find(e =>
+    e.title.toLowerCase() === m.title.toLowerCase()
+    && e.start_time.split('T')[0] === m.date.split('T')[0]);
+}
+
 function parseAttendees(json: string): Attendee[] {
   try { return JSON.parse(json || '[]'); } catch { return []; }
 }
@@ -251,7 +261,7 @@ function openMeeting(id: string, tab?: string): void {
   selectedId = id; view = 'meeting'; activeTab = tab || 'summary';
   const m = meetings.find(x => x.id === id);
   if (m) {
-    const linkedEv = calEvents.find(e => e.meeting_id === m.id);
+    const linkedEv = findLinkedCalEvent(m);
     selectedCalId = linkedEv?.id || null;
     if (['stopping','recorded','transcribing','pending'].includes(m.status)) startPoll(id);
     if (m.status === 'stopping') triggerWhisperWhenReady(id);
@@ -281,7 +291,7 @@ function getAllTags(): string[] {
 function getAllPeople(): Attendee[] {
   const seen = new Map<string, Attendee>();
   meetings.forEach(m => {
-    const ev = calEvents.find(e => e.meeting_id === m.id);
+    const ev = findLinkedCalEvent(m);
     if (ev) {
       parseAttendees(ev.attendees).forEach(a => {
         if (!seen.has(a.email)) seen.set(a.email, a);
@@ -302,7 +312,7 @@ function filterMeetings(): Meeting[] {
     if (activeFilter === 'month' && d < monthStart) return false;
     if (activeTags.length > 0 && !activeTags.some(t => extractTags(m).includes(t))) return false;
     if (activePeople.length > 0) {
-      const ev = calEvents.find(e => e.meeting_id === m.id);
+      const ev = findLinkedCalEvent(m);
       if (!ev) return false;
       const emails = parseAttendees(ev.attendees).map(a => a.email);
       if (!activePeople.some(p => emails.includes(p))) return false;
@@ -599,7 +609,7 @@ function renderHome(): string {
           <div class="meeting-list">
             ${filtered.length > 0 ? filtered.map(m => {
               const tags = extractTags(m);
-              const ev = calEvents.find(e => e.meeting_id === m.id);
+              const ev = findLinkedCalEvent(m);
               const att = ev ? parseAttendees(ev.attendees) : [];
               return `
               <div class="meeting-card" data-meeting-id="${m.id}">
@@ -639,7 +649,8 @@ function getWeekDayPills(): string {
     const isActive = calView === ds;
     const dayName = d.toLocaleDateString(undefined, {weekday: 'short'});
     const dayNum = d.getDate();
-    const hasEvents = calEvents.some(e => e.start_time.split('T')[0] === ds);
+    const hasEvents = calEvents.some(e => e.start_time.split('T')[0] === ds)
+      || meetings.some(m => m.date && localDateStr(new Date(m.date)) === ds && !findLinkedCalEvent(m));
     return '<button class="day-pill' + (isActive ? ' pill-active' : '') + (isToday && !isActive ? ' day-pill-today' : '') + '" data-calview="' + ds + '">'
       + '<span class="day-pill-name">' + dayName + '</span>'
       + '<span class="day-pill-num' + (isToday ? ' day-pill-num-today' : '') + '">' + dayNum + '</span>'
@@ -692,14 +703,26 @@ function getPrepSnippet(prepDoc: string): string {
 
 function renderCalDay(dateStr: string): string {
   const evs = calEvents.filter(e => e.start_time.split('T')[0] === dateStr);
-  if (!evs.length) {
-    return '<div class="day-empty">No meetings this day</div>';
-  }
-  const cards = evs.map(ev => renderMeetingCard(ev)).join('');
-  return '<div class="day-cards">' + cards + '</div>';
+  const linkedIds = new Set(evs.map(e => e.meeting_id).filter(Boolean));
+  // Meetings with no linked CalEvent — synthesize one so they use the same card
+  const orphanEvs: CalEvent[] = meetings
+    .filter(m => {
+      if (!m.date) return false;
+      return localDateStr(new Date(m.date)) === dateStr
+        && !linkedIds.has(m.id)
+        && !findLinkedCalEvent(m);
+    })
+    .map(m => ({
+      id: m.id, title: m.title,
+      start_time: m.date, end_time: m.date,
+      calendar_name: '', meeting_id: m.id,
+      attendees: '[]', prep_status: '', prep_doc: ''
+    }));
+  const allEvs = [...evs, ...orphanEvs].sort((a, b) => a.start_time.localeCompare(b.start_time));
+  if (!allEvs.length) return '<div class="day-empty">No meetings this day</div>';
+  return '<div class="day-cards">' + allEvs.map(ev => renderMeetingCard(ev)).join('') + '</div>';
 }
 
-// renderCalToday replaced by renderCalDay
 
 function renderMeetingCard(e: CalEvent): string {
   const now = new Date();
@@ -708,7 +731,10 @@ function renderMeetingCard(e: CalEvent): string {
   const isLive = now >= st && now <= et;
   const isSoon = !isLive && st.getTime() - now.getTime() < 900000 && st > now;
   const isPast = now > et;
-  const linked = e.meeting_id ? meetings.find(m => m.id === e.meeting_id) : null;
+  const linked = e.meeting_id
+    ? meetings.find(m => m.id === e.meeting_id)
+    : meetings.find(m => m.title.toLowerCase() === e.title.toLowerCase()
+        && m.date && m.date.split('T')[0] === e.start_time.split('T')[0]) || null;
   const attendees = parseAttendees(e.attendees);
   const minsLeft = isLive ? Math.round((et.getTime() - now.getTime()) / 60000) : 0;
   const minsTill = isSoon ? Math.round((st.getTime() - now.getTime()) / 60000) : 0;
@@ -941,7 +967,7 @@ function renderMeeting(): string {
     }
   }
   const m = meetings.find(x => x.id === selectedId);
-  const ev = calEvents.find(e => e.meeting_id === m?.id);
+  const ev = m ? findLinkedCalEvent(m) : undefined;
   const isRec = selectedId === recordingId;
   const title = m?.title || 'New Meeting';
   const status = m?.status || (isRec ? 'recording' : '');
@@ -985,7 +1011,7 @@ function renderMeeting(): string {
 
 function renderMeetingMeta(m: Meeting): string {
   const tags = extractTags(m);
-  const linked = calEvents.find(e => e.meeting_id === m.id);
+  const linked = findLinkedCalEvent(m);
   const attendees = linked ? parseAttendees(linked.attendees) : [];
   if (!tags.length && !attendees.length) return '';
   return `<div class="meeting-meta">
@@ -1025,7 +1051,7 @@ function renderDetailBody(m: Meeting | undefined): string {
     return `<div id="notes-editor" class="notes-editor notes-editable" contenteditable="true" spellcheck="true">${formatSummary(m.notes)}</div>`;
   }
   if (activeTab === 'prep') {
-    const ev = calEvents.find(e => e.meeting_id === m.id);
+    const ev = findLinkedCalEvent(m);
     const prepDoc = ev?.prep_doc || '';
     if (prepDoc) {
       return `<div id="notes-editor" class="notes-editor notes-editable" contenteditable="true" spellcheck="true">${formatSummary(prepDoc)}</div>`;
@@ -1154,7 +1180,7 @@ function attachListeners(): void {
 }
 
 // Expose functions called via inline onclick in HTML templates
-(window as any).shiftWeek = (dir: number) => {
+(window as any).shiftWeek = async (dir: number) => {
   calWeekOffset += dir;
   const today = new Date();
   const todayStr = localDateStr(today);
@@ -1164,6 +1190,10 @@ function attachListeners(): void {
   const days = indices.map(i => { const d = new Date(weekStart); d.setDate(weekStart.getDate() + i); return localDateStr(d); });
   calView = days.includes(todayStr) ? todayStr : days[0];
   render();
+  // Fetch calendar events for this week then re-render with fresh data
+  runJob(CALENDAR_JOB).catch(() => {});
+  await sleep(3000);
+  await loadAll();
 };
 (window as any).openMeeting   = openMeeting;
 (window as any).showMonthDay  = showMonthDay;

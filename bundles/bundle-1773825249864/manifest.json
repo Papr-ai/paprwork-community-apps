@@ -1,11 +1,10 @@
 {
   "schemaVersion": "1.0.0",
-  "bundleId": "meetings-manager",
+  "bundleId": "bundle-1773825249864",
   "name": "Meetings Manager",
   "version": "1.0.0",
-  "createdAt": "2026-03-18T08:11:11.072Z",
+  "createdAt": "2026-03-18T09:14:12.993Z",
   "minPaprworkVersion": "2.0.0",
-  "description": "AI-powered meeting manager \u2014 reads your calendar, auto-summarizes transcripts, preps you for upcoming meetings with attendee research, and syncs everything to PAPR Memory.",
   "requirements": [
     "ANTHROPIC_API_KEY"
   ],
@@ -22,10 +21,46 @@
   },
   "jobs": [
     {
-      "id": "40407339-ca0b-4650-a009-426201025e81",
-      "name": "Calendar Reader",
+      "id": "eb3200be-fa32-4a83-8313-94df426dea89",
+      "name": "Check Screen Recording Permission",
       "type": "bash",
-      "command": "bash run_calendar.sh",
+      "command": "#!/bin/bash\n# Find meetings DB dynamically\nMEETINGS_DB=$(for db in ~/PAPR/jobs/*/data/data.db; do sqlite3 \"$db\" \"SELECT name FROM sqlite_master WHERE name='meetings'\" 2>/dev/null | grep -q meetings && echo \"$db\" && break; done)\nif [ -z \"$MEETINGS_DB\" ]; then echo \"ERROR: meetings DB not found\"; exit 1; fi\n# Find recorder binary dynamically\nRECORDER=$(find ~/PAPR/jobs/*/recorder -type f 2>/dev/null | head -1)\nif [ -z \"$RECORDER\" ]; then echo \"ERROR: recorder binary not found\"; exit 1; fi\nRESULT=$($RECORDER --check-permission 2>&1)\necho \"$RESULT\"\nsqlite3 \"$MEETINGS_DB\" \"DELETE FROM permission_checks; INSERT INTO permission_checks (check_time, result) VALUES (datetime('now'), '$RESULT');\"\necho \"Written to DB: $RESULT\"",
+      "dependsOn": [],
+      "env": {},
+      "outputTables": []
+    },
+    {
+      "id": "52b4abeb-0d23-4724-9a82-0559c64150c1",
+      "name": "Whisper Transcriber",
+      "type": "python",
+      "command": "OPENAI_API_KEY=${OPENAI_PLATFORM_KEY} python3 transcribe.py",
+      "dependsOn": [],
+      "env": {},
+      "outputTables": []
+    },
+    {
+      "id": "54837f40-1e64-4810-a387-f81151d014af",
+      "name": "System Audio Recorder",
+      "type": "bash",
+      "command": "#!/bin/bash\n# Find meetings DB dynamically\nMEETINGS_DB=$(for db in ~/PAPR/jobs/*/data/data.db; do sqlite3 \"$db\" \"SELECT name FROM sqlite_master WHERE name='meetings'\" 2>/dev/null | grep -q meetings && echo \"$db\" && break; done)\nif [ -z \"$MEETINGS_DB\" ]; then echo \"ERROR: meetings DB not found\"; exit 1; fi\nMEETING_ID=$(sqlite3 \"$MEETINGS_DB\" \"SELECT id FROM meetings WHERE status='recording' ORDER BY created_at DESC LIMIT 1\")\nif [ -z \"$MEETING_ID\" ]; then\n  echo \"ERROR: No meeting with status=recording found\"\n  exit 1\nfi\necho \"$MEETING_ID\" > data/current_meeting.txt\nrm -f data/stop_signal data/recording.wav\necho \"Recording meeting: $MEETING_ID\"\n./recorder data/recording.wav data/stop_signal\nFILE_SIZE=$(stat -f%z data/recording.wav 2>/dev/null || echo \"0\")\necho \"Recording file size: $FILE_SIZE bytes\"\nif [ \"$FILE_SIZE\" -gt 1000 ]; then\n  AUDIO_PATH=\"$(pwd)/data/recording.wav\"\n  sqlite3 \"$MEETINGS_DB\" \"UPDATE meetings SET status='recorded', audio_path='$AUDIO_PATH', updated_at=strftime('%s','now') WHERE id='$MEETING_ID'\"\n  echo \"Meeting $MEETING_ID status updated to recorded\"\nelse\n  sqlite3 \"$MEETINGS_DB\" \"UPDATE meetings SET status='failed', updated_at=strftime('%s','now') WHERE id='$MEETING_ID'\"\n  echo \"ERROR: Recording failed - empty file\"\n  exit 1\nfi",
+      "dependsOn": [],
+      "env": {},
+      "outputTables": []
+    },
+    {
+      "id": "5a5c47c7-46f0-430e-8b01-499bdf65de42",
+      "name": "Stop Recorder",
+      "type": "bash",
+      "command": "#!/bin/bash\n# Find the recorder job directory (has stop_signal mechanism)\nRECORDER_DIR=$(find ~/PAPR/jobs/*/data -name \"current_meeting.txt\" -exec dirname {} \\; 2>/dev/null | head -1)\nif [ -z \"$RECORDER_DIR\" ]; then\n  # Fallback: find any job dir with a recorder binary\n  RECORDER_DIR=$(find ~/PAPR/jobs/*/recorder -type f 2>/dev/null | head -1 | xargs dirname)/data\nfi\ntouch \"$RECORDER_DIR/stop_signal\" && echo \"Stop signal sent\"",
+      "dependsOn": [],
+      "env": {},
+      "outputTables": []
+    },
+    {
+      "id": "f98f409f-5efb-4813-9da5-36d10eadab68",
+      "name": "Meeting Memory Sync",
+      "type": "agent",
+      "command": "Step 0: Find the meetings database. Run:\nfor db in ~/PAPR/jobs/*/data/data.db; do sqlite3 \"$db\" \"SELECT name FROM sqlite_master WHERE name='meetings'\" 2>/dev/null | grep -q meetings && echo \"$db\" && break; done\nStore the output path as DB_PATH. Use this path for ALL sqlite3 commands below.\n\nSync completed meetings to PAPR Memory with structured metadata. Follow these steps:\n\nSTEP 1: Find un-synced meetings\nRun: sqlite3 DB_PATH \"SELECT m.id, m.title, m.date, m.summary, m.tags, ce.attendees, ce.start_time, ce.end_time, ce.title as cal_title FROM meetings m LEFT JOIN calendar_events ce ON ce.meeting_id = m.id WHERE m.summary IS NOT NULL AND m.summary != '' AND m.status != 'synced' ORDER BY m.date DESC LIMIT 5\"\n\nIf no results, print \"No meetings to sync\" and stop.\n\nSTEP 2: For each meeting, store TWO types of memory items using add_agent_memory:\n\nA) MEETING MEMORY \u2014 store the full meeting record:\n- content: Include meeting title, date, time, all participant names and emails, the FULL summary, key decisions, action items, and follow-ups\n- category: \"fact\", role: \"assistant\"  \n- topics: extract 3-5 key topics from the summary + meeting title\n- customMetadata MUST include:\n  - memory_type: \"meeting\"\n  - meeting_title: the title\n  - meeting_date: YYYY-MM-DD format\n  - meeting_time: HH:MM format\n  - participants: comma-separated names\n  - participant_emails: comma-separated emails\n  - meeting_type: \"recurring_standup\" or \"recurring_weekly\" or \"one_off\" or \"group_session\" (infer from title)\n  - tags: from the tags column\n  - has_action_items: \"true\" or \"false\"\n\nB) PERSON MEMORIES \u2014 for each unique attendee NOT ending in @papr.ai, store a person memory:\n- content: \"Person: NAME (EMAIL) at COMPANY. Participated in MEETING_TITLE on DATE. Context from meeting: [relevant 1-2 sentences about what they discussed or contributed]\"\n- category: \"fact\", role: \"assistant\"\n- topics: person name, company name, meeting title\n- customMetadata: memory_type: \"person\", person_name, person_email, person_company (from email domain), meetings_attended\n\nSTEP 3: Mark meetings as synced\nRun: sqlite3 DB_PATH \"UPDATE meetings SET status='synced' WHERE id='MEETING_ID'\"\n\nSTEP 4: Print summary of what was synced.",
       "dependsOn": [],
       "env": {},
       "outputTables": []
@@ -40,10 +75,10 @@
       "outputTables": []
     },
     {
-      "id": "f98f409f-5efb-4813-9da5-36d10eadab68",
-      "name": "Meeting Memory Sync",
-      "type": "agent",
-      "command": "Step 0: Find the meetings database. Run:\nfor db in ~/PAPR/jobs/*/data/data.db; do sqlite3 \"$db\" \"SELECT name FROM sqlite_master WHERE name='meetings'\" 2>/dev/null | grep -q meetings && echo \"$db\" && break; done\nStore the output path as DB_PATH. Use this path for ALL sqlite3 commands below.\n\nSync completed meetings to PAPR Memory with structured metadata. Follow these steps:\n\nSTEP 1: Find un-synced meetings\nRun: sqlite3 DB_PATH \"SELECT m.id, m.title, m.date, m.summary, m.tags, ce.attendees, ce.start_time, ce.end_time, ce.title as cal_title FROM meetings m LEFT JOIN calendar_events ce ON ce.meeting_id = m.id WHERE m.summary IS NOT NULL AND m.summary != '' AND m.status != 'synced' ORDER BY m.date DESC LIMIT 5\"\n\nIf no results, print \"No meetings to sync\" and stop.\n\nSTEP 2: For each meeting, store TWO types of memory items using add_agent_memory:\n\nA) MEETING MEMORY \u2014 store the full meeting record:\n- content: Include meeting title, date, time, all participant names and emails, the FULL summary, key decisions, action items, and follow-ups\n- category: \"fact\", role: \"assistant\"  \n- topics: extract 3-5 key topics from the summary + meeting title\n- customMetadata MUST include:\n  - memory_type: \"meeting\"\n  - meeting_title: the title\n  - meeting_date: YYYY-MM-DD format\n  - meeting_time: HH:MM format\n  - participants: comma-separated names\n  - participant_emails: comma-separated emails\n  - meeting_type: \"recurring_standup\" or \"recurring_weekly\" or \"one_off\" or \"group_session\" (infer from title)\n  - tags: from the tags column\n  - has_action_items: \"true\" or \"false\"\n\nB) PERSON MEMORIES \u2014 for each unique attendee NOT ending in @papr.ai, store a person memory:\n- content: \"Person: NAME (EMAIL) at COMPANY. Participated in MEETING_TITLE on DATE. Context from meeting: [relevant 1-2 sentences about what they discussed or contributed]\"\n- category: \"fact\", role: \"assistant\"\n- topics: person name, company name, meeting title\n- customMetadata: memory_type: \"person\", person_name, person_email, person_company (from email domain), meetings_attended\n\nSTEP 3: Mark meetings as synced\nRun: sqlite3 DB_PATH \"UPDATE meetings SET status='synced' WHERE id='MEETING_ID'\"\n\nSTEP 4: Print summary of what was synced.",
+      "id": "40407339-ca0b-4650-a009-426201025e81",
+      "name": "Calendar Reader",
+      "type": "bash",
+      "command": "bash run_calendar.sh",
       "dependsOn": [],
       "env": {},
       "outputTables": []
@@ -76,14 +111,5 @@
     "APOLLO_API_KEY",
     "EXA_API_KEY",
     "PAPR_MEMORY_API_KEY"
-  ],
-  "author": "amirkabbara",
-  "tags": [
-    "meetings",
-    "ai",
-    "productivity",
-    "calendar",
-    "transcription",
-    "memory"
   ]
 }

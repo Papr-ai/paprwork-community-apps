@@ -15,7 +15,5 @@
   "retentionDays": 14,
   "outputMode": "natural",
   "memoryPolicy": "none",
-  "status": "pending",
-  "createdAt": "2026-03-18T08:11:11.041Z",
-  "updatedAt": "2026-03-18T08:11:11.041Z"
+  "status": "pending"
 }
