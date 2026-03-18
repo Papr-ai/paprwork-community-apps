@@ -1,50 +1,49 @@
 # Meetings Manager
 
-A complete meeting workflow app for Paprwork — schedule meetings, take live notes, record and transcribe audio, and get AI-generated summaries with smart topic tags.
+An AI-powered meeting workflow for Paprwork that handles your entire meeting lifecycle — from calendar sync to post-meeting memory.
 
 ## What It Does
 
-**Before the meeting:**
-- Create upcoming meetings with title, date/time, and participants
-- Meetings appear in a clean dashboard sorted by date
+**Before meetings:** Reads your macOS Calendar, identifies upcoming meetings, and generates AI-powered prep documents with attendee research, prior meeting context, and suggested talking points.
 
-**During the meeting:**
-- Take freeform notes directly in the app
-- Record audio with one click — transcription happens automatically via Whisper
+**During meetings:** Record and take notes directly in the app. Your notes are woven into the final summary.
 
-**After the meeting:**
-- The Meeting Summarizer job processes pending transcripts
-- Generates structured summaries: Overview, Key Decisions, Action Items, Follow-ups
-- Auto-tags meetings with 2-5 topic labels (e.g. "Product", "Engineering", "Q2 Planning")
-- Your handwritten notes are woven into the summary as high-priority context
+**After meetings:** Automatically summarizes transcripts, generates smart topic tags, and syncs everything (summaries, participants, action items, decisions) to PAPR Memory for future recall.
 
-## What's Included
+## The Pipeline
 
-| Component | Description |
-|-----------|-------------|
-| **Meetings Manager App** | Interactive UI — create, browse, record, and review meetings |
-| **Meeting Summarizer Job** | AI agent that processes transcripts and generates summaries + tags |
+```
+Calendar Reader → Meeting Summarizer → Meeting Memory Sync
+                    ↗ (on demand)
+        Meeting Prep Agent
+```
+
+| Job | What It Does | Trigger |
+|-----|-------------|---------|
+| **Calendar Reader** | Reads macOS Calendar via EventKit, syncs events + attendees to the database | Scheduled / manual |
+| **Meeting Summarizer** | Summarizes transcripts, generates topic tags, weaves in your notes | Runs after Calendar Reader |
+| **Meeting Memory Sync** | Stores meetings, participants, action items, and decisions to PAPR Memory | Runs after Summarizer |
+| **Meeting Prep Agent** | Researches attendees (Apollo/Exa), pulls prior context from Memory, generates prep docs | On demand per meeting |
 
 ## Requirements
 
-- **Paprwork v2.0.0+**
-- **ANTHROPIC_API_KEY** — Powers the AI summarizer (Claude)
+| Key | Required | Used By |
+|-----|----------|---------|
+| `ANTHROPIC_API_KEY` | ✅ Yes | Summarizer, Memory Sync, Prep Agent (powers the AI sub-agents) |
+| `PAPR_MEMORY_API_KEY` | Optional | Memory Sync (stores meetings/people/decisions to PAPR Memory) |
+| `APOLLO_API_KEY` | Optional | Prep Agent (enriches attendee profiles — name, title, company, LinkedIn) |
+| `EXA_API_KEY` | Optional | Prep Agent (web search for additional meeting context) |
 
-## Installation
+## Platform
 
-Import this bundle through Paprwork:
-- From GitHub: `Import the bundle from github.com/Papr-ai/paprwork-community-apps`
-- Or via the **Community Apps** tab in Paprwork
+**macOS only** — the Calendar Reader uses Apple's EventKit framework to read calendar events natively. Requires `pyobjc-framework-EventKit`.
 
-## How It Works
+## Install
 
-1. Open the Meetings Manager app and create a meeting
-2. During the meeting, take notes and/or hit Record to capture audio
-3. Audio is transcribed locally via Whisper
-4. Run the Meeting Summarizer job (or set it on a schedule)
-5. The AI agent reads pending transcripts + your notes, generates a summary, and writes it back
-6. View the complete summary and tags in the app
+Import via Paprwork's Community Apps tab, or manually:
 
-## Version
+```
+Import App Bundle → ~/PAPR/bundles/meetings-manager
+```
 
-1.0.0 — March 2026
+After import, add your API keys in Settings → API Keys → Custom API Keys.
