@@ -1,25 +1,9 @@
 {
   "id": "40407339-ca0b-4650-a009-426201025e81",
   "name": "Calendar Reader",
-  "type": "shell",
-  "folder": "meetings",
+  "type": "bash",
   "command": "bash run_calendar.sh",
-  "requirements": [
-    "pyobjc-framework-EventKit"
-  ],
-  "dependsOn": [],
-  "retries": {
-    "maxAttempts": 1,
-    "backoffMs": 1000
-  },
-  "retentionDays": 14,
-  "schedule": {
-    "enabled": true,
-    "cron": "*/5 * * * *"
-  },
-  "outputMode": "natural",
-  "memoryPolicy": "none",
   "status": "pending",
-  "createdAt": "2026-03-20T00:49:34.345Z",
-  "updatedAt": "2026-03-20T00:49:34.345Z"
+  "createdAt": "2026-03-19T16:38:05.701Z",
+  "updatedAt": "2026-03-19T16:38:05.701Z"
 }

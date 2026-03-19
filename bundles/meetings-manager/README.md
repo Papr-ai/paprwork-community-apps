@@ -1,12 +1,12 @@
 # undefined
 
-
+AI-powered meeting manager with location-aware backgrounds, calendar integration, recording, transcription, and summarization. Liquid Glass design.
 
 ## Installation
 
 ### Option 1: Import via Paprwork Agent
 ```
-Agent: "Import the bundle from /Users/amirkabbara/PAPR/bundles/meetings-manager"
+Agent: "Import the bundle from /Users/shawkatkabbara/PAPR/bundles/bundle-1773938283407"
 ```
 
 ### Option 2: Import from GitHub
@@ -17,11 +17,12 @@ Agent: "Import the bundle from /Users/amirkabbara/PAPR/bundles/meetings-manager"
 ## Contents
 
 - **App**: Meetings Manager (ea6d8d7c-a15e-4c02-8273-117450b498f4)
-- **Jobs**: 9 job(s)
+- **Jobs**: 10 job(s)
+  - Location Background Generator (python)
   - Check Screen Recording Permission (bash)
   - Whisper Transcriber (python)
-  - System Audio Recorder (bash)
   - Stop Recorder (bash)
+  - System Audio Recorder (bash)
   - Meeting Memory Sync (agent)
   - Meeting Summarizer (agent)
   - Calendar Reader (bash)
@@ -36,4 +37,4 @@ Agent: "Import the bundle from /Users/amirkabbara/PAPR/bundles/meetings-manager"
 
 ## Version
 
-1.1.0 - Created 2026-03-20
+1.0.0 - Created 2026-03-19

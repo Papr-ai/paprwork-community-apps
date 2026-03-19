@@ -26,8 +26,37 @@ def find_meetings_db():
 
 DB_PATH = find_meetings_db()
 
+def ensure_calendar_access(store):
+    """Request Calendar permission if needed and fail loudly if denied."""
+    status = EventKit.EKEventStore.authorizationStatusForEntityType_(EventKit.EKEntityTypeEvent)
+    if status == 0:
+        result = {"done": False, "granted": False, "error": None}
+        def handler(granted, error):
+            result["done"] = True
+            result["granted"] = bool(granted)
+            result["error"] = str(error) if error else None
+        if hasattr(store, "requestFullAccessToEventsWithCompletion_"):
+            store.requestFullAccessToEventsWithCompletion_(handler)
+        else:
+            store.requestAccessToEntityType_completion_(EventKit.EKEntityTypeEvent, handler)
+        import time
+        for _ in range(60):
+            if result["done"]:
+                break
+            time.sleep(0.5)
+        status = EventKit.EKEventStore.authorizationStatusForEntityType_(EventKit.EKEntityTypeEvent)
+        if not result["granted"]:
+            raise RuntimeError(f"Calendar access was not granted: {result['error'] or 'status=' + str(status)}")
+    if status not in (3, 4):
+        raise RuntimeError(f"Calendar access unavailable. Authorization status={status}")
+    return status
+
 def main():
     store = EventKit.EKEventStore.alloc().init()
+    status = ensure_calendar_access(store)
+    calendars = list(store.calendarsForEntityType_(EventKit.EKEntityTypeEvent) or [])
+    print(f"Calendar authorization status: {status}")
+    print(f"Visible calendars: {len(calendars)}")
 
     now = datetime.datetime.now()
     start_of_today = now.replace(hour=0, minute=0, second=0, microsecond=0)
