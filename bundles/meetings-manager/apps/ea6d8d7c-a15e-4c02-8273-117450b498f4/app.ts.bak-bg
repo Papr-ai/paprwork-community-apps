@@ -9,7 +9,6 @@ const SUMMARIZER_JOB  = '8eea1893-4ca5-48ed-bfb4-187b9456fb31';
 const PERM_JOB        = 'eb3200be-fa32-4a83-8313-94df426dea89';
 const CALENDAR_JOB    = '40407339-ca0b-4650-a009-426201025e81';
 const PREP_JOB        = '4d58f7c1-40b5-4aed-805f-f983c0ac0c4c';
-const BG_JOB          = 'd4a2aad6-4722-44b1-b869-d2834cd56975';
 
 interface Meeting {
   id: string; title: string; date: string; duration: number;
@@ -23,9 +22,6 @@ interface CalEvent {
   attendees: string; prep_status: string; prep_doc: string;
 }
 interface Attendee { name: string; email: string; organizer?: boolean; }
-interface LocationBackground {
-  city: string; reason: string; prompt: string; image_url: string; image_data: string; generated_on: string;
-}
 
 type View = 'home' | 'meeting';
 type Filter = 'all' | 'today' | 'week' | 'month';
@@ -33,9 +29,6 @@ type Filter = 'all' | 'today' | 'week' | 'month';
 let view: View = 'home';
 let meetings: Meeting[] = [];
 let calEvents: CalEvent[] = [];
-let bg: LocationBackground | null = null;
-let liveCity = '';
-let liveLocationReason = '';
 let selectedId: string | null = null;
 let isRecording = false;
 let recordingId: string | null = null;
@@ -91,12 +84,7 @@ async function loadAll(): Promise<void> {
       WHERE NOT (start_time LIKE '%T00:00' AND end_time LIKE '%T23:59')
       ORDER BY start_time ASC`);
   } catch { calEvents = []; }
-  try {
-    const rows = await q(`SELECT city, reason, prompt, image_url, image_data, generated_on FROM location_background WHERE id='daily' LIMIT 1`);
-    bg = rows[0] || null;
-  } catch { bg = null; }
   render();
-  loadBgImage();
 }
 
 // Permission
@@ -282,44 +270,6 @@ async function recoverRecordingState(): Promise<void> {
       }, 1000);
     }
   }
-}
-
-async function detectLiveLocation(): Promise<void> {
-  const saveLocation = async (city: string, source: string, lat: number | null = null, lon: number | null = null): Promise<void> => {
-    liveCity = city;
-    liveLocationReason = `${source === 'geolocation' ? 'Live location' : 'Network location'} says ${city}${bg?.city && bg.city !== city ? ` — overriding calendar-derived ${bg.city}` : ''}`;
-    await w(`CREATE TABLE IF NOT EXISTS location_override (id TEXT PRIMARY KEY, city TEXT DEFAULT '', lat REAL, lon REAL, source TEXT DEFAULT '', updated_at INTEGER DEFAULT (strftime('%s','now')))`);
-    await w(`INSERT INTO location_override (id, city, lat, lon, source, updated_at) VALUES ('latest', ?, ?, ?, ?, strftime('%s','now')) ON CONFLICT(id) DO UPDATE SET city=excluded.city, lat=excluded.lat, lon=excluded.lon, source=excluded.source, updated_at=excluded.updated_at`, [city, lat, lon, source]);
-    render();
-    if (city !== bg?.city) {
-      await runJob(BG_JOB).catch(() => {});
-      await sleep(1800);
-      await loadAll();
-    }
-  };
-
-  if ('geolocation' in navigator) {
-    try {
-      const pos = await new Promise<GeolocationPosition>((resolve, reject) => navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: false, timeout: 3500, maximumAge: 60 * 60 * 1000 }));
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`, { headers: { 'Accept': 'application/json' } });
-      const data = await r.json();
-      const addr = data.address || {};
-      const city = addr.city || addr.town || addr.village || addr.county || data.name || '';
-      if (city) {
-        await saveLocation(city, 'geolocation', lat, lon);
-        return;
-      }
-    } catch {}
-  }
-
-  try {
-    const r = await fetch('https://ipapi.co/json/');
-    const data = await r.json();
-    const city = data?.city || data?.region || '';
-    if (city) await saveLocation(city, 'ip');
-  } catch {}
 }
 
 async function deleteMeeting(id: string, e: Event): Promise<void> {
@@ -577,54 +527,12 @@ function icon(name: string, size = 18): string {
   return i[name] || '';
 }
 
-// Render — background image handling
-let cachedBgBlobUrl = '';
-
-function bgSrc(): string {
-  return cachedBgBlobUrl || '';
-}
-
-async function loadBgImage(): Promise<void> {
-  // Prefer inline data URL (works everywhere, no protocol issues)
-  if (bg?.image_data && bg.image_data.startsWith('data:')) {
-    cachedBgBlobUrl = bg.image_data;
-    applyBackground(); render(); return;
-  }
-  // Fallback: try fetching file:// URL (works in some Electron configs)
-  const fileUrl = bg?.image_url || '';
-  if (!fileUrl) return;
-  try {
-    const resp = await fetch(fileUrl);
-    if (resp.ok) {
-      const blob = await resp.blob();
-      if (cachedBgBlobUrl) URL.revokeObjectURL(cachedBgBlobUrl);
-      cachedBgBlobUrl = URL.createObjectURL(blob);
-      applyBackground(); render(); return;
-    }
-  } catch {}
-}
-
-function applyBackground(): void {
-  const body = document.body as HTMLBodyElement;
-  const src = bgSrc();
-  if (src) body.style.setProperty('--bg-image', `url("${src}")`);
-}
-
-function renderBackgroundLayer(): string {
-  const src = bgSrc();
-  const city = liveCity || bg?.city || '';
-  if (!src) return '<div class="app-bg app-bg--fallback"></div>';
-  return `<div class="app-bg" aria-hidden="true">
-    <img class="app-bg-img" src="${esc(src)}" alt="${esc(city + ' background')}">
-    <div class="app-bg-scrim"></div>
-  </div>`;
-}
-
+// Render
 function render(): void {
   const root = document.getElementById('root')!;
-  const content = showPermModal ? renderPermModal() : (view === 'home' ? renderHome() : renderMeeting());
-  root.innerHTML = `${renderBackgroundLayer()}<div class="app-shell">${content}</div>`;
-  applyBackground();
+  if (showPermModal) root.innerHTML = renderPermModal();
+  else if (view === 'home') root.innerHTML = renderHome();
+  else root.innerHTML = renderMeeting();
   attachListeners();
 }
 
@@ -658,17 +566,6 @@ function renderAttendees(attendees: Attendee[], max = 5): string {
   </div>`;
 }
 
-function renderBackgroundHero(): string {
-  const city = liveCity || bg?.city || 'San Francisco';
-  const reason = liveLocationReason || bg?.reason || '';
-  return `
-    <section class="bg-hero">
-      <h1 class="bg-hero-city">${esc(city)}</h1>
-      ${reason ? `<p class="bg-hero-reason">${esc(reason)}</p>` : ''}
-      <button class="bg-hero-refresh" id="btn-refresh-bg">${icon('refresh', 14)} Refresh</button>
-    </section>`;
-}
-
 function renderHome(): string {
   const todayEvs = getTodayEvents();
   const filtered = filterMeetings();
@@ -687,7 +584,6 @@ function renderHome(): string {
         </button>
       </header>
       <div class="home-main">
-        ${renderBackgroundHero()}
 
         ${mainPage === 'meetings' ? `
         <section class="home-section">
@@ -1239,11 +1135,6 @@ function attachListeners(): void {
 
   // Home
   document.getElementById('btn-new-rec')?.addEventListener('click', () => startRecording());
-  document.getElementById('btn-refresh-bg')?.addEventListener('click', async () => {
-    await runJob(BG_JOB).catch(() => {});
-    await sleep(2000);
-    await loadAll();
-  });
   document.querySelectorAll('[data-cal-id]').forEach(btn => {
     btn.addEventListener('click', (e) => { e.stopPropagation(); startRecording((btn as HTMLElement).dataset.calId!); });
   });
@@ -1360,10 +1251,8 @@ function attachListeners(): void {
   calView = localDateStr(new Date()); // default to today
   await loadAll(); // show cached events immediately if we have them
   await runJob(CALENDAR_JOB).catch(() => {});
-  await runJob(BG_JOB).catch(() => {});
   await sleep(1500);
   await loadAll(); // refresh after the sync job finishes
   await recoverRecordingState();
   await recoverStuckPreps();
-  detectLiveLocation().catch(() => {});
 })();
