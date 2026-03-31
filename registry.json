@@ -35,25 +35,30 @@
     {
       "bundleId": "meetings-manager",
       "name": "Meetings Manager",
-      "description": "AI-powered meeting manager \u2014 schedule, prep, record, transcribe, summarize, and sync to memory. Features macOS-style dynamic backgrounds generated daily based on your meetings.",
-      "version": "4.0.0",
+      "description": "AI-powered meeting manager \u2014 schedule, prep, record, transcribe, summarize, and sync to memory with adaptive summaries, live prep progress, and dynamic daily backgrounds.",
+      "version": "4.1.0",
       "author": "amirkabbara",
       "tags": [
         "meetings",
         "transcription",
         "ai",
         "calendar",
-        "productivity",
-        "notes"
+        "notes",
+        "productivity"
       ],
       "minPaprworkVersion": "2.0.0",
       "path": "bundles/meetings-manager",
       "requirements": [
+        "ANTHROPIC_API_KEY",
+        "APOLLO_API_KEY",
+        "EXA_API_KEY",
+        "GOOGLE_API_KEY",
         "OPENAI_API_KEY",
-        "GOOGLE_API_KEY"
+        "OPENAI_PLATFORM_KEY"
       ],
       "platform": [
-        "macos"
+        "macos",
+        "windows"
       ]
     }
   ]

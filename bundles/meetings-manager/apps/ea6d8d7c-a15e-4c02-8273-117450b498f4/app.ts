@@ -8,7 +8,7 @@ const WHISPER_JOB     = '52b4abeb-0d23-4724-9a82-0559c64150c1';
 const SUMMARIZER_JOB  = '8eea1893-4ca5-48ed-bfb4-187b9456fb31';
 const PERM_JOB        = 'eb3200be-fa32-4a83-8313-94df426dea89';
 const CALENDAR_JOB    = '40407339-ca0b-4650-a009-426201025e81';
-const PREP_JOB        = '4d58f7c1-40b5-4aed-805f-f983c0ac0c4c';
+const PREP_JOB        = 'a77f1a09-9b97-4c37-9913-2cffe535c2c7';
 const BG_JOB          = 'd4a2aad6-4722-44b1-b869-d2834cd56975';
 
 interface Meeting {
@@ -57,6 +57,8 @@ let mainPage: 'meetings' | 'notes' = 'meetings';
 let activeTab: 'notes' | 'transcript' | 'prep' = 'notes';
 let selectedCalId: string | null = null;
 let prepPollInterval: ReturnType<typeof setInterval> | null = null;
+let prepLogs: string[] = [];
+let prepStartTime: number = 0;
 let showBgHero: boolean = localStorage.getItem('mm-show-bg') === 'true'; // default off
 
 // DB & Jobs
@@ -79,6 +81,47 @@ async function runJob(id: string): Promise<void> {
     body: JSON.stringify({jobId: id})
   });
 }
+async function fetchPrepLogs(): Promise<void> {
+  try {
+    const r = await fetch('/api/jobs/logs', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({jobId: PREP_JOB})
+    });
+    const data = await r.json();
+    const raw: string = data?.data?.logs || data?.logs || data?.output || data?.stdout || '';
+    // Parse verbose tool logs into readable steps
+    const readable: string[] = [];
+    for (const line of raw.split('\n')) {
+      const m = line.match(/Tool: (\w+)\((.{0,120})/) || line.match(/tool[_\s]?call[:\s]+(\w+)\((.{0,120})/i);
+      if (!m) continue;
+      const tool = m[1]; const args = m[2];
+      if (tool === 'bash') {
+        const cmd = args.replace(/\\/g,'').replace(/"/g,'').slice(0,80);
+        if (cmd.includes('sqlite3')) readable.push('note:Reading meeting data…');
+        else if (cmd.includes('grep')) readable.push('eye:Searching documents…');
+        else if (cmd.includes('apollo')) readable.push('person:Looking up attendee profiles…');
+        else if (cmd.includes('linkedin.com')) readable.push('person:Searching LinkedIn…');
+        else if (cmd.includes('exa') || cmd.includes('search')) readable.push('refresh:Searching the web…');
+        else if (cmd.includes('curl')) readable.push('refresh:Fetching external data…');
+        else readable.push('settings:Running task…');
+      } else if (tool === 'search_agent_memory') {
+        const q = args.match(/query.*?[":]\s*"?([^"\\,{}]{8,50})/i)?.[1] || '';
+        readable.push(`sparkle:Searching memory${q ? ': ' + q.trim() : '…'}`);
+      } else if (tool === 'read_file' || tool === 'read_document') {
+        readable.push('note:Reading document…');
+      } else if (tool === 'add_agent_memory') {
+        readable.push('lock:Saving context to memory…');
+      } else {
+        readable.push(`settings:${tool.replace(/_/g,' ')}…`);
+      }
+    }
+    if (readable.length > 0) { prepLogs = readable.slice(-20); render(); }
+    else if (raw.includes('PREP_COMPLETE')) {
+      // Job finished — refresh data from DB
+      await loadAll();
+    }
+  } catch {}
+}
 function sleep(ms: number) { return new Promise(r => setTimeout(r, ms)); }
 
 // Data
@@ -93,7 +136,7 @@ async function loadAll(): Promise<void> {
       ORDER BY start_time ASC`);
   } catch { calEvents = []; }
   try {
-    const rows = await q(`SELECT city, reason, prompt, image_url, image_data, generated_on FROM location_background WHERE id='daily' LIMIT 1`);
+    const rows = await q(`SELECT city, reason, prompt, image_url, image_data, generated_on FROM location_background WHERE id='current' LIMIT 1`);
     bg = rows[0] || null;
   } catch { bg = null; }
   render();
@@ -113,59 +156,118 @@ async function checkPerm(): Promise<boolean> {
 }
 
 // Recording
+async function finalizeMeetingRecording(mid: string, durationSeconds?: number, savedNotes?: string): Promise<void> {
+  if (savedNotes !== undefined) {
+    await w("UPDATE meetings SET notes=?, updated_at=strftime('%s','now') WHERE id=?", [savedNotes, mid]);
+  }
+  if (durationSeconds !== undefined) {
+    await w("UPDATE meetings SET duration=?, updated_at=strftime('%s','now') WHERE id=?", [durationSeconds, mid]);
+  }
+  await w("UPDATE meetings SET status='stopping', updated_at=strftime('%s','now') WHERE id=? AND status IN ('recording','stopping')", [mid]);
+  // Send stop signal — retry up to 3 times
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try { await runJob(STOP_JOB); break; } catch { await sleep(1000); }
+  }
+  // Wait for recorder to save audio, with fallback timeout
+  let settled = false;
+  for (let i = 0; i < 20; i++) {
+    await sleep(1500);
+    const rows = await q("SELECT status FROM meetings WHERE id=?", [mid]);
+    if (!rows.length) return;
+    const s = rows[0].status;
+    if (['recorded','transcribing','pending','summarized'].includes(s)) { settled = true; break; }
+    if (s === 'failed') return;
+  }
+  // If still stopping after 30s, force to recorded so pipeline continues
+  if (!settled) {
+    await w("UPDATE meetings SET status='recorded', updated_at=strftime('%s','now') WHERE id=? AND status='stopping'", [mid]);
+  }
+  triggerWhisperWhenReady(mid).catch(() => {});
+  startPoll(mid);
+}
+
+async function handoffActiveRecording(): Promise<void> {
+  const rows = await q("SELECT id, status FROM meetings WHERE status='recording' ORDER BY created_at DESC LIMIT 1");
+  if (!rows.length) return;
+  const activeId = rows[0].id as string;
+  if (activeId === recordingId) {
+    const editor = document.getElementById('notes-editor') as HTMLElement;
+    const notes = editor ? editor.innerHTML.trim() : '';
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    isRecording = false;
+    await finalizeMeetingRecording(activeId, elapsedSeconds, notes || undefined);
+    recordingId = null;
+    elapsedSeconds = 0;
+  } else {
+    await finalizeMeetingRecording(activeId);
+  }
+}
+
 async function startRecording(fromCalId?: string): Promise<void> {
   if (permissionGranted !== true) {
     const ok = await checkPerm();
     if (!ok) { showPermModal = true; render(); return; }
   }
-  const id = crypto.randomUUID();
+  await handoffActiveRecording();
+
   const now = new Date().toISOString();
   let title = 'Meeting \u2014 ' + new Date().toLocaleString(undefined, {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+  let id = '';
   if (fromCalId) {
     const ev = calEvents.find(e => e.id === fromCalId);
     if (ev) {
       title = ev.title;
-      await w("UPDATE calendar_events SET meeting_id = ? WHERE id = ?", [id, fromCalId]);
+      // Check if a scheduled meeting already exists for this calendar event
+      const existing = await q("SELECT m.id FROM meetings m JOIN calendar_events ce ON ce.meeting_id = m.id WHERE ce.id = ? AND m.status = 'scheduled' LIMIT 1", [fromCalId]);
+      if (existing.length) {
+        id = existing[0].id;
+        await w("UPDATE meetings SET status='recording', date=?, updated_at=strftime('%s','now') WHERE id=?", [now, id]);
+      } else {
+        id = crypto.randomUUID();
+        await w("UPDATE calendar_events SET meeting_id = ? WHERE id = ?", [id, fromCalId]);
+      }
     }
   }
-  await w("INSERT INTO meetings (id, title, date, status) VALUES (?, ?, ?, 'recording')", [id, title, now]);
+  if (!id) {
+    id = crypto.randomUUID();
+  }
+  // Insert only if we didn't reuse an existing scheduled meeting
+  const check = await q("SELECT id FROM meetings WHERE id=?", [id]);
+  if (!check.length) {
+    await w("INSERT INTO meetings (id, title, date, status) VALUES (?, ?, ?, 'recording')", [id, title, now]);
+  }
   recordingId = id; isRecording = true; elapsedSeconds = 0; selectedId = id;
   view = 'meeting';
+  render();
   timerInterval = setInterval(() => {
     elapsedSeconds++;
     const el = document.getElementById('rec-timer');
     if (el) el.textContent = fmtDur(elapsedSeconds);
   }, 1000);
-  await runJob(RECORDER_JOB);
+  try { await runJob(RECORDER_JOB); } catch(e) { console.error('Recorder job failed:', e); }
   await loadAll();
 }
 
 async function stopRecording(): Promise<void> {
   if (!recordingId) return;
   const editor = document.getElementById('notes-editor') as HTMLElement;
-  if (editor) {
-    const notes = editor.innerHTML.trim();
-    if (notes) await w("UPDATE meetings SET notes=?, updated_at=strftime('%s','now') WHERE id=?", [notes, recordingId]);
-  }
+  const notes = editor ? editor.innerHTML.trim() : '';
+  const sid = recordingId;
   isRecording = false;
   if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-  await w("UPDATE meetings SET duration=?, updated_at=strftime('%s','now') WHERE id=?", [elapsedSeconds, recordingId]);
-  await w("UPDATE meetings SET status='stopping', updated_at=strftime('%s','now') WHERE id=?", [recordingId]);
-  await runJob(STOP_JOB);
-  const sid = recordingId;
-  recordingId = null; elapsedSeconds = 0;
+  recordingId = null;
+  await finalizeMeetingRecording(sid, elapsedSeconds, notes || undefined);
+  elapsedSeconds = 0;
   await loadAll();
-  triggerWhisperWhenReady(sid);
-  startPoll(sid);
 }
 
 async function triggerWhisperWhenReady(mid: string): Promise<void> {
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 45; i++) {
     await sleep(2000);
     const rows = await q("SELECT status FROM meetings WHERE id=?", [mid]);
     if (!rows.length || rows[0].status === 'failed') return;
     if (rows[0].status === 'recorded') { await runJob(WHISPER_JOB); return; }
-    // Keep polling through 'stopping' and 'recording' states
+    if (['transcribing', 'pending', 'summarized', 'synced'].includes(rows[0].status)) return;
   }
 }
 
@@ -195,7 +297,7 @@ function flushSave(): void {
   if (activeTab === 'prep' && selectedCalId) {
     w("UPDATE calendar_events SET prep_doc=? WHERE id=?", [html, selectedCalId]);
   } else if (activeTab === 'notes') {
-    w("UPDATE meetings SET notes=?, updated_at=strftime('%s','now') WHERE id=?", [html, id]);
+    w("UPDATE meetings SET summary=?, updated_at=strftime('%s','now') WHERE id=?", [html, id]);
   }
 }
 
@@ -204,14 +306,31 @@ function autoSave(): void {
   saveTimeout = setTimeout(() => flushSave(), 1500);
 }
 
+function isSameMeetingDay(a?: string, b?: string): boolean {
+  return !!a && !!b && a.split('T')[0] === b.split('T')[0];
+}
+
 // Find linked CalEvent: first by explicit meeting_id, then by title+date fuzzy match
 function findLinkedCalEvent(m: Meeting): CalEvent | undefined {
-  const byId = calEvents.find(e => e.meeting_id === m.id);
+  const byId = calEvents.find(e => e.meeting_id === m.id && isSameMeetingDay(e.start_time, m.date));
   if (byId) return byId;
   if (!m.date) return undefined;
   return calEvents.find(e =>
     e.title.toLowerCase() === m.title.toLowerCase()
-    && e.start_time.split('T')[0] === m.date.split('T')[0]);
+    && isSameMeetingDay(e.start_time, m.date));
+}
+
+function getLinkedMeetingForEvent(e: CalEvent): Meeting | null {
+  const byId = e.meeting_id ? meetings.find(m => m.id === e.meeting_id) : null;
+  if (byId && isSameMeetingDay(byId.date, e.start_time)) return byId;
+  return meetings.find(m =>
+    m.title.toLowerCase() === e.title.toLowerCase()
+    && isSameMeetingDay(m.date, e.start_time)
+  ) || null;
+}
+
+function hasMeetingContent(m?: Meeting | null): boolean {
+  return !!(m && ((m.notes || '').trim() || (m.summary || '').trim() || (m.transcript || '').trim()));
 }
 
 function parseAttendees(json: string): Attendee[] {
@@ -234,24 +353,38 @@ async function triggerPrep(eventId: string): Promise<void> {
   if (!ev) return;
   const attendees = parseAttendees(ev.attendees);
   const req = { event_id: eventId, title: ev.title, attendees, start_time: ev.start_time, calendar_name: ev.calendar_name };
+  prepLogs = []; prepStartTime = Date.now();
   await w("UPDATE calendar_events SET prep_status='preparing', prep_doc=? WHERE id=?", [JSON.stringify(req), eventId]);
-  await runJob(PREP_JOB);
-  startPrepPoll(eventId);
+  // Navigate to prep view immediately so user sees progress
+  view = 'meeting'; selectedCalId = eventId; activeTab = 'prep';
   await loadAll();
+  runJob(PREP_JOB).catch(() => {});
+  startPrepPoll(eventId);
 }
 
 function startPrepPoll(eventId: string): void {
   if (prepPollInterval) clearInterval(prepPollInterval);
   let attempts = 0;
   const MAX_ATTEMPTS = 200; // 10 min timeout (200 * 3s)
+  // Check immediately — don't wait 3s for first tick
+  (async () => {
+    const rows = await q("SELECT prep_status FROM calendar_events WHERE id=?", [eventId]);
+    if (rows.length && rows[0].prep_status === 'ready') {
+      clearInterval(prepPollInterval!); prepPollInterval = null;
+      prepLogs = []; await loadAll(); return;
+    }
+  })();
   prepPollInterval = setInterval(async () => {
     attempts++;
+    fetchPrepLogs();
     const rows = await q("SELECT prep_status, prep_doc FROM calendar_events WHERE id=?", [eventId]);
     if (rows.length && rows[0].prep_status === 'ready') {
       clearInterval(prepPollInterval!); prepPollInterval = null;
+      prepLogs = [];
       await loadAll();
-    } else if (attempts >= MAX_ATTEMPTS) {
+    } else if (attempts >= MAX_ATTEMPTS || (rows.length && rows[0].prep_status === 'failed')) {
       clearInterval(prepPollInterval!); prepPollInterval = null;
+      prepLogs = ['alert:Prep timed out — agent took too long. Click Retry to try again.'];
       await w("UPDATE calendar_events SET prep_status='failed' WHERE id=? AND prep_status='preparing'", [eventId]);
       await loadAll();
     }
@@ -481,7 +614,7 @@ function fmtDayLabel(t: string): string {
 function esc(s: string): string { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
 function statusLabel(s: string): string {
   return {recording:'Recording', stopping:'Processing', recorded:'Transcribing', transcribing:'Transcribing',
-    pending:'Summarizing', summarized:'Complete', failed:'Failed'}[s] || s;
+    pending:'Summarizing', summarized:'Complete', synced:'Complete', failed:'Failed', scheduled:'Scheduled'}[s] || '';
 }
 function statusClass(s: string): string {
   return {recording:'status-recording', stopping:'status-processing', recorded:'status-processing',
@@ -576,8 +709,9 @@ function icon(name: string, size = 18): string {
     person: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
     eye: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`,
     'eye-off': `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`,
+    alert: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
   };
-  return i[name] || '';
+  return i[name] || i['settings'] || '';
 }
 
 // Render — background image handling
@@ -618,7 +752,7 @@ function renderBackgroundLayer(): string {
   const src = bgSrc();
   const city = liveCity || bg?.city || '';
   if (!src) return '<div class="app-bg app-bg--fallback"></div>';
-  return `<div class="app-bg${showBgHero ? '' : ' app-bg--subtle'}" aria-hidden="true">
+  return `<div class="app-bg${(showBgHero && view === 'home') ? '' : ' app-bg--subtle'}" aria-hidden="true">
     <img class="app-bg-img" src="${esc(src)}" alt="${esc(city + ' background')}">
     <div class="app-bg-scrim"></div>
   </div>`;
@@ -627,13 +761,17 @@ function renderBackgroundLayer(): string {
 
 function render(): void {
   const root = document.getElementById('root')!;
+  const homeMain = root.querySelector('.home-main') as HTMLElement | null;
+  const preservedScrollTop = view === 'home' ? (homeMain?.scrollTop || 0) : 0;
   const content = showPermModal ? renderPermModal() : (view === 'home' ? renderHome() : renderMeeting());
   root.innerHTML = `${renderBackgroundLayer()}<div class="app-shell">${content}</div>
-    <button class="bg-toggle-fab" id="btn-toggle-bg" title="${showBgHero ? 'Hide' : 'Show'} background & location">
-      ${showBgHero ? icon('eye', 16) : icon('eye-off', 16)}
-    </button>`;
+    ${view === 'home' ? `<button class="bg-toggle-fab" id="btn-toggle-bg" title="${showBgHero ? 'Hide' : 'Show'} background">${showBgHero ? icon('eye', 16) : icon('eye-off', 16)}</button>` : ''}`;
   applyBackground();
   attachListeners();
+  if (view === 'home') {
+    const nextHomeMain = root.querySelector('.home-main') as HTMLElement | null;
+    if (nextHomeMain) nextHomeMain.scrollTop = preservedScrollTop;
+  }
 }
 
 function renderPermModal(): string {
@@ -674,16 +812,9 @@ function toggleBgHero(): void {
 }
 
 function renderBackgroundHero(): string {
-  if (!showBgHero) return '';
-  const city = liveCity || bg?.city || 'San Francisco';
-  const reason = liveLocationReason || bg?.reason || '';
-  return `
-    <section class="bg-hero">
-      <h1 class="bg-hero-city">${esc(city)}</h1>
-      ${reason ? `<p class="bg-hero-reason">${esc(reason)}</p>` : ''}
-      <button class="bg-hero-refresh" id="btn-refresh-bg">${icon('refresh', 14)} Refresh</button>
-    </section>`;
+  return '';
 }
+
 
 function renderHome(): string {
   const todayEvs = getTodayEvents();
@@ -766,26 +897,27 @@ function renderHome(): string {
             </div>
           </div>
           <div class="meeting-list">
-            ${filtered.length > 0 ? filtered.map(m => {
-              const tags = extractTags(m);
-              const ev = findLinkedCalEvent(m);
-              const att = ev ? parseAttendees(ev.attendees) : [];
-              return `
-              <div class="meeting-card" data-meeting-id="${m.id}">
-                <div class="card-row">
-                  <div class="card-status-dot ${statusClass(m.status)}"></div>
-                  <div class="card-info">
-                    <div class="card-title">${esc(m.title)}</div>
-                    <div class="card-meta">${icon('clock', 12)} ${fmtDate(m.date)}${m.duration ? ' · ' + fmtDur(m.duration) : ''}</div>
-                    ${tags.length ? `<div class="card-tags">${tags.map(t => `<span class="pill">${esc(t)}</span>`).join('')}</div>` : ''}
-                  </div>
-                  <div class="card-actions">
-                    <button class="btn-icon card-del" data-id="${m.id}" title="Delete">${icon('trash', 13)}</button>
-                  </div>
-                </div>
-              </div>`;
-            }).join('') : `<div class="empty-state">No meeting notes yet</div>`}
-          </div>
+            ${(() => {
+              const withContent = filtered.filter(m => m.summary && m.summary.trim());
+              if (!withContent.length) {
+                return '<div class="empty-state">No summaries yet \u2014 summaries appear here after meetings are processed</div>';
+              }
+              return withContent.map(m => {
+                const tags = extractTags(m);
+                const snippet = m.summary.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 120);
+                const snippetEl = snippet ? '<div class="notes-snippet">' + esc(snippet) + '\u2026</div>' : '';
+                const tagsEl = tags.length ? '<div class="card-tags\">' + tags.map(t => '<span class="pill">' + esc(t) + '</span>').join('') + '</div>' : '';
+                return '<div class="meeting-card notes-card" data-meeting-id="' + m.id + '">'
+                  + '<div class="card-row"><div class="card-info">'
+                  + '<div class="card-title">' + esc(m.title) + '</div>'
+                  + '<div class="card-meta">' + icon('clock', 12) + ' ' + fmtDate(m.date) + (m.duration ? ' \xb7 ' + fmtDur(m.duration) : '') + '</div>'
+                  + snippetEl + tagsEl
+                  + '</div>'
+                  + '<div class="card-actions"><button class="btn-icon card-del" data-id="' + m.id + '" title="Delete">' + icon('trash', 13) + '</button></div>'
+                  + '</div></div>';
+              }).join('');
+            })()}
+
         </section>
         `}
       </div>
@@ -843,26 +975,17 @@ function getWeekDays(): string[] {
 
 function getPrepSnippet(prepDoc: string): string {
   if (!prepDoc) return '';
-  try { const o = JSON.parse(prepDoc); if (o.event_id) return ''; } catch {}
-  // Look for ## TL;DR section first
-  const tldrMatch = prepDoc.match(/## TL;?DR\n+([\s\S]*?)(?=\n## |$)/i);
-  if (tldrMatch) {
-    const para = tldrMatch[1].trim().replace(/\*\*/g, '').replace(/\n+/g, ' ').slice(0, 400);
-    return `<div class="prep-snip-tldr">${esc(para)}</div>`;
-  }
-  // Fallback: Context & Background paragraph
-  const ctxMatch = prepDoc.match(/## Context.*?\n+([\s\S]*?)(?=\n## |$)/i);
-  if (ctxMatch) {
-    const lines = ctxMatch[1].split('\n').map(l => l.replace(/\*\*/g, '').trim()).filter(l => l && !l.startsWith('---') && !l.startsWith('|'));
-    const para = lines.slice(0, 3).join(' ').slice(0, 300);
-    return `<div class="prep-snip-tldr">${esc(para)}</div>`;
-  }
+  try {
+    const o = JSON.parse(prepDoc);
+    if (o.tldr) return `<div class="prep-snip-tldr">${esc(o.tldr.slice(0, 300))}</div>`;
+    if (o.event_id) return ''; // old format placeholder
+  } catch {}
   return '';
 }
 
 function renderCalDay(dateStr: string): string {
   const evs = calEvents.filter(e => e.start_time.split('T')[0] === dateStr);
-  const linkedIds = new Set(evs.map(e => e.meeting_id).filter(Boolean));
+  const linkedIds = new Set(evs.map(e => getLinkedMeetingForEvent(e)?.id).filter(Boolean));
   // Meetings with no linked CalEvent — synthesize one so they use the same card
   const orphanEvs: CalEvent[] = meetings
     .filter(m => {
@@ -890,16 +1013,27 @@ function renderMeetingCard(e: CalEvent): string {
   const isLive = now >= st && now <= et;
   const isSoon = !isLive && st.getTime() - now.getTime() < 900000 && st > now;
   const isPast = now > et;
-  const linked = e.meeting_id
-    ? meetings.find(m => m.id === e.meeting_id)
-    : meetings.find(m => m.title.toLowerCase() === e.title.toLowerCase()
-        && m.date && m.date.split('T')[0] === e.start_time.split('T')[0]) || null;
+  const linked = getLinkedMeetingForEvent(e);
+  const linkedHasContent = hasMeetingContent(linked);
   const attendees = parseAttendees(e.attendees);
   const minsLeft = isLive ? Math.round((et.getTime() - now.getTime()) / 60000) : 0;
   const minsTill = isSoon ? Math.round((st.getTime() - now.getTime()) / 60000) : 0;
 
-  // Status
-  const statusBadge = isLive
+  // Status — show meeting pipeline status if linked, else time-based
+  const mStatus = linked && linked.status !== 'scheduled' ? linked.status : null;
+  const statusBadge = mStatus === 'recording'
+    ? '<span class="mc-badge mc-badge-live"><span class="pulse-dot red"></span>Recording</span>'
+    : mStatus === 'stopping' || mStatus === 'recorded'
+    ? '<span class="mc-badge mc-badge-proc"><span class="spinner-sm"></span> Saving audio</span>'
+    : mStatus === 'transcribing'
+    ? '<span class="mc-badge mc-badge-proc"><span class="spinner-sm"></span> Transcribing</span>'
+    : mStatus === 'pending'
+    ? '<span class="mc-badge mc-badge-proc"><span class="spinner-sm"></span> Summarizing</span>'
+    : mStatus === 'summarized' || mStatus === 'synced'
+    ? '<span class="mc-badge mc-badge-done">✓ Ready</span>'
+    : mStatus === 'failed'
+    ? '<span class="mc-badge mc-badge-fail">Failed</span>'
+    : isLive
     ? '<span class="mc-badge mc-badge-live"><span class="pulse-dot red"></span>Live \u00b7 ' + minsLeft + 'm left</span>'
     : isSoon
     ? '<span class="mc-badge mc-badge-soon">In ' + minsTill + 'm</span>'
@@ -921,17 +1055,22 @@ function renderMeetingCard(e: CalEvent): string {
   const prepBtn = e.prep_status === 'ready'
     ? '<button class="mc-btn mc-btn-glass" onclick="event.stopPropagation();openMeeting(\'' + (linked?.id || e.id) + '\',\'prep\')">View Prep</button>'
     : e.prep_status === 'preparing'
-    ? '<button class="mc-btn mc-btn-glass" disabled><span class="spinner-sm"></span> Prepping\u2026</button>'
+    ? `<button class="mc-btn mc-btn-glass" onclick="event.stopPropagation();viewPrep('${e.id}')"><span class="spinner-sm"></span> Prepping\u2026</button>`
     : e.prep_status === 'failed'
     ? '<button class="mc-btn mc-btn-warn" onclick="event.stopPropagation();triggerPrep(\'' + e.id + '\')">Retry Prep</button>'
     : '<button class="mc-btn mc-btn-glass" onclick="event.stopPropagation();triggerPrep(\'' + e.id + '\')">\u2726 Prep</button>';
 
-  const actionBtn = linked
+  const actionBtn = linkedHasContent
     ? '<button class="mc-btn mc-btn-primary" onclick="event.stopPropagation();openMeeting(\'' + linked.id + '\')">View Notes</button>'
+    : linked && linked.status !== 'scheduled' && linked.status === 'recording'
+    ? '<button class="mc-btn mc-btn-warn" onclick="event.stopPropagation();openMeeting(\'' + linked.id + '\')">\u23f9 Stop</button>'
+    : linked && linked.status !== 'scheduled'
+    ? '<button class="mc-btn mc-btn-glass" onclick="event.stopPropagation();openMeeting(\'' + linked.id + '\')">' + statusLabel(linked.status) + '\u2026</button>'
     : '<button class="mc-btn mc-btn-primary" onclick="event.stopPropagation();startRecording(\'' + e.id + '\')">\u25b6 Start</button>';
 
+
   const cardClass = 'mc' + (isLive ? ' mc-live' : '') + (isSoon ? ' mc-soon' : '') + (isPast ? ' mc-past' : '');
-  const clickAttr = linked ? ' onclick="openMeeting(\'' + linked.id + '\')"' : '';
+  const clickAttr = linked && (linkedHasContent || linked.status !== 'scheduled') ? ' onclick="openMeeting(\'' + linked.id + '\')"' : '';
 
   return '<div class="' + cardClass + '"' + clickAttr + '>' +
     '<div class="mc-inner">' +
@@ -972,7 +1111,8 @@ function renderCalWeek(): string {
           <div class="week-day-heading${isToday ? ' week-day-today' : ''}">${dayLabel}</div>
           <div class="week-day-events">
             ${evs.map(e => {
-              const linked = e.meeting_id;
+              const linkedMeeting = getLinkedMeetingForEvent(e);
+              const linked = linkedMeeting?.id || '';
               const prepReady = e.prep_status === 'ready';
               const prepBusy  = e.prep_status === 'preparing';
               const click = linked ? `onclick="openMeeting('${linked}')"` : '';
@@ -982,12 +1122,12 @@ function renderCalWeek(): string {
                 <span class="week-row-dot" style="background:${e.calendar_name ? 'var(--accent)' : 'var(--muted)'}"></span>
                 <span class="week-row-title">${esc(e.title)}</span>
                 ${e.calendar_name ? `<span class="week-row-cal">${esc(e.calendar_name)}</span>` : ''}
-                ${linked ? `<span class="week-row-notes">${icon('note', 12)} Notes</span>` : ''}
+                ${hasMeetingContent(linkedMeeting) ? `<span class="week-row-notes">${icon('note', 12)} Notes</span>` : ''}
                 <span class="week-row-actions">
                   ${prepReady
                     ? `<button class="week-action-btn" onclick="event.stopPropagation();openMeeting('${linked}')">${icon('sparkle',12)} View Prep</button>`
                     : prepBusy
-                    ? `<button class="week-action-btn" disabled>${icon('sparkle',12)} Prepping…</button>`
+                    ? `<button class="week-action-btn" onclick="event.stopPropagation();viewPrep('${e.id}')">${icon('sparkle',12)} Prepping…</button>`
                     : e.prep_status === 'failed'
               ? `<button class="week-action-btn week-action-warn" onclick="event.stopPropagation();triggerPrep('${e.id}')">${icon('sparkle',12)} Retry</button>`
               : `<button class="week-action-btn" onclick="event.stopPropagation();triggerPrep('${e.id}')">${icon('sparkle',12)} Prep</button>`
@@ -1021,7 +1161,7 @@ function renderCalMonth(): string {
                   <div class="month-cell-num${cell.isToday ? ' today-num' : ''}">${cell.day}</div>
                   ${cell.events.length ? `
                     <div class="month-dots">
-                      ${cell.events.slice(0, 3).map(e => `<span class="month-dot${e.meeting_id ? ' month-dot-linked' : ''}"></span>`).join('')}
+                      ${cell.events.slice(0, 3).map(e => `<span class="month-dot${getLinkedMeetingForEvent(e) ? ' month-dot-linked' : ''}"></span>`).join('')}
                       ${cell.events.length > 3 ? `<span class="month-dot-more">+${cell.events.length - 3}</span>` : ''}
                     </div>` : ''}
                 ` : ''}
@@ -1044,19 +1184,20 @@ function showMonthDay(dateStr: string): void {
     <div class="month-detail-header">${label}</div>
     <div class="week-day-events">
       ${evs.map(e => {
-        const linked = e.meeting_id;
+        const linkedMeeting = getLinkedMeetingForEvent(e);
+        const linked = linkedMeeting?.id || '';
         return `
         <div class="week-row${linked ? ' week-row-linked' : ''}" ${linked ? `onclick="openMeeting('${linked}')"` : ''}>
           <span class="week-row-time">${fmtTime(e.start_time)}</span>
           <span class="week-row-dot" style="background:var(--accent)"></span>
           <span class="week-row-title">${esc(e.title)}</span>
           ${e.calendar_name ? `<span class="week-row-cal">${esc(e.calendar_name)}</span>` : ''}
-          ${linked ? `<span class="week-row-notes">${icon('note', 12)} Notes</span>` : ''}
+          ${hasMeetingContent(linkedMeeting) ? `<span class="week-row-notes">${icon('note', 12)} Notes</span>` : ''}
           <span class="week-row-actions">
             ${e.prep_status === 'ready'
               ? `<button class="week-action-btn" onclick="event.stopPropagation();openMeeting('${linked}')">${icon('sparkle',12)} View Prep</button>`
               : e.prep_status === 'preparing'
-              ? `<button class="week-action-btn" disabled>${icon('sparkle',12)} Prepping…</button>`
+              ? `<button class="week-action-btn" onclick="event.stopPropagation();viewPrep('${e.id}')">${icon('sparkle',12)} Prepping…</button>`
               : e.prep_status === 'failed'
               ? `<button class="week-action-btn week-action-warn" onclick="event.stopPropagation();triggerPrep('${e.id}')">${icon('sparkle',12)} Retry</button>`
               : `<button class="week-action-btn" onclick="event.stopPropagation();triggerPrep('${e.id}')">${icon('sparkle',12)} Prep</button>`
@@ -1074,6 +1215,75 @@ function renderPrepView(ev: CalEvent): string {
   const isPreparing = ev.prep_status === 'preparing';
   const isReady = ev.prep_status === 'ready';
 
+  // Parse structured JSON prep doc
+  let prep: any = null;
+  if (isReady && ev.prep_doc) {
+    try { prep = JSON.parse(ev.prep_doc); } catch {}
+  }
+
+  function renderPrepReady(): string {
+    if (!prep) return `<div class="notes-editor notes-editable" contenteditable="false">${formatSummary(ev.prep_doc)}</div>`;
+    // Merge calendar attendees with enriched attendee data from prep
+    const enriched: {[k:string]:any} = {};
+    (prep.attendees || []).forEach((a:any) => { if(a.name) enriched[a.name.toLowerCase()] = a; });
+
+    return `
+      <div class="prep-doc">
+        ${prep.tldr ? `
+        <div class="prep-card prep-card-tldr">
+          <div class="prep-card-label">${icon('sparkle',13)} Walking in</div>
+          <p class="prep-tldr-text">${esc(prep.tldr)}</p>
+        </div>` : ''}
+
+        <div class="prep-card">
+          <div class="prep-card-label">${icon('person',13)} Attendees</div>
+          <div class="prep-people">
+            ${attendees.slice(0,12).map(a => {
+              const key = (a.name||'').toLowerCase();
+              const info = enriched[key] || {};
+              return `<div class="prep-person">
+                <div class="avatar" style="background:${avatarColor(a.name||a.email)}">${getInitials(a.name||a.email)}</div>
+                <div class="prep-person-info">
+                  <div class="prep-person-name">${esc(a.name||a.email.split('@')[0])}</div>
+                  ${info.title||info.company ? `<div class="prep-person-role">${esc([info.title,info.company].filter(Boolean).join(' · '))}</div>` : `<div class="prep-person-email">${esc(a.email)}</div>`}
+                  ${info.bio ? `<div class="prep-person-bio">${esc(info.bio)}</div>` : ''}
+                  ${info.linkedin ? `<a class="prep-person-linkedin" href="${info.linkedin}" target="_blank">${icon('person', 11)} LinkedIn</a>` : ''}
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+
+        ${prep.context && prep.context !== 'No prior context found.' ? `
+        <div class="prep-card">
+          <div class="prep-card-label">${icon('note',13)} Context</div>
+          <p class="prep-card-body">${esc(prep.context)}</p>
+        </div>` : ''}
+
+        ${prep.openItems && prep.openItems.length ? `
+        <div class="prep-card">
+          <div class="prep-card-label">${icon('check',13)} Open items</div>
+          <ul class="prep-list">
+            ${prep.openItems.map((item:string) => `<li>${esc(item)}</li>`).join('')}
+          </ul>
+        </div>` : ''}
+
+        ${prep.talkingPoints && prep.talkingPoints.length ? `
+        <div class="prep-card">
+          <div class="prep-card-label">${icon('chat',13)} Talking points</div>
+          <ul class="prep-list prep-list-talking">
+            ${prep.talkingPoints.map((tp:string) => `<li>${esc(tp)}</li>`).join('')}
+          </ul>
+        </div>` : ''}
+
+        ${prep.news ? `
+        <div class="prep-card">
+          <div class="prep-card-label">${icon('refresh',13)} Recent news</div>
+          <p class="prep-card-body">${esc(prep.news)}</p>
+        </div>` : ''}
+      </div>`;
+  }
+
   return `
     <div class="meeting-layout">
       <div class="meeting-topbar glass">
@@ -1084,38 +1294,41 @@ function renderPrepView(ev: CalEvent): string {
         </div>
       </div>
       <div class="meeting-body">
-        ${attendees.length ? `
-        <div class="prep-attendees">
-          <div class="prep-section-label">Attendees</div>
-          <div class="prep-people">
-            ${attendees.slice(0, 12).map(a => `
-              <div class="prep-person">
-                <div class="avatar" style="background:${avatarColor(a.name || a.email)}">${getInitials(a.name || a.email)}</div>
-                <div class="prep-person-info">
-                  <div class="prep-person-name">${esc(a.name || a.email.split('@')[0])}</div>
-                  <div class="prep-person-email">${esc(a.email)}</div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>` : ''}
         ${isPreparing ? `
-          <div class="processing-bar"><div class="spinner"></div><span>Researching attendees, searching memory, and building your prep doc\u2026</span></div>
-        ` : isReady ? `
-          <div class="notes-editor notes-editable" contenteditable="false">${formatSummary(ev.prep_doc)}</div>
-        ` : ev.prep_status === 'failed' ? `
+          <div class="prep-live">
+            <div class="prep-live-header">
+              <div class="spinner"></div>
+              <span>Agent is researching your prep doc…</span>
+              ${prepStartTime ? `<span class="prep-elapsed">${Math.floor((Date.now()-prepStartTime)/1000)}s</span>` : ''}
+            </div>
+            ${prepLogs.length === 0 ? `
+              <div class="prep-live-empty">Starting up…</div>
+            ` : `
+              <div class="prep-log-card">
+                <div class="prep-log-latest">${icon(prepLogs[prepLogs.length-1].split(':')[0],14)} ${esc(prepLogs[prepLogs.length-1].split(':').slice(1).join(':'))}</div>
+                ${prepLogs.length > 1 ? `
+                  <div class="prep-log-history">
+                    ${prepLogs.slice(-8,-1).reverse().map(l => `<div class="prep-log-line">${icon(l.split(':')[0],12)} ${esc(l.split(':').slice(1).join(':'))}</div>`).join('')}
+                  </div>
+                ` : ''}
+              </div>
+            `}
+          </div>
+        ` : isReady ? renderPrepReady() : ev.prep_status === 'failed' ? `
           <div class="prep-empty">
-            <p>Prep timed out or failed.</p>
+            <p>Prep failed. Try again.</p>
             <button class="btn btn-primary" onclick="triggerPrep('${ev.id}')">Retry Prep</button>
           </div>
         ` : `
           <div class="prep-empty">
-            <p>Click <strong>Prep</strong> on a calendar event to generate a prep document with attendee research, prior meeting context, and suggested talking points.</p>
+            <p>Click <strong>Prep</strong> on a calendar event to generate a prep document with attendee research, prior meeting context, and talking points.</p>
           </div>
         `}
       </div>
     </div>`;
 }
+
+
 
 function renderMeeting(): string {
   // Check if viewing a prep doc or a calendar event with no linked meeting
@@ -1203,20 +1416,15 @@ function renderDetailBody(m: Meeting | undefined): string {
     return `<div class="processing-bar failed"><span>Processing failed. <button class="inline-btn" id="btn-retry-pipeline">Retry</button></span></div>`;
   }
   const hasSummary = m.summary?.trim();
-  const hasNotes = m.notes?.trim();
 
   if (activeTab === 'notes') {
-    // Notes tab: show AI summary + user notes merged, or just user notes, or empty
-    // Detect if content is already HTML (edited & saved) vs raw markdown (from AI)
     const isHtml = (s: string) => /<[a-z][\s\S]*>/i.test(s);
     const fmt = (s: string) => isHtml(s) ? s : formatSummary(s);
-    let content = '';
-    if (hasSummary && hasNotes) content = fmt(m.summary) + '<hr style="margin:24px 0;opacity:.15">' + fmt(m.notes);
-    else if (hasSummary) content = fmt(m.summary);
-    else if (hasNotes) content = fmt(m.notes);
-    const empty = !hasSummary && !hasNotes;
-    return `<div id="notes-editor" class="notes-editor notes-editable${empty ? ' is-empty' : ''}" contenteditable="true" spellcheck="true" data-placeholder="Add your notes\u2026">${content}</div>`;
+    const content = hasSummary ? fmt(m.summary) : '';
+    return `<div id="notes-editor" class="notes-editor notes-editable${!content ? ' is-empty' : ''}" contenteditable="true" spellcheck="true" data-placeholder="Add your notes\u2026">${content}</div>`;
   }
+
+
   if (activeTab === 'prep') {
     const ev = findLinkedCalEvent(m);
     const prepDoc = ev?.prep_doc || '';
@@ -1372,6 +1580,14 @@ function attachListeners(): void {
 (window as any).openMeeting   = openMeeting;
 (window as any).showMonthDay  = showMonthDay;
 (window as any).triggerPrep   = triggerPrep;
+(window as any).viewPrep      = async (id: string) => {
+  selectedCalId = id; view = 'meeting'; activeTab = 'prep';
+  if (!prepStartTime) prepStartTime = Date.now();
+  render(); // show immediately with cached data
+  await loadAll(); // refresh from DB — picks up completed preps instantly
+  fetchPrepLogs();
+  if (!prepPollInterval) { startPrepPoll(id); }
+};
 (window as any).startRecording = startRecording;
 
 // Init
@@ -1385,4 +1601,18 @@ function attachListeners(): void {
   await recoverRecordingState();
   await recoverStuckPreps();
   detectLiveLocation().catch(() => {});
+  // Auto-refresh home view every 10s to show pipeline progress
+  setInterval(async () => {
+    if (view !== 'home') return;
+    try { meetings = await q('SELECT * FROM meetings ORDER BY created_at DESC'); } catch {}
+    try {
+      calEvents = await q(`SELECT id, title, start_time, end_time, calendar_name, meeting_id,
+        COALESCE(attendees, '[]') as attendees, COALESCE(prep_status, '') as prep_status,
+        COALESCE(prep_doc, '') as prep_doc
+        FROM calendar_events
+        WHERE NOT (start_time LIKE '%T00:00' AND end_time LIKE '%T23:59')
+        ORDER BY start_time ASC`);
+    } catch {}
+    render();
+  }, 30000);
 })();
