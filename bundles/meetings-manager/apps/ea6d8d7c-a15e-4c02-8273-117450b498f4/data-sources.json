@@ -1,5 +1,59 @@
 [
   {
+    "id": "d4a2aad6-4722-44b1-b869-d2834cd56975:auto-discovered",
+    "type": "sqlite",
+    "jobId": "d4a2aad6-4722-44b1-b869-d2834cd56975",
+    "alias": "Location Background Generator",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-05T15:42:29.607Z"
+  },
+  {
+    "id": "eb3200be-fa32-4a83-8313-94df426dea89:auto-discovered",
+    "type": "sqlite",
+    "jobId": "eb3200be-fa32-4a83-8313-94df426dea89",
+    "alias": "Check Screen Recording Permission",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-05T15:42:29.606Z"
+  },
+  {
+    "id": "52b4abeb-0d23-4724-9a82-0559c64150c1:auto-discovered",
+    "type": "sqlite",
+    "jobId": "52b4abeb-0d23-4724-9a82-0559c64150c1",
+    "alias": "Whisper Transcriber",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-05T15:42:29.605Z"
+  },
+  {
+    "id": "5a5c47c7-46f0-430e-8b01-499bdf65de42:auto-discovered",
+    "type": "sqlite",
+    "jobId": "5a5c47c7-46f0-430e-8b01-499bdf65de42",
+    "alias": "Stop Recorder",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-05T15:42:29.605Z"
+  },
+  {
+    "id": "54837f40-1e64-4810-a387-f81151d014af:auto-discovered",
+    "type": "sqlite",
+    "jobId": "54837f40-1e64-4810-a387-f81151d014af",
+    "alias": "System Audio Recorder",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-05T15:42:29.602Z"
+  },
+  {
+    "id": "a77f1a09-9b97-4c37-9913-2cffe535c2c7:Meeting Prep Agent (a77f1a09)",
+    "type": "sqlite",
+    "jobId": "a77f1a09-9b97-4c37-9913-2cffe535c2c7",
+    "alias": "Meeting Prep Agent (a77f1a09)",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-03-31T19:44:00.000Z"
+  },
+  {
     "id": "06c8e329-7e5f-45a3-82d7-af91e7ffcac1:Meeting Monitor (06c8e329)",
     "type": "sqlite",
     "jobId": "06c8e329-7e5f-45a3-82d7-af91e7ffcac1",
@@ -7,15 +61,6 @@
     "dbPath": "",
     "tables": [],
     "linkedAt": "2026-03-18T17:49:58.016Z"
-  },
-  {
-    "id": "4d58f7c1-40b5-4aed-805f-f983c0ac0c4c:Meeting Prep Agent (4d58f7c1)",
-    "type": "sqlite",
-    "jobId": "4d58f7c1-40b5-4aed-805f-f983c0ac0c4c",
-    "alias": "Meeting Prep Agent (4d58f7c1)",
-    "dbPath": "",
-    "tables": [],
-    "linkedAt": "2026-03-18T08:18:32.009Z"
   },
   {
     "id": "40407339-ca0b-4650-a009-426201025e81:Calendar Reader (40407339)",
