@@ -56,6 +56,28 @@
       "platform": [
         "macos"
       ]
+    },
+    {
+      "bundleId": "bundle-1775845734319",
+      "name": "Parabola Lab",
+      "description": "An interactive parabola explorer with Learn, Explore, and Practice modes. Features a glassmorphism UI with a Dublin, CA landscape background, real-time graph manipulation with sliders, AI tutor chat, and challenge mode to test your skills.",
+      "version": "1.0.0",
+      "author": "shawkatkabbara",
+      "tags": [
+        "math",
+        "education",
+        "interactive",
+        "graphing",
+        "parabola"
+      ],
+      "minPaprworkVersion": "2.0.0",
+      "path": "bundles/bundle-1775845734319",
+      "requirements": [],
+      "platform": [
+        "macos",
+        "windows",
+        "linux"
+      ]
     }
   ]
 }
