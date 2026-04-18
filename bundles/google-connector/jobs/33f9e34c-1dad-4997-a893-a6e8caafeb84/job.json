@@ -1,0 +1,31 @@
+{
+  "id": "33f9e34c-1dad-4997-a893-a6e8caafeb84",
+  "name": "google-connector-oauth",
+  "type": "python",
+  "status": "completed",
+  "folder": "Google Connector",
+  "command": "GOOGLE_CONNECTOR_DB=${HOME}/Papr/jobs/1b1fd68b-f25a-4433-a5cf-359b34b4147e/data/data.db GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} python3 google_oauth.py",
+  "requirements": [
+    "requests"
+  ],
+  "dependsOn": [
+    {
+      "jobId": "1b1fd68b-f25a-4433-a5cf-359b34b4147e",
+      "onStatus": "completed"
+    }
+  ],
+  "retries": {
+    "maxAttempts": 1,
+    "backoffMs": 1000
+  },
+  "retentionDays": 14,
+  "outputMode": "natural",
+  "memoryPolicy": "none",
+  "createdAt": "2026-04-18T05:30:43.654Z",
+  "updatedAt": "2026-04-18T05:49:40.714Z",
+  "lastRunAt": "2026-04-18T05:49:22.106Z",
+  "exitCode": 0,
+  "lastOutput": "OAuth server on port 8765\nBrowser opened — waiting for sign-in...\nExchanging code...\nConnected: amir@papr.ai (Amir Kabbara)\nDone!",
+  "lastExecutionId": "33f9e34c-1dad-4997-a893-a6e8caafeb84-1776491362106-a1",
+  "completedAt": "2026-04-18T05:49:40.714Z"
+}

@@ -1,33 +1,28 @@
-# Google Connector
+# Google Connector v2.0.0
 
-Connect your Google accounts to Paprwork. Manages OAuth tokens for Gmail, Calendar, and Drive, with a built-in setup guide for creating your Google Cloud credentials.
+Connect your Google account to Paprwork with one click. Supports Gmail, Calendar, and Drive.
 
-## Installation
+## What's New in v2.0.0
+- **Setup wizard** — clear step-by-step guide visible before connecting
+- **One-click OAuth** — local callback server catches the redirect automatically (no copy-paste)
+- **Auto token refresh** — scheduled job refreshes tokens every 45 minutes
+- **Liquid Glass UI** — redesigned with the Paprwork design system
+- **Modular architecture** — 4 focused TypeScript files instead of 1 monolith
 
-### Option 1: Import via Papr Work Agent
-```
-Agent: "Import the Google Connector bundle from the community apps repo"
-```
+## Setup
+1. Create a Google Cloud project (free)
+2. Enable Gmail, Calendar, and Drive APIs
+3. Create a Desktop OAuth client
+4. Add `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in Settings → API Keys → Custom Keys
+5. Click **Connect Google Account**
 
-### Option 2: Import from GitHub
-1. Clone or download this repo
-2. Import: `"Import the bundle from github.com/Papr-ai/paprwork-community-apps" subPath="bundles/google-connector"`
-
-## Contents
-
-- **App**: Google Connector (e460c97b-62da-4ddf-969d-874daa9ba819)
-- **Jobs**: 3 job(s)
-  - Google Connector Exchange (python)
-  - relationship_ops_schema (python)
-  - relationship_ops_google_auth (python)
+## Jobs
+| Job | Purpose | Schedule |
+|-----|---------|----------|
+| google-connector-schema | Creates database tables | Run once |
+| google-connector-oauth | Handles OAuth flow with local callback server | On demand |
+| google-connector-refresh | Refreshes tokens before expiry | Every 45 min |
 
 ## Requirements
-
-- Papr Work v2.0.0 or later
-- Python 3.8+ for Python jobs
-- `GOOGLE_CLIENT_ID` — Google OAuth client ID
-- `GOOGLE_CLIENT_SECRET` — Google OAuth client secret
-
-## Version
-
-1.0.0 - Created 2026-04-17
+- `GOOGLE_CLIENT_ID` — from Google Cloud Console
+- `GOOGLE_CLIENT_SECRET` — from Google Cloud Console
