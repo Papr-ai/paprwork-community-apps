@@ -100,7 +100,7 @@ async function loadFeed() {
     // Prefer tweets that already have generated drafts so Reply/Quote opens pre-filled
     const withDrafts = await query<Tweet>(`
       SELECT * FROM tweets
-      WHERE status = 'new' AND IFNULL(draft_reply, '') <> ''
+      WHERE status IN ('new','scored') AND IFNULL(draft_reply, '') <> ''
       ORDER BY score DESC, datetime(scored_at) DESC
       LIMIT 10
     `);
@@ -111,7 +111,7 @@ async function loadFeed() {
       // Next: scored tweets, even if draft field happened to be empty
       const scored = await query<Tweet>(`
         SELECT * FROM tweets
-        WHERE score > 0 AND status = 'new'
+        WHERE score > 0 AND status IN ('new','scored')
         ORDER BY score DESC
         LIMIT 10
       `);
@@ -122,7 +122,7 @@ async function loadFeed() {
         // Last fallback: engagement, but these may not have generated drafts yet
         tweets = await query<Tweet>(`
           SELECT * FROM tweets
-          WHERE status = 'new'
+          WHERE status IN ('new','scored')
           ORDER BY (like_count + retweet_count * 3 + reply_count * 2) DESC
           LIMIT 10
         `);
