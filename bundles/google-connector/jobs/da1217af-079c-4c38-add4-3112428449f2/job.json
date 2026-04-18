@@ -1,0 +1,41 @@
+{
+  "id": "da1217af-079c-4c38-add4-3112428449f2",
+  "name": "google-connector-refresh",
+  "type": "python",
+  "status": "completed",
+  "folder": "Google Connector",
+  "command": "GOOGLE_CONNECTOR_DB=${HOME}/Papr/jobs/1b1fd68b-f25a-4433-a5cf-359b34b4147e/data/data.db GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} python3 refresh_tokens.py",
+  "requirements": [
+    "requests"
+  ],
+  "dependsOn": [
+    {
+      "jobId": "1b1fd68b-f25a-4433-a5cf-359b34b4147e",
+      "onStatus": "completed"
+    }
+  ],
+  "retries": {
+    "maxAttempts": 1,
+    "backoffMs": 1000
+  },
+  "retentionDays": 14,
+  "schedule": {
+    "enabled": true,
+    "cron": "*/45 * * * *"
+  },
+  "scheduleState": {
+    "nextRunAt": "2026-04-18T06:45:00.000Z",
+    "lastScheduledRunAt": "2026-04-18T06:00:00.000Z",
+    "lastTriggeredAt": "2026-04-18T06:00:00.017Z",
+    "lastIdempotencyKey": "da1217af-079c-4c38-add4-3112428449f2-2026-04-18T06:00:00.000Z"
+  },
+  "outputMode": "natural",
+  "memoryPolicy": "none",
+  "createdAt": "2026-04-18T05:31:23.693Z",
+  "updatedAt": "2026-04-18T06:00:01.075Z",
+  "lastRunAt": "2026-04-18T06:00:00.025Z",
+  "exitCode": 0,
+  "lastOutput": "No tokens need refreshing.",
+  "lastExecutionId": "da1217af-079c-4c38-add4-3112428449f2-1776492000025-a1",
+  "completedAt": "2026-04-18T06:00:01.069Z"
+}

@@ -1,29 +1,20 @@
 [
   {
-    "id": "abd8058e-7d56-4e1f-9f92-368462832c91:auto-discovered",
+    "id": "33f9e34c-1dad-4997-a893-a6e8caafeb84:google-connector-oauth",
     "type": "sqlite",
-    "jobId": "abd8058e-7d56-4e1f-9f92-368462832c91",
-    "alias": "relationship_ops_google_auth",
-    "dbPath": "",
-    "tables": [],
-    "linkedAt": "2026-04-09T18:54:25.790Z"
+    "jobId": "33f9e34c-1dad-4997-a893-a6e8caafeb84",
+    "alias": "google-connector-oauth"
   },
   {
-    "id": "29ae68fd-7ad8-441f-80a9-bde03b7a8d75:relationship_ops_schema (29ae68fd)",
+    "id": "1b1fd68b-f25a-4433-a5cf-359b34b4147e:google-connector-schema",
     "type": "sqlite",
-    "jobId": "29ae68fd-7ad8-441f-80a9-bde03b7a8d75",
-    "alias": "relationship_ops_schema (29ae68fd)",
-    "dbPath": "",
-    "tables": [],
-    "linkedAt": "2026-04-09T16:46:40.857Z"
+    "jobId": "1b1fd68b-f25a-4433-a5cf-359b34b4147e",
+    "alias": "google-connector-schema"
   },
   {
-    "id": "3a73c753-4f4c-41dd-96ef-929ba51d5a1d:Google Connector Exchange (3a73c753)",
+    "id": "da1217af-079c-4c38-add4-3112428449f2:google-connector-refresh",
     "type": "sqlite",
-    "jobId": "3a73c753-4f4c-41dd-96ef-929ba51d5a1d",
-    "alias": "Google Connector Exchange (3a73c753)",
-    "dbPath": "",
-    "tables": [],
-    "linkedAt": "2026-04-08T22:44:57.859Z"
+    "jobId": "da1217af-079c-4c38-add4-3112428449f2",
+    "alias": "google-connector-refresh"
   }
 ]

@@ -1,0 +1,22 @@
+{
+  "id": "1b1fd68b-f25a-4433-a5cf-359b34b4147e",
+  "name": "google-connector-schema",
+  "type": "python",
+  "status": "completed",
+  "folder": "Google Connector",
+  "command": "python3 schema.py",
+  "dependsOn": [],
+  "retries": {
+    "maxAttempts": 1,
+    "backoffMs": 1000
+  },
+  "retentionDays": 14,
+  "outputMode": "natural",
+  "memoryPolicy": "none",
+  "createdAt": "2026-04-18T05:30:11.438Z",
+  "updatedAt": "2026-04-18T06:10:22.358Z",
+  "lastRunAt": "2026-04-18T06:10:22.284Z",
+  "exitCode": 0,
+  "lastExecutionId": "1b1fd68b-f25a-4433-a5cf-359b34b4147e-1776492622284-a1",
+  "completedAt": "2026-04-18T06:10:22.358Z"
+}
