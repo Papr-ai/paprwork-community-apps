@@ -1,0 +1,18 @@
+{
+  "id": "1b1fd68b-f25a-4433-a5cf-359b34b4147e",
+  "name": "google-connector-schema",
+  "type": "python",
+  "folder": "Google Connector",
+  "command": "python3 schema.py",
+  "dependsOn": [],
+  "retries": {
+    "maxAttempts": 1,
+    "backoffMs": 1000
+  },
+  "retentionDays": 14,
+  "outputMode": "natural",
+  "memoryPolicy": "none",
+  "status": "pending",
+  "createdAt": "2026-04-18T05:34:40.252Z",
+  "updatedAt": "2026-04-18T05:34:40.252Z"
+}

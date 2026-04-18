@@ -1,33 +1,38 @@
 # Google Connector
 
-Connect your Google accounts to Paprwork. Manages OAuth tokens for Gmail, Calendar, and Drive, with a built-in setup guide for creating your Google Cloud credentials.
+One-click Google OAuth connector for Paprwork. Click **Connect**, sign in with Google, done.
 
-## Installation
+## What it does
 
-### Option 1: Import via Papr Work Agent
-```
-Agent: "Import the Google Connector bundle from the community apps repo"
-```
+- **One-click OAuth** — Click Connect, browser opens, sign in, redirect is caught automatically
+- **Auto token refresh** — Tokens refresh every 45 minutes, always stays connected
+- **Gmail, Calendar & Drive** — Scopes for reading email, calendar events, and Drive file access
 
-### Option 2: Import from GitHub
-1. Clone or download this repo
-2. Import: `"Import the bundle from github.com/Papr-ai/paprwork-community-apps" subPath="bundles/google-connector"`
+## Setup
 
-## Contents
+### Prerequisites
+1. A **Google Cloud project** (free) at [console.cloud.google.com](https://console.cloud.google.com)
+2. **Gmail API**, **Google Calendar API**, and **Google Drive API** enabled
+3. An **OAuth 2.0 Client ID** (Desktop app type)
+4. Redirect URI set to: `http://127.0.0.1:8765/google-oauth-callback`
 
-- **App**: Google Connector (e460c97b-62da-4ddf-969d-874daa9ba819)
-- **Jobs**: 3 job(s)
-  - Google Connector Exchange (python)
-  - relationship_ops_schema (python)
-  - relationship_ops_google_auth (python)
+### API Keys Required
+Add these in Paprwork → Settings → Custom API Keys:
+- `GOOGLE_CLIENT_ID` — Your OAuth Client ID
+- `GOOGLE_CLIENT_SECRET` — Your OAuth Client Secret
 
-## Requirements
+## Architecture
 
-- Papr Work v2.0.0 or later
-- Python 3.8+ for Python jobs
-- `GOOGLE_CLIENT_ID` — Google OAuth client ID
-- `GOOGLE_CLIENT_SECRET` — Google OAuth client secret
+| Job | Purpose |
+|-----|---------|
+| `google-connector-schema` | Creates database tables (run once) |
+| `google-connector-oauth` | Runs local HTTP server, opens browser, exchanges code for tokens |
+| `google-connector-refresh` | Refreshes tokens every 45 min (scheduled) |
 
-## Version
+## Database Schema
 
-1.0.0 - Created 2026-04-17
+**google_connections** — Connected Google accounts (id, email, display_name, picture_url, status, scopes)
+
+**google_tokens** — OAuth tokens (connection_id, access_token, refresh_token, expires_at)
+
+Other jobs can query these tables to use the stored tokens for Google API calls.

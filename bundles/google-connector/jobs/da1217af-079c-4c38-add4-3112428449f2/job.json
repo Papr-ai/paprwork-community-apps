@@ -1,0 +1,20 @@
+{
+  "id": "da1217af-079c-4c38-add4-3112428449f2",
+  "name": "google-connector-refresh",
+  "type": "python",
+  "command": "GOOGLE_CONNECTOR_DB=${HOME}/Papr/jobs/1b1fd68b-f25a-4433-a5cf-359b34b4147e/data/data.db GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} python3 refresh_tokens.py",
+  "requirements": [
+    "requests"
+  ],
+  "dependsOn": [
+    {
+      "jobId": "1b1fd68b-f25a-4433-a5cf-359b34b4147e",
+      "onStatus": "completed"
+    }
+  ],
+  "schedule": {
+    "enabled": true,
+    "cron": "*/45 * * * *"
+  },
+  "folder": "Google Connector"
+}
