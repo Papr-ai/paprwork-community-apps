@@ -29,4 +29,4 @@ Agent: "Import the bundle from /Users/amirkabbara/Papr/bundles/x-action-engine"
 
 ## Version
 
-1.2.0 - Created 2026-04-18
+1.2.1 - Created 2026-04-18
