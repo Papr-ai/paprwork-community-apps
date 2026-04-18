@@ -2,8 +2,8 @@
   "schemaVersion": "1.0.0",
   "bundleId": "x-action-engine",
   "name": "X Action Engine",
-  "version": "1.2.0",
-  "createdAt": "2026-04-18T06:36:43.327Z",
+  "version": "1.2.1",
+  "createdAt": "2026-04-18T06:45:54.712Z",
   "minPaprworkVersion": "2.0.0",
   "requirements": [
     "ANTHROPIC_API_KEY",
@@ -15,7 +15,7 @@
   "app": {
     "id": "3e08bfb2-23f1-4173-b76f-f1910bdc31fd",
     "name": "X Action Engine",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "entryFile": "index.html",
     "appPath": "apps/3e08bfb2-23f1-4173-b76f-f1910bdc31fd",
     "description": "Focus feed with Papr memory context and 80/20 scoring"
