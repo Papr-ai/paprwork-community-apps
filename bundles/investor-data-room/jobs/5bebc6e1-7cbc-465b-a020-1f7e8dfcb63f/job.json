@@ -1,0 +1,19 @@
+{
+  "id": "5bebc6e1-7cbc-465b-a020-1f7e8dfcb63f",
+  "name": "Community Data Room DB Setup",
+  "type": "python",
+  "folder": "data-room",
+  "command": "python3 code/seed.py",
+  "requirements": [],
+  "dependsOn": [],
+  "retries": {
+    "maxAttempts": 1,
+    "backoffMs": 1000
+  },
+  "retentionDays": 14,
+  "outputMode": "natural",
+  "memoryPolicy": "none",
+  "status": "pending",
+  "createdAt": "2026-04-24T20:32:44.744Z",
+  "updatedAt": "2026-04-24T20:32:44.744Z"
+}

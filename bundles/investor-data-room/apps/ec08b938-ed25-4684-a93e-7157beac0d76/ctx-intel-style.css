@@ -1,0 +1,86 @@
+/* Context Intelligence — Adaptive Light/Dark Visualization */
+.ctx-viz { padding: 0; }
+.ctx-header { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 16px; }
+.ctx-toggles { display: flex; gap: 6px; }
+.ctx-tog {
+  padding: 6px 14px; border-radius: 20px; border: 1px solid var(--glass-border);
+  background: var(--glass2); color: var(--muted); font: 500 12px/1 var(--font);
+  cursor: pointer; transition: all 0.3s ease;
+}
+.ctx-tog.active { background: rgba(56,189,148,0.12); border-color: rgba(56,189,148,0.3); color: #38bd94; }
+.ctx-tog:hover:not(.active) { background: var(--glass-hover); color: var(--text); }
+
+.ctx-canvas-wrap { display: flex; gap: 14px; min-height: 260px; }
+
+/* Code panel — left side */
+.ctx-code-panel {
+  flex: 0 0 260px; padding: 14px; border-radius: var(--r);
+  background: var(--glass2); border: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+.ctx-panel-label {
+  font: 600 10px/1 var(--font); color: var(--dim); text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 4px;
+}
+.ctx-panel-hook {
+  font: 600 12px/1.3 var(--font); color: #38bd94; margin-bottom: 12px;
+}
+.ctx-code {
+  margin: 0; padding: 0; font: 400 10px/1.7 'SF Mono', 'Fira Code', monospace;
+  color: var(--text); white-space: pre; overflow-x: auto;
+}
+.ctx-code code { font: inherit; }
+.ck { color: #b794f4; } /* keywords */
+.cs { color: #38bd94; } /* strings */
+.cn { color: #63b3ed; } /* class names */
+.ct { color: var(--muted); } /* types */
+.cv { color: #f6ad55; } /* values */
+
+/* Graph area — right side */
+.ctx-graph-area {
+  flex: 1; position: relative; border-radius: var(--r);
+  background: var(--glass2); border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+#ctx-svg { width: 100%; height: 100%; }
+.ctx-svg-node { transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1); }
+.ctx-svg-node circle { fill: var(--muted); }
+.ctx-svg-type-source circle { fill: #63b3ed; }
+.ctx-svg-type-entity circle { fill: #b794f4; }
+.ctx-svg-type-derived circle { fill: #f6ad55; }
+.ctx-svg-type-insight circle { fill: #38bd94; }
+.ctx-svg-label { font: 500 3.2px var(--font); fill: var(--text); opacity: 0.8; }
+.ctx-svg-edge {
+  stroke: var(--dim); stroke-width: 0.3; opacity: 0.4;
+  stroke-dasharray: 100; stroke-dashoffset: 100; animation: ctx-draw 0.8s ease forwards;
+}
+@keyframes ctx-draw { to { stroke-dashoffset: 0; } }
+.ctx-svg-pulse {
+  fill: none; stroke: #38bd94; stroke-width: 0.6;
+  animation: ctx-pulse 1.5s ease-out infinite;
+}
+@keyframes ctx-pulse { 0% { r: 4; opacity: 1; } 100% { r: 12; opacity: 0; } }
+
+/* Prediction badge */
+.ctx-prediction {
+  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+  padding: 8px 16px; border-radius: 20px;
+  background: rgba(56,189,148,0.10); border: 1px solid rgba(56,189,148,0.2);
+  backdrop-filter: blur(10px); font: 500 12px/1 var(--font); color: #38bd94;
+  opacity: 0; transition: opacity 0.5s ease; white-space: nowrap;
+}
+.ctx-prediction.visible { opacity: 1; }
+.ctx-pred-icon { margin-right: 4px; }
+.ctx-pred-conf { margin-left: 8px; opacity: 0.6; font-size: 11px; }
+
+/* Bottom stats */
+.ctx-bottom { display: flex; gap: 12px; margin-top: 16px; justify-content: center; }
+.ctx-stat {
+  padding: 8px 16px; border-radius: 10px;
+  background: var(--glass2); border: 1px solid var(--glass-border); text-align: center;
+}
+.ctx-stat-val { display: block; font: 700 16px/1.2 var(--font); color: var(--text); }
+.ctx-stat-lbl { font: 400 10px/1.4 var(--font); color: var(--muted); }
+}

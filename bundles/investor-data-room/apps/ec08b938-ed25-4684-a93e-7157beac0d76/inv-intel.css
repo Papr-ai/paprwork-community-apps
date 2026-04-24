@@ -1,0 +1,12 @@
+.inv-signal-chip{font-size:10px;padding:2px 8px;border-radius:999px;font-weight:600;display:inline-flex;gap:4px;align-items:center;margin-top:2px;background:var(--glass2);border:1px solid var(--glass-border);color:var(--text)}
+.sig-direct,.risk-direct{background:rgba(239,68,68,.10);color:#b91c1c;border-color:rgba(239,68,68,.18)}
+.sig-adjacent,.risk-adjacent{background:rgba(245,158,11,.10);color:#b45309;border-color:rgba(245,158,11,.18)}
+.sig-theme,.risk-theme{background:rgba(59,130,246,.10);color:#1d4ed8;border-color:rgba(59,130,246,.18)}
+.sig-count{color:var(--muted)}
+.inv-intel-shell{margin-top:14px}.inv-intel-panel{padding:14px;border-radius:16px;border:1px solid var(--glass-border);background:var(--glass2)}
+.intel-head,.intel-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.intel-head{margin-bottom:12px}.intel-title{font-weight:700}.intel-meta,.intel-sub,.intel-k,.intel-empty,.intel-source{font-size:12px;color:var(--muted)}
+.intel-source,.intel-link{display:inline-flex;align-items:center;gap:6px;color:var(--accent);text-decoration:none}.intel-link{padding:6px;border-radius:10px;background:var(--glass)}
+.intel-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px}.intel-stat{padding:10px 12px;border-radius:14px;background:var(--glass);border:1px solid var(--glass-border)}.intel-stat strong{display:block;margin-top:4px}.intel-wide{grid-column:span 3}
+.intel-block{margin-top:12px}.intel-block-head{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px}.intel-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:14px;margin-bottom:8px;background:var(--glass)}.intel-main{flex:1}.intel-name{font-weight:600}
+.intel-chip{font-size:10px;padding:2px 8px;border-radius:999px;font-weight:600;display:inline-flex;align-items:center;margin-left:8px}.intel-empty{padding:10px 12px;border-radius:14px;background:var(--glass)}
+@media (max-width:900px){.intel-summary{grid-template-columns:1fr}.intel-wide{grid-column:span 1}}

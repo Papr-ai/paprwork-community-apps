@@ -1,0 +1,68 @@
+/* ICP Editor */
+.icp-editor { display: flex; flex-direction: column; gap: 12px; }
+.icp-ed-photos { position: relative; margin-bottom: 36px; }
+.icp-ed-bg {
+  width: 100%; height: 120px; border-radius: 14px; cursor: pointer;
+  background: linear-gradient(135deg, rgba(1,97,224,0.08), rgba(79,70,229,0.06));
+  border: 2px dashed var(--glass-border, rgba(15,23,42,0.15));
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; position: relative;
+  transition: border-color 160ms ease;
+}
+.icp-ed-bg:hover { border-color: var(--accent, #0161E0); }
+.icp-ed-bg-img { width: 100%; height: 100%; object-fit: cover; }
+.icp-ed-bg-empty { font-size: 13px; color: var(--muted, #667085); }
+.icp-ed-bg-hint {
+  position: absolute; bottom: 6px; right: 10px;
+  font-size: 11px; color: var(--text); background: rgba(0,0,0,0.4);
+  padding: 2px 8px; border-radius: 6px;
+}
+.icp-ed-pf {
+  width: 72px; height: 72px; border-radius: 50%; cursor: pointer;
+  background: var(--glass, rgba(255,255,255,0.65));
+  border: 3px solid var(--glass-border);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent, #0161E0); overflow: hidden;
+  position: absolute; bottom: -32px; left: 20px;
+  transition: box-shadow 160ms ease;
+}
+.icp-ed-pf:hover { box-shadow: 0 2px 16px rgba(1,97,224,0.25); }
+.icp-ed-pf-img { width: 100%; height: 100%; object-fit: cover; }
+.icp-ed-fields { display: flex; flex-direction: column; gap: 8px; }
+.icp-ed-field { display: flex; flex-direction: column; gap: 4px; }
+.icp-ed-field label { font-size: 12px; font-weight: 600; color: var(--muted, #667085); }
+.icp-ed-field input {
+  padding: 10px 12px; border-radius: 10px; font-size: 14px;
+  border: 1px solid var(--glass-border, rgba(15,23,42,0.12));
+  background: var(--glass-2, rgba(255,255,255,0.45));
+  color: var(--text); font-family: inherit;
+}
+.icp-ed-field input:focus { outline: none; border-color: var(--accent, #0161E0); }
+.icp-ed-sec {
+  font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  color: var(--muted, #667085); margin-bottom: 4px; margin-top: 4px;
+}
+.icp-ed-pair {
+  display: grid; grid-template-columns: 110px 1fr 28px; gap: 6px; align-items: center;
+}
+.icp-ed-lbl, .icp-ed-val {
+  padding: 9px 12px; border-radius: 10px; font-size: 13px;
+  border: 1px solid var(--glass-border, rgba(15,23,42,0.12));
+  background: var(--glass-2, rgba(255,255,255,0.45));
+  color: var(--text); font-family: inherit;
+}
+.icp-ed-lbl { font-weight: 600; }
+.icp-ed-lbl:focus, .icp-ed-val:focus { outline: none; border-color: var(--accent, #0161E0); }
+.icp-ed-rm {
+  width: 28px; height: 28px; border: none; background: none;
+  color: var(--muted, #667085); font-size: 18px; cursor: pointer;
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+}
+.icp-ed-rm:hover { background: rgba(239,68,68,0.08); color: #ef4444; }
+.icp-ed-add {
+  padding: 10px; border-radius: 10px; border: 1px dashed var(--glass-border, rgba(15,23,42,0.15));
+  background: none; color: var(--accent, #0161E0); font-size: 13px;
+  font-weight: 600; cursor: pointer; margin-top: 4px;
+}
+.icp-ed-add:hover { background: rgba(1,97,224,0.04); }

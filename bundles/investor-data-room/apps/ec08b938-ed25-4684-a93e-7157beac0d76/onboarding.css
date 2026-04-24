@@ -1,0 +1,108 @@
+/* ── Template banner — persistent top bar ── */
+#ob-banner {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 20px;
+  background:rgba(108,142,239,0.06);
+  border-bottom:1px solid rgba(108,142,239,0.12);
+  font-size:13px; color:rgba(255,255,255,0.5);
+  position:relative; z-index:100;
+}
+#ob-banner svg { color:#6C8EEF; flex-shrink:0; }
+#ob-banner strong { color:rgba(255,255,255,0.8); }
+.ob-banner-dot {
+  width:4px; height:4px; border-radius:50%;
+  background:rgba(255,255,255,0.15); flex-shrink:0;
+}
+.ob-banner-vc { color:rgba(255,255,255,0.35); font-size:12px; }
+.ob-banner-btn {
+  margin-left:auto; padding:6px 16px;
+  background:#6C8EEF; color:#fff; border:none;
+  border-radius:8px; font-size:12px; font-weight:600;
+  cursor:pointer; transition:filter 0.2s; white-space:nowrap;
+}
+.ob-banner-btn:hover { filter:brightness(1.15); }
+
+/* ── Build Your Own overlay ── */
+#ob-overlay {
+  position:fixed; inset:0; z-index:9999;
+  background:rgba(5,10,18,0.88); backdrop-filter:blur(16px);
+  display:flex; align-items:center; justify-content:center;
+  transition:opacity 0.25s ease;
+}
+.ob-card {
+  background:rgba(255,255,255,0.035);
+  border:1px solid rgba(108,142,239,0.18);
+  border-radius:20px; max-width:440px; width:90%;
+  padding:36px 32px; text-align:center;
+  backdrop-filter:blur(40px); position:relative;
+}
+.ob-close {
+  position:absolute; top:14px; right:14px;
+  background:none; border:none; color:rgba(255,255,255,0.3);
+  cursor:pointer; padding:4px;
+}
+.ob-close:hover { color:rgba(255,255,255,0.6); }
+.ob-icon { margin-bottom:14px; }
+.ob-title {
+  font-size:20px; font-weight:700; margin:0 0 6px;
+  color:rgba(255,255,255,0.92); letter-spacing:-0.3px;
+}
+.ob-desc {
+  font-size:13px; color:rgba(255,255,255,0.45);
+  margin:0 0 24px; line-height:1.6;
+}
+
+/* Single input row */
+.ob-input-wrap {
+  display:flex; gap:8px; margin-bottom:20px;
+}
+.ob-input {
+  flex:1; padding:12px 16px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px; color:#fff;
+  font-size:14px; outline:none;
+  transition:border-color 0.2s;
+}
+.ob-input::placeholder { color:rgba(255,255,255,0.25); }
+.ob-input:focus { border-color:rgba(108,142,239,0.4); }
+.ob-input-error { border-color:rgba(239,108,108,0.5) !important; }
+.ob-go {
+  padding:12px 24px; background:#6C8EEF; color:#fff;
+  border:none; border-radius:10px; font-size:14px;
+  font-weight:600; cursor:pointer; transition:filter 0.2s;
+  white-space:nowrap;
+}
+.ob-go:hover { filter:brightness(1.12); }
+
+/* Detail steps */
+.ob-detail { text-align:left; margin-bottom:16px; }
+.ob-detail-row {
+  display:flex; align-items:center; gap:10px;
+  padding:8px 0; font-size:13px;
+  color:rgba(255,255,255,0.45); line-height:1.4;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.ob-detail-row:last-child { border-bottom:none; }
+.ob-check {
+  min-width:22px; height:22px; border-radius:50%;
+  background:rgba(108,142,239,0.1); color:#6C8EEF;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; flex-shrink:0;
+}
+.ob-or {
+  font-size:12px; color:rgba(255,255,255,0.25);
+  margin:0; font-style:italic;
+}
+
+/* Reset to template button in header */
+.ob-reset-btn {
+  background:none; border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.3); border-radius:8px;
+  padding:6px 8px; cursor:pointer; display:flex;
+  align-items:center; transition:all 0.2s;
+}
+.ob-reset-btn:hover {
+  border-color:rgba(108,142,239,0.3);
+  color:#6C8EEF; background:rgba(108,142,239,0.06);
+}

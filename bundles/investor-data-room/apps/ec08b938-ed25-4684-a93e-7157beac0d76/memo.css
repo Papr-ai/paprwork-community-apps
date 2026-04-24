@@ -1,0 +1,46 @@
+/* Investment Memo — locked state */
+.memo-locked-card { max-width: 520px !important; }
+.memo-locked-body { text-align: center; padding: 48px 32px; }
+.memo-lock-icon {
+  color: rgba(1,97,224,.5);
+  margin-bottom: 20px;
+}
+.memo-lock-title {
+  font-size: 20px; font-weight: 700;
+  color: var(--text-primary, #fff);
+  margin: 0 0 12px;
+}
+.memo-lock-desc {
+  font-size: 14px; line-height: 1.6;
+  color: var(--text-secondary, rgba(255,255,255,.5));
+  max-width: 380px; margin: 0 auto 32px;
+}
+.memo-lock-preview {
+  padding: 24px;
+  background: var(--glass-bg, rgba(255,255,255,.03));
+  border-radius: 12px;
+  border: 1px solid var(--glass-border, rgba(255,255,255,.06));
+}
+.memo-blur-line {
+  height: 10px; border-radius: 5px; margin-bottom: 12px;
+  background: var(--text-secondary, rgba(255,255,255,.08));
+  opacity: .15; filter: blur(1px);
+}
+.memo-blur-line.short { margin-bottom: 20px; }
+.memo-blur-line:last-child { margin-bottom: 0; }
+.memo-empty { text-align: center; padding: 60px 20px; }
+.memo-empty-title {
+  font-size: 18px; font-weight: 600; margin-bottom: 12px;
+  color: var(--text-secondary, rgba(255,255,255,.4));
+}
+/* Doc row lock icon for Investment Memo */
+.doc-row-locked { position: relative; }
+.doc-row-locked .doc-name::after {
+  content: 'lock'; font-family: 'Material Symbols Outlined'; font-size: 14px; margin-left: 6px;
+  opacity: .5;
+}
+@media (prefers-color-scheme: light) {
+  .memo-lock-icon { color: rgba(1,97,224,.4); }
+  .memo-lock-preview { background: rgba(0,0,0,.03); border-color: rgba(0,0,0,.06); }
+  .memo-blur-line { background: rgba(0,0,0,.1); }
+}

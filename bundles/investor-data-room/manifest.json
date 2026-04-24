@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0.0",
+  "bundleId": "investor-data-room",
+  "name": "Investor Data Room",
+  "version": "1.0.0",
+  "createdAt": "2026-04-24T20:32:47.801Z",
+  "minPaprworkVersion": "2.0.0",
+  "icon": "\ud83d\udcbc",
+  "requirements": [
+    "VERCEL_API_KEY"
+  ],
+  "platform": [
+    "macos"
+  ],
+  "app": {
+    "id": "ec08b938-ed25-4684-a93e-7157beac0d76",
+    "name": "Investor Data Room",
+    "version": "1.0.0",
+    "entryFile": "index.html",
+    "appPath": "apps/ec08b938-ed25-4684-a93e-7157beac0d76",
+    "description": "Community-ready investor data room template. Full Liquid Glass design with VC directory, portfolio intelligence, intro pathways, and Vercel deployment."
+  },
+  "jobs": [
+    {
+      "id": "f04b0460-445f-476c-bbf3-6f23da7cdd05",
+      "name": "Community Data Room Publish",
+      "type": "python",
+      "command": "python3 code/main.py --vercel-key $VERCEL_API_KEY",
+      "dependsOn": [],
+      "env": {},
+      "outputTables": [],
+      "requirements": [
+        "requests"
+      ],
+      "folder": "data-room",
+      "retries": {
+        "maxAttempts": 1,
+        "backoffMs": 1000
+      },
+      "outputMode": "natural",
+      "memoryPolicy": "none",
+      "runtimeCalls": []
+    },
+    {
+      "id": "5bebc6e1-7cbc-465b-a020-1f7e8dfcb63f",
+      "name": "Community Data Room DB Setup",
+      "type": "python",
+      "command": "python3 code/seed.py",
+      "dependsOn": [],
+      "env": {},
+      "outputTables": [],
+      "requirements": [],
+      "folder": "data-room",
+      "retries": {
+        "maxAttempts": 1,
+        "backoffMs": 1000
+      },
+      "outputMode": "natural",
+      "memoryPolicy": "none",
+      "runtimeCalls": []
+    }
+  ],
+  "sqlite": [],
+  "deploymentProfiles": [
+    {
+      "id": "local-default",
+      "name": "Local Default",
+      "runtimeTarget": "local",
+      "environment": {}
+    }
+  ],
+  "sync": {
+    "preferredRoot": "~/Papr",
+    "bundleSubpath": "bundles",
+    "cloudReady": true
+  }
+}

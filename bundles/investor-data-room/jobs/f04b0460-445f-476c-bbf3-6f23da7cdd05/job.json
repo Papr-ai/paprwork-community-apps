@@ -1,0 +1,21 @@
+{
+  "id": "f04b0460-445f-476c-bbf3-6f23da7cdd05",
+  "name": "Community Data Room Publish",
+  "type": "python",
+  "folder": "data-room",
+  "command": "python3 code/main.py --vercel-key $VERCEL_API_KEY",
+  "requirements": [
+    "requests"
+  ],
+  "dependsOn": [],
+  "retries": {
+    "maxAttempts": 1,
+    "backoffMs": 1000
+  },
+  "retentionDays": 14,
+  "outputMode": "natural",
+  "memoryPolicy": "none",
+  "status": "pending",
+  "createdAt": "2026-04-24T20:32:43.990Z",
+  "updatedAt": "2026-04-24T20:32:43.990Z"
+}
