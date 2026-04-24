@@ -1,0 +1,57 @@
+/* Financial Model — COGS + Drivers + Funds */
+.fn-cogs { margin-bottom:28px; padding:16px;
+  background:var(--glass); border:1px solid var(--glass-border); border-radius:14px; }
+.fn-cogs-header { font:600 13px -apple-system,system-ui,sans-serif; color:#14161a; margin-bottom:12px; }
+.fn-cogs-labels { display:flex; gap:16px; margin-bottom:10px; }
+.fn-cogs-tag { font:500 11px -apple-system,system-ui,sans-serif; padding:2px 8px; border-radius:4px; }
+.fn-cogs-tag.fn-cogs-now { background:rgba(100,120,140,0.12); color:#667085; }
+.fn-cogs-tag.fn-cogs-fut { background:rgba(1,97,224,0.1); color:#0161E0; }
+.fn-cog-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.fn-cog-name { flex:0 0 140px; font:400 12px -apple-system,system-ui,sans-serif; color:#667085; }
+.fn-cog-bars { flex:1; display:flex; flex-direction:column; gap:3px; }
+.fn-cog-bar { height:8px; border-radius:4px; transition:width 600ms ease; }
+.fn-cog-bar.fn-cog-now { background:rgba(100,120,140,0.25); }
+.fn-cog-bar.fn-cog-fut { background:rgba(1,97,224,0.5); }
+.fn-cog-pcts { flex:0 0 80px; font:500 12px -apple-system,system-ui,sans-serif;
+  color:#667085; text-align:right; }
+.fn-drivers { display:flex; flex-direction:column; gap:12px; }
+.fn-driver { display:flex; gap:12px; padding:14px 16px;
+  background:var(--glass); border:1px solid var(--glass-border); border-radius:12px; }
+.fn-driver-num { flex:0 0 28px; height:28px; border-radius:50%;
+  background:rgba(1,97,224,0.08); color:#0161E0;
+  font:600 13px -apple-system,system-ui,sans-serif;
+  display:flex; align-items:center; justify-content:center; }
+.fn-driver-text { flex:1; display:flex; flex-direction:column; gap:2px; }
+.fn-driver-title { font:600 14px -apple-system,system-ui,sans-serif; color:#14161a; }
+.fn-driver-desc { font:400 13px/1.5 -apple-system,system-ui,sans-serif; color:#667085; }
+.fn-driver-impact { font:600 12px -apple-system,system-ui,sans-serif; color:#0161E0; }
+/* Page 3 — Funds */
+.fn-raise { text-align:center; margin-bottom:28px; }
+.fn-raise-amt { font:700 48px -apple-system,system-ui,sans-serif; color:#0161E0; }
+.fn-raise-meta { font:400 14px -apple-system,system-ui,sans-serif; color:#667085; }
+.fn-raise-sep { margin:0 8px; }
+.fn-alloc-row { display:flex; gap:32px; align-items:center; justify-content:center; margin-bottom:32px; }
+.fn-alloc-chart { flex:0 0 180px; }
+.fn-alloc-legend { display:flex; flex-direction:column; gap:10px; }
+.fn-alloc-item { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.fn-alloc-dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+.fn-alloc-name { font:600 13px -apple-system,system-ui,sans-serif; color:#14161a; }
+.fn-alloc-pct { font:600 13px -apple-system,system-ui,sans-serif; color:#0161E0; }
+.fn-alloc-desc { font:400 12px -apple-system,system-ui,sans-serif; color:#667085; width:100%; padding-left:18px; }
+.fn-miles { margin-top:8px; }
+.fn-miles-title { font:600 11px -apple-system,system-ui,sans-serif; color:#667085;
+  text-transform:uppercase; letter-spacing:1.2px; text-align:center; margin-bottom:20px; }
+.fn-miles-line { display:flex; align-items:flex-start; justify-content:center; gap:0; }
+.fn-mile { text-align:center; flex:0 0 160px; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.fn-mile-dot { width:12px; height:12px; border-radius:50%; background:#0161E0; border:3px solid rgba(1,97,224,0.2); }
+.fn-mile-month { font:600 12px -apple-system,system-ui,sans-serif; color:#14161a; }
+.fn-mile-goal { font:700 16px -apple-system,system-ui,sans-serif; color:#0161E0; }
+.fn-mile-desc { font:400 12px/1.4 -apple-system,system-ui,sans-serif; color:#667085; max-width:140px; }
+.fn-mile-conn { flex:0 0 40px; height:2px; background:rgba(1,97,224,0.2); margin-top:6px; align-self:flex-start; }
+@media(prefers-color-scheme:light){
+.fn-ue-val{color:#1a1a1a}
+.fn-ue-label{color:#667085}
+.fn-driver-num{color:#0161E0}
+.fn-driver-title{color:#1a1a1a}
+.fn-driver-text{color:#667085}
+}

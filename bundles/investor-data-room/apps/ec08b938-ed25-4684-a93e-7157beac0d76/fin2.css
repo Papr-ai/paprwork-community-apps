@@ -1,0 +1,39 @@
+/* Financial Model page 1 — Revenue */
+/* Revenue header */
+.fn-rev-header { display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:8px; }
+.fn-rev-header .fn-headline { margin:0; }
+.fn-nrr-badge { padding:4px 12px; border-radius:20px; font:600 12px -apple-system,system-ui,sans-serif;
+  color:#0161E0; background:rgba(1,97,224,0.08); border:1px solid rgba(1,97,224,0.15); white-space:nowrap; }
+.fn-chart-wrap { margin:0 auto 24px; max-width:640px;
+  background:var(--glass); border:1px solid var(--glass-border);
+  border-radius:14px; padding:16px; }
+.fn-chart-wrap canvas { width:100%; height:auto; }
+.fn-proj-row { display:flex; gap:8px; justify-content:center; align-items:center; }
+.fn-proj-row--5 .fn-proj-card { max-width:120px; }
+.fn-proj-card { flex:1; max-width:150px; padding:14px 10px;
+  background:var(--glass); border:1px solid var(--glass-border);
+  border-radius:12px; text-align:center; display:flex; flex-direction:column; gap:3px; }
+.fn-proj-hero { border-color:rgba(1,97,224,0.25); background:rgba(1,97,224,0.04); }
+.fn-proj-arrow { font:300 22px -apple-system,system-ui,sans-serif; color:#c0c8d4; }
+.fn-proj-year { font:600 11px -apple-system,system-ui,sans-serif; color:#667085;
+  text-transform:uppercase; letter-spacing:0.8px; }
+.fn-proj-arr { font:700 20px -apple-system,system-ui,sans-serif; color:#0161E0; }
+.fn-proj-hero .fn-proj-arr { font-size:22px; }
+.fn-proj-cust { font:500 11px -apple-system,system-ui,sans-serif; color:#14161a; }
+.fn-proj-note { font:400 10px -apple-system,system-ui,sans-serif; color:#667085; }
+/* Page 2 — Unit Economics */
+.fn-margin-row { display:flex; align-items:center; justify-content:center; gap:24px; margin-bottom:28px; }
+.fn-margin-card { text-align:center; padding:16px 24px;
+  background:var(--glass); border:1px solid var(--glass-border);
+  border-radius:14px; }
+.fn-margin-label { display:block; font:500 11px -apple-system,system-ui,sans-serif;
+  color:#667085; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.fn-margin-val { display:block; font:700 28px -apple-system,system-ui,sans-serif; color:#14161a; }
+.fn-margin-val.fn-accent { color:#0161E0; }
+.fn-margin-arrow { font:300 32px -apple-system,system-ui,sans-serif; color:#667085; }
+.fn-gauge-wrap { height:80px; }
+@media(prefers-color-scheme:light){
+.fn-proj-label{color:#667085}
+.fn-proj-val{color:#1a1a1a}
+.fn-proj-note{color:#667085}
+}

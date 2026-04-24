@@ -1,0 +1,41 @@
+/* Expandable investor rows + partner cards */
+.inv-row-wrap{margin-bottom:2px}
+.inv-row{cursor:pointer;position:relative;padding-right:36px}
+.inv-chevron{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--dim);transition:transform var(--dur) var(--ease);flex-shrink:0}
+.inv-row-wrap.expanded .inv-chevron{transform:translateY(-50%) rotate(180deg)}
+.inv-expand{max-height:0;overflow:hidden;transition:max-height .3s var(--ease)}
+.inv-row-wrap.expanded .inv-expand{max-height:600px}
+.inv-expand-inner{padding:8px 12px 12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+/* People badge (avatars stack) on collapsed row */
+.inv-people-badge{display:flex;align-items:center;margin-left:auto;margin-right:8px;flex-shrink:0}
+.inv-p-av{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid var(--bg);margin-left:-8px}
+.inv-p-av:first-child{margin-left:0}
+.inv-p-av-i{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;font-size:10px;font-weight:700;letter-spacing:.3px}
+/* Partner card inside expanded row */
+.pcard{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;min-width:200px;flex:1;max-width:320px}
+.pcard-av{width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.pcard-av-i{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;font-size:12px;font-weight:700}
+.pcard-info{flex:1;min-width:0}
+.pcard-name{font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px}
+.pcard-title{font-size:11px;color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcard-li{background:rgba(10,102,194,.1);color:#0A66C2;font-size:10px;font-weight:700;padding:1px 5px;border-radius:4px;text-decoration:none;line-height:1}
+.pcard-li:hover{background:rgba(10,102,194,.2)}
+/* Fit score badge */
+.fit-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;margin-left:auto;margin-right:8px;flex-shrink:0;letter-spacing:.3px}
+.fit-hi{background:rgba(34,197,94,.15);color:#22c55e}
+.fit-mid{background:rgba(234,179,8,.12);color:#eab308}
+.fit-lo{background:rgba(255,255,255,.06);color:var(--muted)}
+/* Investor header badges */
+.inv-count{font-size:13px;font-weight:400;color:var(--muted);margin-left:4px}
+.inv-hi-badge{font-size:11px;padding:3px 10px;border-radius:10px;background:rgba(34,197,94,.1);color:#22c55e;font-weight:600;margin-left:8px}
+.inv-sort-sel{background:var(--glass-bg);color:var(--text);border:1px solid var(--glass-border);border-radius:8px;padding:4px 8px;font-size:12px;margin-left:auto;cursor:pointer;-webkit-appearance:none}
+.inv-meta{font-size:11px;color:var(--dim);display:block}
+.inv-check-chip{font-size:10px;color:#7c3aed;background:rgba(124,58,237,.06);padding:1px 7px;border-radius:6px;font-weight:600;display:inline-block;margin-top:2px}
+.pcard-email{font-size:10px;color:var(--dim);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Buttons */
+.btn-xs{font-size:11px;padding:4px 10px;border:none;border-radius:6px;cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:4px;color:var(--muted);transition:all var(--dur)}
+.btn-xs:hover{color:var(--text);background:var(--glass-hover)}
+.add-person-btn{border:1px dashed var(--glass-border)!important;color:var(--dim)}
+.add-person-btn:hover{border-color:var(--accent)!important;color:var(--accent)}
+/* Share buttons */
+.share-ptr-btn{font-size:10px;padding:3px 8px;white-space:nowrap}

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "8b738e60-10f2-4e72-987f-179757f3b8c4:auto-discovered",
+    "type": "sqlite",
+    "jobId": "8b738e60-10f2-4e72-987f-179757f3b8c4",
+    "alias": "Mercury VC Scraper",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-24T19:50:40.578Z"
+  },
+  {
+    "id": "686d5ffa-e7c5-4eae-87f6-257698319224:auto-discovered",
+    "type": "sqlite",
+    "jobId": "686d5ffa-e7c5-4eae-87f6-257698319224",
+    "alias": "Data Room Publish",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-24T19:50:40.574Z"
+  },
+  {
+    "id": "5bebc6e1-7cbc-465b-a020-1f7e8dfcb63f:Community Data Room DB Setup (5bebc6e1)",
+    "type": "sqlite",
+    "jobId": "5bebc6e1-7cbc-465b-a020-1f7e8dfcb63f",
+    "alias": "Community Data Room DB Setup (5bebc6e1)",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-24T18:31:38.455Z"
+  },
+  {
+    "id": "5bebc6e1-7cbc-465b-a020-1f7e8dfcb63f:community-db",
+    "type": "sqlite",
+    "jobId": "5bebc6e1-7cbc-465b-a020-1f7e8dfcb63f",
+    "alias": "Community Data Room DB Setup",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-24T18:31:34.000Z"
+  }
+]

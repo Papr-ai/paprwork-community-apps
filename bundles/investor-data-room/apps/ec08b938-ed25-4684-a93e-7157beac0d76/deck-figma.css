@@ -1,0 +1,63 @@
+/* Figma preview card — shown instead of blocked iframe */
+.dk-figma-wrap {
+  flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.dk-figma-card {
+  width: min(460px, 92vw); padding: 40px 36px; border-radius: 24px;
+  text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px;
+  background: var(--glass); border: 1px solid var(--glass-border);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+}
+.dk-figma-logo { margin-bottom: 4px; }
+.dk-figma-platform {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--dim);
+}
+.dk-figma-title {
+  font-size: 22px; font-weight: 700; color: var(--text); margin: 0;
+}
+.dk-figma-desc { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.5; }
+.dk-figma-primary {
+  margin-top: 8px; padding: 13px 28px; border-radius: 999px; border: none;
+  background: #0161E0; color: white; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: opacity 0.15s, transform 0.15s; width: 100%;
+}
+.dk-figma-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+.dk-figma-sec {
+  padding: 11px 28px; border-radius: 999px; border: 1px solid var(--glass-border);
+  background: var(--glass); color: var(--muted);
+  font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; width: 100%;
+}
+.dk-figma-sec:hover { background: var(--glass); }
+.dk-figma-note { font-size: 12px; color: var(--dim); margin: 4px 0 0; line-height: 1.4; }
+
+/* Keynote viewer — full stage */
+.dk-keynote-viewer {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: 40px; box-sizing: border-box;
+}
+.dk-kn-stage {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; max-width: 440px; gap: 12px;
+}
+.dk-kn-icon { margin-bottom: 8px; }
+.dk-kn-title { font-size: 24px; font-weight: 700; color: var(--text); margin: 0; }
+.dk-kn-desc { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.5; }
+.dk-kn-present {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 36px; margin-top: 12px; border-radius: 14px; border: none;
+  background: #007AFF; color: white; font-size: 17px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.dk-kn-present:hover {
+  background: #0066DD; transform: scale(1.03);
+  box-shadow: 0 8px 32px rgba(0,122,255,0.35);
+}
+.dk-kn-copy {
+  padding: 8px 20px; border-radius: 999px; margin-top: 4px;
+  border: 1px solid var(--glass-border); background: transparent;
+  color: var(--muted); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+}
+.dk-kn-copy:hover { border-color: var(--muted); color: var(--text); }
+.dk-kn-note { font-size: 12px; color: var(--dim); margin: 8px 0 0; line-height: 1.4; }

@@ -129,6 +129,31 @@
       "platform": [
         "macos"
       ]
+    },
+    {
+      "bundleId": "investor-data-room",
+      "name": "Investor Data Room",
+      "description": "Full-featured investor data room template with 1,062 real VCs, portfolio intelligence, competitive analysis (2x2 + market map), moat & defensibility, GTM strategy, financial model, and one-click Vercel deployment. Pre-loaded with Sleep AI template data \u2014 type your company name and Pen builds your room in under a minute.",
+      "version": "1.0.0",
+      "author": "shawkatkabbara",
+      "tags": [
+        "fundraising",
+        "investors",
+        "data-room",
+        "vc",
+        "startup",
+        "finance",
+        "deployment"
+      ],
+      "minPaprworkVersion": "2.0.0",
+      "path": "bundles/investor-data-room",
+      "icon": "\ud83d\udcbc",
+      "requirements": [
+        "VERCEL_API_KEY"
+      ],
+      "platform": [
+        "macos"
+      ]
     }
   ]
 }
