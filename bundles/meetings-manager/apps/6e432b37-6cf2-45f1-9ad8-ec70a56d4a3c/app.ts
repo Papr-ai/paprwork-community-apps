@@ -1,15 +1,16 @@
 // Meetings Manager — Steve Jobs × Elon Musk
 // One job: Record meeting → transcribe → summarize. That's it.
 
-const APP_ID = 'ea6d8d7c-a15e-4c02-8273-117450b498f4';
-const RECORDER_JOB    = '54837f40-1e64-4810-a387-f81151d014af';
-const STOP_JOB        = '5a5c47c7-46f0-430e-8b01-499bdf65de42';
-const WHISPER_JOB     = '52b4abeb-0d23-4724-9a82-0559c64150c1';
-const SUMMARIZER_JOB  = '8eea1893-4ca5-48ed-bfb4-187b9456fb31';
-const PERM_JOB        = 'eb3200be-fa32-4a83-8313-94df426dea89';
-const CALENDAR_JOB    = '40407339-ca0b-4650-a009-426201025e81';
-const PREP_JOB        = 'a77f1a09-9b97-4c37-9913-2cffe535c2c7';
-const BG_JOB          = 'd4a2aad6-4722-44b1-b869-d2834cd56975';
+const APP_ID = '6e432b37-6cf2-45f1-9ad8-ec70a56d4a3c';
+const RECORDER_JOB    = '095b6dbf-6096-433c-83d9-e7a66b8e459b';
+const STOP_JOB        = '71c6b7b8-9b7e-4f3a-bfc9-1dee90193bce';
+const WHISPER_JOB     = '84262b7e-fc23-4b08-914b-7791c78a7736';
+const SUMMARIZER_JOB  = '069f5b22-f29e-4b24-b001-c8f9d057b0b7';
+const PERM_JOB        = 'be69e2ba-62ff-40d1-8e0f-837c1619434e';
+const CALENDAR_JOB    = '0a93a300-d958-4439-9d78-957f47865821';
+const PREP_JOB        = '32aa2031-ecba-4188-9a59-e906c7e61e5e';
+const BG_JOB          = '751f6600-b8e7-4097-8f63-66fe9bb6bd2b';
+const AUDIO_DEVICES_JOB = '755d4cab-7b57-48dc-9ade-826768f30997';
 
 interface Meeting {
   id: string; title: string; date: string; duration: number;
@@ -60,6 +61,41 @@ let prepPollInterval: ReturnType<typeof setInterval> | null = null;
 let prepLogs: string[] = [];
 let prepStartTime: number = 0;
 let showBgHero: boolean = localStorage.getItem('mm-show-bg') === 'true'; // default off
+let audioDevices: {device_index: number, name: string}[] = [];
+let selectedAudioDevice: {index: number, name: string} = {index: -1, name: ''};
+let showAudioMenu = false;
+let toasts: {id: number, type: 'error'|'success'|'info', message: string, action?: {label: string, fn: string}}[] = [];
+let toastCounter = 0;
+
+function showToast(type: 'error'|'success'|'info', message: string, action?: {label: string, fn: string}, duration = 5000): void {
+  const id = ++toastCounter;
+  toasts.push({id, type, message, action});
+  renderToasts();
+  if (!action) setTimeout(() => dismissToast(id), duration);
+}
+
+function dismissToast(id: number): void {
+  const el = document.querySelector(`[data-toast-id="${id}"]`) as HTMLElement;
+  if (el) { el.classList.add('toast-exit'); setTimeout(() => { toasts = toasts.filter(t => t.id !== id); renderToasts(); }, 300); }
+  else { toasts = toasts.filter(t => t.id !== id); renderToasts(); }
+}
+
+function renderToasts(): void {
+  let container = document.getElementById('toast-container');
+  if (!container) { container = document.createElement('div'); container.id = 'toast-container'; container.className = 'toast-container'; document.body.appendChild(container); }
+  container.innerHTML = toasts.map(t => `
+    <div class="toast toast-${t.type}" data-toast-id="${t.id}">
+      <div class="toast-icon">${t.type === 'error' ? icon('alert', 16) : t.type === 'success' ? icon('check', 16) : icon('sparkle', 16)}</div>
+      <span class="toast-msg">${t.message}</span>
+      ${t.action ? `<button class="toast-action" onclick="${t.action.fn}">${t.action.label}</button>` : ''}
+      <button class="toast-dismiss" onclick="dismissToast(${t.id})">×</button>
+    </div>
+  `).join('');
+}
+
+// Make toast functions available globally
+(window as any).dismissToast = dismissToast;
+(window as any).showToast = showToast;
 
 // DB & Jobs
 async function q(sql: string, p: unknown[] = []): Promise<any[]> {
@@ -139,6 +175,31 @@ async function loadAll(): Promise<void> {
     const rows = await q(`SELECT city, reason, prompt, image_url, image_data, generated_on FROM location_background WHERE id='current' LIMIT 1`);
     bg = rows[0] || null;
   } catch { bg = null; }
+  await loadAudioDevices();
+  render();
+}
+
+async function loadAudioDevices(): Promise<void> {
+  try {
+    audioDevices = await q('SELECT device_index, name FROM audio_devices ORDER BY device_index');
+    const settings = await q('SELECT selected_device_index, selected_device_name FROM audio_settings WHERE id=1');
+    if (settings.length && settings[0].selected_device_index >= 0) {
+      selectedAudioDevice = {index: settings[0].selected_device_index, name: settings[0].selected_device_name};
+    }
+  } catch { /* tables may not exist yet */ }
+}
+
+async function refreshAudioDevices(): Promise<void> {
+  await runJob(AUDIO_DEVICES_JOB);
+  await new Promise(r => setTimeout(r, 2000));
+  await loadAudioDevices();
+  render();
+}
+
+async function selectAudioDevice(idx: number, name: string): Promise<void> {
+  selectedAudioDevice = {index: idx, name};
+  showAudioMenu = false;
+  await w("UPDATE audio_settings SET selected_device_index=?, selected_device_name=?, updated_at=strftime('%s','now') WHERE id=1", [idx, name]);
   render();
 }
 
@@ -383,7 +444,8 @@ function startPrepPoll(eventId: string): void {
       await loadAll();
     } else if (attempts >= MAX_ATTEMPTS || (rows.length && rows[0].prep_status === 'failed')) {
       clearInterval(prepPollInterval!); prepPollInterval = null;
-      prepLogs = ['alert:Prep timed out — agent took too long. Click Retry to try again.'];
+      prepLogs = [];
+      showToast('error', 'Prep timed out — agent took too long', {label: 'Retry', fn: `triggerPrep('${eventId}')`});
       await w("UPDATE calendar_events SET prep_status='failed' WHERE id=? AND prep_status='preparing'", [eventId]);
       await loadAll();
     }
@@ -739,18 +801,35 @@ function render(): void {
 function renderPermModal(): string {
   return `
     <div class="perm-overlay">
-      <div class="perm-modal glass">
-        <div class="perm-icon">${icon('lock', 28)}</div>
-        <h2>Screen Recording Required</h2>
-        <p>To capture audio from Zoom, Teams, or Meet, Paprwork needs Screen Recording access.</p>
-        <ol>
-          <li>Open <strong>System Settings</strong></li>
-          <li>Go to <strong>Privacy &amp; Security &rarr; Screen Recording</strong></li>
-          <li>Enable <strong>Paprwork</strong></li>
-        </ol>
-        <div class="perm-actions">
-          <button class="btn-primary" id="btn-open-settings">${icon('settings', 15)} Open System Settings</button>
-          <button class="btn-ghost" id="btn-retry-perm">${icon('refresh', 15)} I've enabled it</button>
+      <div class="perm-modal">
+        <div class="perm-shield">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </div>
+        <h2>Screen & Audio Recording</h2>
+        <p class="perm-subtitle">Paprwork captures system audio from Zoom, Teams, and Meet to transcribe your meetings.</p>
+        <div class="perm-steps">
+          <div class="perm-step">
+            <span class="perm-step-num">1</span>
+            <span>Open <strong>System Settings → Privacy & Security</strong></span>
+          </div>
+          <div class="perm-step">
+            <span class="perm-step-num">2</span>
+            <span>Find <strong>Screen & Audio Recording</strong></span>
+          </div>
+          <div class="perm-step">
+            <span class="perm-step-num">3</span>
+            <span>Toggle on <strong>Electron</strong> (dev) or <strong>Papr Work</strong></span>
+          </div>
+          <div class="perm-step">
+            <span class="perm-step-num">4</span>
+            <span>Restart the app after enabling</span>
+          </div>
+        </div>
+        <div class="perm-btns">
+          <button class="perm-btn-settings" id="btn-open-settings">Open System Settings</button>
+          <button class="perm-btn-retry" id="btn-retry-perm">I've enabled it — retry</button>
         </div>
       </div>
     </div>`;
@@ -789,6 +868,27 @@ function renderHome(): string {
           <button class="home-nav-tab${mainPage === 'notes' ? ' active' : ''}" data-page="notes">Notes</button>
         </nav>
         <div class="header-actions">
+          <div class="audio-device-wrapper">
+            <button class="btn-audio-device" id="btn-audio-device" title="${selectedAudioDevice.name || 'Select microphone'}">
+              ${icon('mic', 14)}
+              <span class="audio-device-label">${selectedAudioDevice.name || 'No mic'}</span>
+              ${icon('chevron', 10)}
+            </button>
+            ${showAudioMenu ? `<div class="audio-device-menu glass">
+              <div class="audio-menu-header">
+                <span>Audio Input</span>
+                <button class="audio-refresh-btn" id="btn-refresh-devices">${icon('refresh', 12)}</button>
+              </div>
+              ${audioDevices.map(d => `
+                <button class="audio-device-option${d.device_index === selectedAudioDevice.index ? ' selected' : ''}" 
+                  data-dev-idx="${d.device_index}" data-dev-name="${esc(d.name)}">
+                  <span class="audio-dev-name">${esc(d.name)}</span>
+                  ${d.device_index === selectedAudioDevice.index ? icon('check', 14) : ''}
+                </button>
+              `).join('')}
+              ${audioDevices.length === 0 ? '<div class="audio-no-devices">No devices found. Click refresh.</div>' : ''}
+            </div>` : ''}
+          </div>
           <button class="btn-record" id="btn-new-rec">
             New Note
           </button>
@@ -1274,9 +1374,13 @@ function renderPrepView(ev: CalEvent): string {
             `}
           </div>
         ` : isReady ? renderPrepReady() : ev.prep_status === 'failed' ? `
-          <div class="prep-empty">
-            <p>Prep failed. Try again.</p>
-            <button class="btn btn-primary" onclick="triggerPrep('${ev.id}')">Retry Prep</button>
+          <div class="prep-failed-card">
+            <div class="prep-failed-icon">${icon('alert', 24)}</div>
+            <div class="prep-failed-text">
+              <div class="prep-failed-title">Prep couldn't complete</div>
+              <div class="prep-failed-sub">The agent ran into an issue. This usually resolves on retry.</div>
+            </div>
+            <button class="prep-retry-btn" onclick="triggerPrep('${ev.id}')">${icon('refresh', 14)} Try again</button>
           </div>
         ` : `
           <div class="prep-empty">
@@ -1372,7 +1476,13 @@ function renderDetailBody(m: Meeting | undefined): string {
       </div>`;
   }
   if (m.status === 'failed') {
-    return `<div class="processing-bar failed"><span>Processing failed. <button class="inline-btn" id="btn-retry-pipeline">Retry</button></span></div>`;
+    return `<div class="pipeline-failed-bar glass">
+      <div class="pipeline-failed-inner">
+        ${icon('alert', 16)}
+        <span>Processing didn't complete</span>
+        <button class="pipeline-retry-btn" id="btn-retry-pipeline">${icon('refresh', 13)} Retry</button>
+      </div>
+    </div>`;
   }
   const hasSummary = m.summary?.trim();
 
@@ -1424,6 +1534,25 @@ function attachListeners(): void {
 
   // Home
   document.getElementById('btn-new-rec')?.addEventListener('click', () => startRecording());
+  document.getElementById('btn-audio-device')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    showAudioMenu = !showAudioMenu;
+    render();
+  });
+  document.getElementById('btn-refresh-devices')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    refreshAudioDevices();
+  });
+  document.querySelectorAll('.audio-device-option').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const idx = parseInt((el as HTMLElement).dataset.devIdx || '-1');
+      const name = (el as HTMLElement).dataset.devName || '';
+      selectAudioDevice(idx, name);
+    });
+  });
+  // Close audio menu on outside click
+  document.addEventListener('click', () => { if (showAudioMenu) { showAudioMenu = false; render(); } });
   document.getElementById('btn-toggle-bg')?.addEventListener('click', () => toggleBgHero());
   document.getElementById('btn-refresh-bg')?.addEventListener('click', async () => {
     await runJob(BG_JOB).catch(() => {});
