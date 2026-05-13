@@ -1,15 +1,15 @@
 // Meetings Manager — Steve Jobs × Elon Musk
 // One job: Record meeting → transcribe → summarize. That's it.
 
-const APP_ID = 'ea6d8d7c-a15e-4c02-8273-117450b498f4';
-const RECORDER_JOB    = '54837f40-1e64-4810-a387-f81151d014af';
-const STOP_JOB        = '5a5c47c7-46f0-430e-8b01-499bdf65de42';
-const WHISPER_JOB     = '52b4abeb-0d23-4724-9a82-0559c64150c1';
-const SUMMARIZER_JOB  = '8eea1893-4ca5-48ed-bfb4-187b9456fb31';
-const PERM_JOB        = 'eb3200be-fa32-4a83-8313-94df426dea89';
-const CALENDAR_JOB    = '40407339-ca0b-4650-a009-426201025e81';
-const PREP_JOB        = 'a77f1a09-9b97-4c37-9913-2cffe535c2c7';
-const BG_JOB          = 'd4a2aad6-4722-44b1-b869-d2834cd56975';
+const APP_ID = '6e432b37-6cf2-45f1-9ad8-ec70a56d4a3c';
+const RECORDER_JOB    = '095b6dbf-6096-433c-83d9-e7a66b8e459b';
+const STOP_JOB        = '71c6b7b8-9b7e-4f3a-bfc9-1dee90193bce';
+const WHISPER_JOB     = '84262b7e-fc23-4b08-914b-7791c78a7736';
+const SUMMARIZER_JOB  = '069f5b22-f29e-4b24-b001-c8f9d057b0b7';
+const PERM_JOB        = 'be69e2ba-62ff-40d1-8e0f-837c1619434e';
+const CALENDAR_JOB    = '0a93a300-d958-4439-9d78-957f47865821';
+const PREP_JOB        = '32aa2031-ecba-4188-9a59-e906c7e61e5e';
+const BG_JOB          = '751f6600-b8e7-4097-8f63-66fe9bb6bd2b';
 
 interface Meeting {
   id: string; title: string; date: string; duration: number;
@@ -739,18 +739,35 @@ function render(): void {
 function renderPermModal(): string {
   return `
     <div class="perm-overlay">
-      <div class="perm-modal glass">
-        <div class="perm-icon">${icon('lock', 28)}</div>
-        <h2>Screen Recording Required</h2>
-        <p>To capture audio from Zoom, Teams, or Meet, Paprwork needs Screen Recording access.</p>
-        <ol>
-          <li>Open <strong>System Settings</strong></li>
-          <li>Go to <strong>Privacy &amp; Security &rarr; Screen Recording</strong></li>
-          <li>Enable <strong>Paprwork</strong></li>
-        </ol>
-        <div class="perm-actions">
-          <button class="btn-primary" id="btn-open-settings">${icon('settings', 15)} Open System Settings</button>
-          <button class="btn-ghost" id="btn-retry-perm">${icon('refresh', 15)} I've enabled it</button>
+      <div class="perm-modal">
+        <div class="perm-shield">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </div>
+        <h2>Screen & Audio Recording</h2>
+        <p class="perm-subtitle">Paprwork captures system audio from Zoom, Teams, and Meet to transcribe your meetings.</p>
+        <div class="perm-steps">
+          <div class="perm-step">
+            <span class="perm-step-num">1</span>
+            <span>Open <strong>System Settings → Privacy & Security</strong></span>
+          </div>
+          <div class="perm-step">
+            <span class="perm-step-num">2</span>
+            <span>Find <strong>Screen & Audio Recording</strong></span>
+          </div>
+          <div class="perm-step">
+            <span class="perm-step-num">3</span>
+            <span>Toggle on <strong>Electron</strong> (dev) or <strong>Papr Work</strong></span>
+          </div>
+          <div class="perm-step">
+            <span class="perm-step-num">4</span>
+            <span>Restart the app after enabling</span>
+          </div>
+        </div>
+        <div class="perm-btns">
+          <button class="perm-btn-settings" id="btn-open-settings">Open System Settings</button>
+          <button class="perm-btn-retry" id="btn-retry-perm">I've enabled it — retry</button>
         </div>
       </div>
     </div>`;

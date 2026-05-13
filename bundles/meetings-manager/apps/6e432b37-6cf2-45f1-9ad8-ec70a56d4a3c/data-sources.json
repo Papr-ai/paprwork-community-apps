@@ -1,0 +1,101 @@
+[
+  {
+    "id": "40407339-ca0b-4650-a009-426201025e81:Calendar Reader (40407339)",
+    "type": "sqlite",
+    "jobId": "40407339-ca0b-4650-a009-426201025e81",
+    "alias": "Calendar Reader (40407339)",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-05-13T15:21:52.727Z"
+  },
+  {
+    "id": "751f6600-b8e7-4097-8f63-66fe9bb6bd2b:auto-discovered",
+    "type": "sqlite",
+    "jobId": "751f6600-b8e7-4097-8f63-66fe9bb6bd2b",
+    "alias": "Location Background Generator",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-05T15:42:29.607Z"
+  },
+  {
+    "id": "be69e2ba-62ff-40d1-8e0f-837c1619434e:auto-discovered",
+    "type": "sqlite",
+    "jobId": "be69e2ba-62ff-40d1-8e0f-837c1619434e",
+    "alias": "Check Screen Recording Permission",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-05T15:42:29.606Z"
+  },
+  {
+    "id": "84262b7e-fc23-4b08-914b-7791c78a7736:auto-discovered",
+    "type": "sqlite",
+    "jobId": "84262b7e-fc23-4b08-914b-7791c78a7736",
+    "alias": "Whisper Transcriber",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-05T15:42:29.605Z"
+  },
+  {
+    "id": "71c6b7b8-9b7e-4f3a-bfc9-1dee90193bce:auto-discovered",
+    "type": "sqlite",
+    "jobId": "71c6b7b8-9b7e-4f3a-bfc9-1dee90193bce",
+    "alias": "Stop Recorder",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-05T15:42:29.605Z"
+  },
+  {
+    "id": "095b6dbf-6096-433c-83d9-e7a66b8e459b:auto-discovered",
+    "type": "sqlite",
+    "jobId": "095b6dbf-6096-433c-83d9-e7a66b8e459b",
+    "alias": "System Audio Recorder",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-05T15:42:29.602Z"
+  },
+  {
+    "id": "32aa2031-ecba-4188-9a59-e906c7e61e5e:Meeting Prep Agent (a77f1a09)",
+    "type": "sqlite",
+    "jobId": "32aa2031-ecba-4188-9a59-e906c7e61e5e",
+    "alias": "Meeting Prep Agent (a77f1a09)",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-03-31T19:44:00.000Z"
+  },
+  {
+    "id": "b14c4bc6-dd31-4448-8edd-58831d5dea39:Meeting Monitor (06c8e329)",
+    "type": "sqlite",
+    "jobId": "b14c4bc6-dd31-4448-8edd-58831d5dea39",
+    "alias": "Meeting Monitor (06c8e329)",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-03-18T17:49:58.016Z"
+  },
+  {
+    "id": "0a93a300-d958-4439-9d78-957f47865821:Calendar Reader (40407339)",
+    "type": "sqlite",
+    "jobId": "0a93a300-d958-4439-9d78-957f47865821",
+    "alias": "Calendar Reader (40407339)",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-03-18T08:18:25.283Z"
+  },
+  {
+    "id": "069f5b22-f29e-4b24-b001-c8f9d057b0b7:Meeting Summarizer (8eea1893)",
+    "type": "sqlite",
+    "jobId": "069f5b22-f29e-4b24-b001-c8f9d057b0b7",
+    "alias": "Meeting Summarizer (8eea1893)",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-03-18T08:18:16.644Z"
+  },
+  {
+    "id": "2af1cd35-610a-4961-8a3b-0043c151f0e4:Meeting Memory Sync (f98f409f)",
+    "type": "sqlite",
+    "jobId": "2af1cd35-610a-4961-8a3b-0043c151f0e4",
+    "alias": "Meeting Memory Sync (f98f409f)",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-03-18T08:17:42.309Z"
+  }
+]

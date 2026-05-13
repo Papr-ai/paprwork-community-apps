@@ -36,8 +36,8 @@
       "bundleId": "meetings-manager",
       "name": "Meetings Manager",
       "description": "AI-powered meeting manager \u2014 schedule, prep, record, transcribe, summarize, and sync to memory. Ambient glass UI with light/dark mode support.",
-      "version": "5.0.0",
-      "author": "amirkabbara",
+      "version": "3.0.0",
+      "author": "shawkatkabbara",
       "tags": [
         "meetings",
         "transcription",

@@ -1,0 +1,9 @@
+{
+  "id": "0a93a300-d958-4439-9d78-957f47865821",
+  "name": "Calendar Reader",
+  "type": "bash",
+  "command": "bash run_calendar.sh",
+  "status": "pending",
+  "createdAt": "2026-05-13T16:09:46.711Z",
+  "updatedAt": "2026-05-13T16:09:46.711Z"
+}
