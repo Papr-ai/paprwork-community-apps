@@ -93,44 +93,79 @@ body {
   align-self: center;
 }
 
-/* Permission modal */
+/* Permission modal — Liquid Glass */
 .perm-overlay {
   position: fixed; inset: 0; z-index: 100;
-  background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+  background: rgba(0,0,0,0.45); backdrop-filter: blur(20px) saturate(120%);
   display: flex; align-items: center; justify-content: center;
+  animation: permFadeIn 0.3s ease;
 }
+@keyframes permFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes permSlideUp { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .perm-modal {
-  background: var(--glass); border: 1px solid var(--glass-border);
-  backdrop-filter: blur(40px) saturate(180%);
-  box-shadow: var(--shadow-2), inset 0 0.5px 0 rgba(255,255,255,0.45);
-  border-radius: var(--r-lg); padding: var(--s8); max-width: 420px; width: 90%;
-  text-align: center;
+  background: rgba(255,255,255,0.72); border: 1px solid rgba(255,255,255,0.5);
+  backdrop-filter: blur(60px) saturate(200%);
+  -webkit-backdrop-filter: blur(60px) saturate(200%);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.06), inset 0 0.5px 0 rgba(255,255,255,0.8);
+  border-radius: 20px; padding: 36px 32px 28px; max-width: 420px; width: 90%;
+  text-align: center; animation: permSlideUp 0.35s ease;
 }
-.perm-icon {
-  width: 48px; height: 48px; border-radius: 50%;
+@media (prefers-color-scheme: dark) {
+  .perm-modal {
+    background: rgba(30,30,32,0.78); border-color: rgba(255,255,255,0.08);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.35), inset 0 0.5px 0 rgba(255,255,255,0.06);
+  }
+}
+.perm-shield {
+  width: 56px; height: 56px; border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px; color: white;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.3);
+}
+.perm-modal h2 {
+  font-size: 20px; font-weight: 700; margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+.perm-subtitle {
+  font-size: 13.5px; color: var(--muted); margin-bottom: 24px;
+  line-height: 1.6; max-width: 340px; margin-left: auto; margin-right: auto;
+}
+.perm-steps {
+  text-align: left; margin-bottom: 24px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.perm-step {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 13.5px; color: var(--text); line-height: 1.4;
+}
+.perm-step-num {
+  width: 24px; height: 24px; border-radius: 8px; flex-shrink: 0;
   background: var(--glass-2); border: 1px solid var(--glass-border);
   display: flex; align-items: center; justify-content: center;
-  margin: 0 auto var(--s4);
+  font-size: 12px; font-weight: 700; color: var(--accent);
 }
-.perm-icon svg { width: 32px; height: 32px; color: var(--muted); }
-.perm-modal h2 { font-size: var(--text-xl); font-weight: 700; margin-bottom: var(--s3); }
-.perm-modal p { font-size: var(--text-sm); color: var(--muted); margin-bottom: var(--s6); line-height: 1.6; }
-.perm-steps {
-  text-align: left; font-size: var(--text-sm); color: var(--text);
-  margin-bottom: var(--s6); line-height: 2;
-}
-.perm-btns { display: flex; gap: var(--s3); justify-content: center; }
+.perm-btns { display: flex; gap: 10px; justify-content: center; }
 .perm-btn-settings, .perm-btn-retry {
-  height: 40px; padding: 0 20px; border-radius: var(--r-sm);
-  font-size: var(--text-sm); font-weight: 600; font-family: var(--font);
-  cursor: pointer; border: none; transition: all var(--dur) var(--ease);
+  height: 40px; padding: 0 20px; border-radius: 12px;
+  font-size: 13.5px; font-weight: 600; font-family: var(--font);
+  cursor: pointer; border: none; transition: all 0.2s ease;
 }
 .perm-btn-settings {
   background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.25);
+  flex: 1;
 }
-.perm-btn-settings:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); }
-.perm-btn-retry { background: var(--glass); color: var(--text); border: 1px solid var(--glass-border); }
-.perm-btn-retry:hover { background: var(--glass-2); }
+.perm-btn-settings:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(99,102,241,0.35); }
+.perm-btn-retry {
+  background: rgba(255,255,255,0.5); color: var(--text);
+  border: 1px solid var(--glass-border); backdrop-filter: blur(8px);
+  flex: 1;
+}
+@media (prefers-color-scheme: dark) {
+  .perm-btn-retry { background: rgba(255,255,255,0.06); }
+}
+.perm-btn-retry:hover { background: var(--glass-2); transform: translateY(-1px); }
 
 
 /* =====================================================
