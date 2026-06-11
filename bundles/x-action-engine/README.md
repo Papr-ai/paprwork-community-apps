@@ -29,4 +29,6 @@ Agent: "Import the bundle from /Users/amirkabbara/Papr/bundles/x-action-engine"
 
 ## Version
 
+1.2.2 - Show user profile picture in reply/quote composer (configured via Settings → "Your X profile")
+
 1.2.1 - Created 2026-04-18

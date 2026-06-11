@@ -36,6 +36,7 @@ let composeText = '';
 let composeSeedText = '';
 let loading = false;
 let refreshing = false;
+let myHandle = ''; // user's own @ handle for compose avatar
 
 // ── API ──────────────────────────────────────────────
 async function query<T = any>(sql: string, params: any[] = []): Promise<T[]> {
@@ -549,11 +550,11 @@ function renderCompose(t: Tweet): string {
       <!-- Compose area -->
       <div class="compose-area">
         <img class="compose-avatar"
-          src="https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
+          src="${myHandle ? `https://unavatar.io/twitter/${esc(myHandle)}` : 'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png'}"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
-          alt="You"
+          alt="${myHandle ? '@' + esc(myHandle) : 'You'}"
         />
-        <div class="compose-avatar-fallback" style="display:none">SK</div>
+        <div class="compose-avatar-fallback" style="display:none">${myHandle ? esc(myHandle.slice(0,2).toUpperCase()) : '?'}</div>
         <textarea
           class="compose-input"
           placeholder="${isReply ? 'Write your reply...' : 'Add your thoughts...'}"
@@ -675,5 +676,16 @@ function connectWS() {
 }
 
 // ── Init ────────────────────────────────────────────────
+async function loadMyHandle() {
+  try {
+    const fn = (window as any).loadYourHandle;
+    if (typeof fn === 'function') {
+      myHandle = (await fn()) || '';
+    }
+  } catch (e) { console.error('loadMyHandle error:', e); }
+}
+// Refresh handle whenever settings panel closes (so saves take effect immediately)
+(window as any).onSettingsSaved = async () => { await loadMyHandle(); render(); };
+loadMyHandle();
 loadFeed();
 connectWS();
