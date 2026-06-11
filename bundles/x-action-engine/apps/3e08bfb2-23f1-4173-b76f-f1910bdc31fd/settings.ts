@@ -192,6 +192,7 @@ function renderSettings() {
           </svg>
         </button>
       </div>
+      <div class="settings-body">
       ${companyHtml}
       ${settingsLoading ? '' : `
       <div class="settings-section">
@@ -209,6 +210,7 @@ function renderSettings() {
         <h4>Search Topics</h4>
         <p class="settings-desc">Topics to search on X. The fetcher finds tweets matching these.</p>
         <div class="topics-list" style="padding:0 2px">${topicRows}</div>
+      </div>
       </div>
       <div class="settings-actions">
         <button class="action-btn-ghost" onclick="addTopicRow()">+ Add topic</button>
