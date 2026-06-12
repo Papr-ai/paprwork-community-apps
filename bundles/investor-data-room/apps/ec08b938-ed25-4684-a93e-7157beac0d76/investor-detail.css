@@ -1,0 +1,32 @@
+/* Investor Detail Overlay — extends vw-overlay from viewer.css, uses design tokens */
+.inv-detail-card{max-width:720px;width:94%}
+.id-score-header{display:flex;align-items:center;gap:24px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--glass-border)}
+.id-score-circle{width:80px;height:80px;border-radius:50%;border:3px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.id-score-num{font-size:28px;font-weight:700;color:var(--text);line-height:1}
+.id-score-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-top:2px}
+.id-score-bars{flex:1;display:flex;flex-direction:column;gap:6px}
+.id-bar{display:flex;align-items:center;gap:8px}
+.id-bar-label{font-size:11px;color:var(--muted);min-width:90px;font-weight:500}
+.id-bar-track{flex:1;height:6px;background:var(--glass-hover);border-radius:3px;overflow:hidden}
+.id-bar-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.id-bar-val{font-size:11px;color:var(--muted);min-width:24px;text-align:right}
+.id-action{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-radius:10px;background:var(--accent-glow);border:1px solid rgba(1,97,224,.15);font-size:13px;color:var(--text);margin-bottom:20px;line-height:1.5}
+.id-action svg{flex-shrink:0;color:var(--accent);margin-top:1px}
+.id-section-title{font-size:13px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.8px;margin:20px 0 12px}
+/* Timeline */
+.id-timeline{display:flex;flex-direction:column;gap:2px;max-height:350px;overflow-y:auto}
+.id-date-group{margin-bottom:12px}
+.id-date{font-size:11px;font-weight:600;color:var(--dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.id-event{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;font-size:13px;transition:background var(--dur)}
+.id-event:hover{background:var(--glass-hover)}
+.id-ev-icon{color:var(--muted);flex-shrink:0;display:flex}
+.id-ev-name{font-weight:500;color:var(--text)}
+.id-ev-meta{font-size:11px;color:var(--muted);margin-left:auto}
+.id-ev-city{font-size:11px;color:var(--dim);margin-left:8px;display:flex;align-items:center;gap:2px}
+.id-ev-city svg{color:var(--dim)}
+/* Multi-channel */
+.id-multi{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.id-signal{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:var(--glass);border:1px solid var(--glass-border);box-shadow:var(--shadow1)}
+.id-signal-icon{color:var(--accent);display:flex;flex-shrink:0}
+.id-signal-label{font-size:12px;color:var(--muted);flex:1}
+.id-signal-val{font-size:14px;font-weight:600;color:var(--text)}

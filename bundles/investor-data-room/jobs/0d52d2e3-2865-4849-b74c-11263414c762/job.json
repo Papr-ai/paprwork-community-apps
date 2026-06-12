@@ -1,11 +1,11 @@
 {
-  "id": "f04b0460-445f-476c-bbf3-6f23da7cdd05",
-  "name": "Community Data Room Publish",
+  "id": "0d52d2e3-2865-4849-b74c-11263414c762",
+  "name": "Data Room One-Pager PDF Generator",
   "type": "python",
   "folder": "data-room",
-  "command": "python3 code/main.py --vercel-key $VERCEL_API_KEY",
+  "command": "python3 code/main.py --downloads",
   "requirements": [
-    "requests"
+    "reportlab"
   ],
   "dependsOn": [],
   "retries": {
@@ -16,6 +16,6 @@
   "outputMode": "natural",
   "memoryPolicy": "none",
   "status": "pending",
-  "createdAt": "2026-06-12T15:42:36.425Z",
-  "updatedAt": "2026-06-12T15:42:36.425Z"
+  "createdAt": "2026-06-12T15:42:31.960Z",
+  "updatedAt": "2026-06-12T15:42:31.960Z"
 }
