@@ -17,12 +17,13 @@ Agent: "Import the bundle from /Users/shawkatkabbara/Papr/bundles/investor-data-
 ## Contents
 
 - **App**: Investor Data Room (ec08b938-ed25-4684-a93e-7157beac0d76)
-- **Jobs**: 5 job(s)
-  - Community Data Room Publish (python)
+- **Jobs**: 6 job(s)
+  - Data Room One-Pager PDF Generator (python)
   - Community Data Room DB Setup (python)
   - Data Room Publish (python)
   - Attio VC Sync (python)
   - Mercury VC Scraper (python)
+  - Community Data Room Publish (python)
 
 ## Requirements
 
@@ -32,4 +33,4 @@ Agent: "Import the bundle from /Users/shawkatkabbara/Papr/bundles/investor-data-
 
 ## Version
 
-1.0.0 - Created 2026-04-24
+1.0.0 - Created 2026-06-12

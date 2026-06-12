@@ -1,9 +1,9 @@
 {
-  "id": "f04b0460-445f-476c-bbf3-6f23da7cdd05",
-  "name": "Community Data Room Publish",
+  "id": "fbe28161-72d8-46f4-9329-0c7c1f5aae1f",
+  "name": "Attio VC Sync",
   "type": "python",
   "folder": "data-room",
-  "command": "python3 code/main.py --vercel-key $VERCEL_API_KEY",
+  "command": "python3 code/main.py --attio-key ${ATTIO_API_KEY}",
   "requirements": [
     "requests"
   ],
@@ -16,6 +16,6 @@
   "outputMode": "natural",
   "memoryPolicy": "none",
   "status": "pending",
-  "createdAt": "2026-06-12T15:42:36.425Z",
-  "updatedAt": "2026-06-12T15:42:36.425Z"
+  "createdAt": "2026-06-12T15:42:35.712Z",
+  "updatedAt": "2026-06-12T15:42:35.712Z"
 }

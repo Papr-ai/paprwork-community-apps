@@ -229,8 +229,15 @@ function renderConnector(room, connector) {
       var liUrl = p.via_person_linkedin || '';
       var liH = liUrl ? '<a href="'+esc(liUrl)+'" target="_blank" style="font-size:11px;color:#0CF;margin-left:6px;text-decoration:none;font-weight:700;background:rgba(1,97,224,.08);padding:1px 5px;border-radius:4px">in</a>' : '';
       var subj = 'Intro Request: Papr \u2014 Context Intelligence Platform';
-      var body = 'Hi '+(p.via_person||'').split(' ')[0]+',\n\nI wanted to connect you with {FOUNDER_NAME}, CEO of {COMPANY_NAME} \u2014 they build the circadian intelligence layer for AI agents.\n\nTheir Sleep AI reduces agent hallucinations by 40% through scheduled rest cycles \u2014 significantly outperforming existing retrieval approaches.\n\n{COMPANY_NAME} is backed by {INVESTORS}, with design partners including {CUSTOMERS}.\n\nWould you be open to a quick intro?\n\nBest,\n'+firstName;
-      var mailto = 'mailto:?cc=shawkat%40papr.ai%2Camir%40papr.ai&subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
+      var body = 'Hi '+(p.via_person||'').split(' ')[0]+',
+
+I wanted to connect you with our founding team — we are building ' + (window.COMPANY_INFO && window.COMPANY_INFO.tagline || 'something exciting') + '.
+
+Would you be open to a quick intro?
+
+Best,
+'+firstName;
+      var mailto = 'mailto:?cc=' + encodeURIComponent((window.COMPANY_INFO && window.COMPANY_INFO.contact_email) || '') + '&subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
       return '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04)"><div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0"><div class="pav-init" style="width:34px;height:34px;font-size:12px;flex-shrink:0">'+ini+'</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(p.via_person)+liH+'</span><span style="font-size:12px;color:rgba(255,255,255,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(p.via_person_title)+' at '+esc(p.investor_name)+'</span></div></div><a href="'+mailto+'" style="background:#0161E0;color:#fff;border:none;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;text-decoration:none">Send Intro</a></div>';
     }).join('');
     return '<div style="margin-bottom:16px"><div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(255,255,255,.04);border-radius:10px 10px 0 0;border:1px solid rgba(255,255,255,.06);border-bottom:0">'+logoH+'<span style="font-weight:600;font-size:14px;flex:1">'+esc(g.vc)+'</span></div><div style="border:1px solid rgba(255,255,255,.06);border-radius:0 0 10px 10px;overflow:hidden">'+pplH+'</div></div>';

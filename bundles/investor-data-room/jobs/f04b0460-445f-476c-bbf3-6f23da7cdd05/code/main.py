@@ -67,7 +67,7 @@ JS_FILES = [
     "db-queries.js",           # DB query helpers
     "utils.js",                # Utility functions
     "logos.js",                # SVG wordmark logos
-    "shawkat-b64.js",         # Shawkat's photo base64
+    # Founder photo base64 (add your own)
     "icons.js",                # SVG icon registry
     "components.js",           # Shared render functions
     "share-mode.js",           # Share mode picker (pre/post-commit)
@@ -154,7 +154,7 @@ def load_room():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    company = dict(c.execute("SELECT * FROM company_info WHERE id='papr'").fetchone())
+    company = dict(c.execute("SELECT * FROM company_info LIMIT 1").fetchone())
     raise_data = dict(c.execute("SELECT * FROM raise_tracker WHERE id='current'").fetchone())
     sections = [dict(r) for r in c.execute("SELECT * FROM sections ORDER BY sort_order").fetchall()]
     documents = [dict(r) for r in c.execute("SELECT * FROM documents ORDER BY section_id, sort_order").fetchall()]
@@ -496,7 +496,7 @@ def build_html(room_data):
     json_ld = json.dumps({
         "@context": "https://schema.org",
         "@type": "Organization",
-        "name": c.get("name", "Papr"),
+        "name": c.get("name", "Your Company"),
         "description": c.get("overview", ""),
         "url": c.get("website", ""),
         "foundingDate": "2024",
@@ -506,7 +506,7 @@ def build_html(room_data):
     faq_items = room_data.get("faq", [])
     faq_text = "".join(f"<h3>{q.get('question','')}</h3><p>{q.get('answer','')[:200]}...</p>" for q in faq_items)
     one_pager_text = (room_data.get("one_pager", "") or "")[:2000]
-    company_name = c.get("name", "Papr")
+    company_name = c.get("name", "Your Company")
     company_tagline = c.get("tagline", "")
     company_overview = c.get("overview", "")
     company_website = c.get("website", "")
@@ -516,10 +516,10 @@ def build_html(room_data):
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Papr · Data Room</title>
-  <meta name="description" content="Papr, Inc. — Context Intelligence Infrastructure. Predictive Memory and Holographic Neural Embeddings for AI agents.">
+  <title>Investor Data Room</title>
+  <meta name="description" content="Investor Data Room">
   <meta name="robots" content="noindex">
-  <meta property="og:title" content="Papr · Investor Data Room">
+  <meta property="og:title" content="Investor Data Room">
   <meta property="og:description" content="Context Intelligence Infrastructure — Predictive Memory for AI Agents">
   <meta property="og:type" content="website">
   <style>{all_css}</style>
@@ -666,15 +666,15 @@ module.exports = function(req, res) {{
 }};
 
 function landing() {{
-  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Papr Data Room</title>' +
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Investor Data Room</title>' +
     '<style>body{{font-family:-apple-system,sans-serif;background:#050a12;color:rgba(255,255,255,.92);' +
     'display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center}}' +
     'h1{{font-size:32px;font-weight:700;margin-bottom:8px}}p{{color:rgba(255,255,255,.5);font-size:16px}}</style></head>' +
-    '<body><div><h1>Papr</h1><p>Data Room</p></div></body></html>';
+    '<body><div><h1>Data Room</h1><p>Data Room</p></div></body></html>';
 }}
 
 function errorPage(title, msg) {{
-  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Papr Data Room</title>' +
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Investor Data Room</title>' +
     '<style>body{{font-family:-apple-system,sans-serif;background:#050a12;color:rgba(255,255,255,.92);' +
     'display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center}}' +
     'h2{{font-size:24px;margin-bottom:8px}}p{{color:rgba(255,255,255,.5)}}</style></head>' +
@@ -695,7 +695,7 @@ def deploy(vercel_key, function_js, html_content):
         "headers": [
             # Deck: allow framing from Paprwork localhost + dataroom.papr.ai (no X-Frame-Options → CSP wins)
             {"source": "/deck.html", "headers": [
-                {"key": "Content-Security-Policy", "value": "frame-ancestors 'self' http://localhost:* https://dataroom.papr.ai https://*.vercel.app"},
+                {"key": "Content-Security-Policy", "value": "frame-ancestors 'self' http://localhost:* https://*.vercel.app"},
                 {"key": "X-Content-Type-Options", "value": "nosniff"},
                 {"key": "Cache-Control", "value": "public, max-age=300"}
             ]},
@@ -708,7 +708,7 @@ def deploy(vercel_key, function_js, html_content):
             ]}
         ]
     })
-    pkg_json = '{"name":"papr-dataroom","private":true}'
+    pkg_json = '{"name":"investor-dataroom","private":true}'
 
     # Prepare all files with their SHA1 hashes
     files_data = {
@@ -719,7 +719,7 @@ def deploy(vercel_key, function_js, html_content):
     }
 
     # Add pitch deck (Papr Deck.html — uses external assets/ folder) at /deck.html
-    deck_path = os.path.join(os.path.dirname(__file__), "pitch_deck", "Papr Deck.html")
+    deck_path = os.path.join(os.path.dirname(__file__), "pitch_deck", "deck.html")  # Add your deck HTML
     if os.path.exists(deck_path):
         with open(deck_path, 'rb') as f:
             deck_bytes = f.read()
@@ -755,7 +755,7 @@ def deploy(vercel_key, function_js, html_content):
         print(f"   ✓ Deck assets loaded: {asset_count} files, {asset_bytes:,} bytes")
 
     # Add print variant of pitch deck
-    deck_print_path = os.path.join(os.path.dirname(__file__), "pitch_deck", "Papr Deck-print.html")
+    deck_print_path = os.path.join(os.path.dirname(__file__), "pitch_deck", "deck-print.html")  # Optional
     if os.path.exists(deck_print_path):
         with open(deck_print_path, 'rb') as f:
             files_data["public/deck-print.html"] = f.read()

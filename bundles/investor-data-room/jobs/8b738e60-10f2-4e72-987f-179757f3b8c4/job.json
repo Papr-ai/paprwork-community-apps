@@ -1,0 +1,21 @@
+{
+  "id": "8b738e60-10f2-4e72-987f-179757f3b8c4",
+  "name": "Mercury VC Scraper",
+  "type": "python",
+  "command": "python3 mercury_scraper.py",
+  "requirements": [
+    "requests",
+    "beautifulsoup4"
+  ],
+  "dependsOn": [],
+  "retries": {
+    "maxAttempts": 1,
+    "backoffMs": 1000
+  },
+  "retentionDays": 14,
+  "outputMode": "natural",
+  "memoryPolicy": "none",
+  "status": "pending",
+  "createdAt": "2026-06-12T15:42:36.414Z",
+  "updatedAt": "2026-06-12T15:42:36.414Z"
+}

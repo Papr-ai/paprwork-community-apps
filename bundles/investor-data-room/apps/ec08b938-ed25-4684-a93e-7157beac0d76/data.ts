@@ -35,8 +35,8 @@
     ]},
   ],
   team: [
-    { name: 'Shawkat Kabbara', role: 'CEO & Co-Founder', bio: 'AI memory researcher. Inventor of schema-conditioned embedding. Techstars NYC \'26.', linkedin: 'https://linkedin.com/in/shawkatkabbara' },
-    { name: 'Amir Kabbara', role: 'CTO & Co-Founder', bio: 'Systems engineer and co-inventor on Papr\'s core patents. Builds the infrastructure that makes memory scale.', linkedin: 'https://linkedin.com/in/amirkabbara' },
+    { name: 'Jane Smith', role: 'CEO & Co-Founder', bio: 'Your CEO bio here. Highlight relevant experience and domain expertise.', linkedin: 'https://linkedin.com/in/yourprofile' },
+    { name: 'John Smith', role: 'CTO & Co-Founder', bio: 'Your CTO bio here. Technical background and key achievements.', linkedin: 'https://linkedin.com/in/yourprofile2' },
     { name: 'Rony Ferzli', role: 'Technology Advisor', bio: 'Technical Fellow at General Motors. Co-inventor on Papr\'s adaptive reranking patent. Deep AI systems expertise.', linkedin: 'https://linkedin.com/in/ronyferzli' },
   ],
   links: [

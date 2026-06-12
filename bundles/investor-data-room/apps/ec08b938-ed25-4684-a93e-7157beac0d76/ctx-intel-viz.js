@@ -1,7 +1,7 @@
 // Context Intelligence — Animated Graph Builder
 var ctxVizActive = false;
 var ctxAnimFrame = null;
-var ctxCurrentSchema = 'coda';
+var ctxCurrentSchema = 'deeptrust';
 var ctxGeneration = 0;
 
 function renderCtxIntelViz() {
@@ -9,8 +9,8 @@ function renderCtxIntelViz() {
   return '<div class="ctx-viz">' +
     '<div class="ctx-header">' +
       '<div class="ctx-toggles">' +
-        '<button class="ctx-tog' + (ctxCurrentSchema === 'coda' ? ' active' : '') + '" data-schema="coda">Coda</button>' +
-        '<button class="ctx-tog' + (ctxCurrentSchema === 'autoreview' ? ' active' : '') + '" data-schema="autoreview">AutoReview</button>' +
+        '<button class="ctx-tog' + (ctxCurrentSchema === 'deeptrust' ? ' active' : '') + '" data-schema="deeptrust">DeepTrust</button>' +
+        '<button class="ctx-tog' + (ctxCurrentSchema === 'joecoffee' ? ' active' : '') + '" data-schema="joecoffee">joe.coffee</button>' +
       '</div>' +
     '</div>' +
     '<div class="ctx-canvas-wrap">' +

@@ -1,5 +1,14 @@
 [
   {
+    "id": "f04b0460-445f-476c-bbf3-6f23da7cdd05:auto-discovered",
+    "type": "sqlite",
+    "jobId": "f04b0460-445f-476c-bbf3-6f23da7cdd05",
+    "alias": "Community Data Room Publish",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-04-28T04:37:22.812Z"
+  },
+  {
     "id": "8b738e60-10f2-4e72-987f-179757f3b8c4:auto-discovered",
     "type": "sqlite",
     "jobId": "8b738e60-10f2-4e72-987f-179757f3b8c4",

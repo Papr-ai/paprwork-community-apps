@@ -1,0 +1,83 @@
+/* Legal — subsection rows + full-page overlay (matches dk-overlay pattern) */
+
+/* Subsection rows in the main section — left-aligned */
+.lgl-sub-row { cursor: pointer; }
+.lgl-sub-row:hover { background: var(--glass); }
+.lgl-chev { color: var(--dim); display: flex; transition: all var(--dur); flex-shrink: 0; }
+.lgl-sub-row:hover .lgl-chev { color: var(--accent); transform: translateX(2px); }
+.lgl-chev svg { width: 16px; height: 16px; }
+
+/* Full-page overlay — same as .dk-overlay */
+.lgl-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  opacity: 0; transition: opacity 0.28s ease;
+}
+.lgl-overlay.open { opacity: 1; }
+
+/* Header — same as .dk-header */
+.lgl-ov-header {
+  display: flex; align-items: center; padding: 0 20px; height: 52px; flex-shrink: 0;
+  background: var(--glass); border-bottom: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+}
+.lgl-ov-back {
+  display: flex; align-items: center; gap: 4px;
+  background: none; border: none; color: var(--accent); font-size: 13px; font-weight: 500;
+  cursor: pointer; padding: 6px 10px; border-radius: 8px;
+  transition: background var(--dur); font-family: inherit;
+}
+.lgl-ov-back:hover { background: var(--glass-hover); }
+.lgl-ov-back svg { width: 16px; height: 16px; }
+.lgl-ov-title { flex: 1; text-align: center; font-size: 14px; font-weight: 600; color: var(--text); }
+.lgl-ov-close {
+  background: var(--glass); border: 1px solid var(--glass-border); color: var(--muted);
+  width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--dur);
+}
+.lgl-ov-close:hover { color: var(--text); background: var(--glass-hover); }
+
+/* Body — scrollable content area */
+.lgl-ov-body {
+  flex: 1; overflow-y: auto; padding: 32px;
+  min-height: 0; /* CRITICAL: allows overflow-y to work in flex column */
+  max-width: 860px; width: 100%; margin: 0 auto; box-sizing: border-box;
+}
+.lgl-ov-icon { color: var(--accent); margin-bottom: 12px; }
+.lgl-ov-icon svg { width: 28px; height: 28px; }
+.lgl-ov-heading { font-size: 22px; font-weight: 700; color: var(--text); margin: 0 0 6px; }
+.lgl-ov-desc { font-size: 14px; color: var(--muted); margin: 0 0 24px; }
+.lgl-ov-files { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.lgl-ov-empty { font-size: 13px; color: var(--dim); text-align: center; padding: 24px 0; margin: 0; }
+
+/* File rows inside overlay — wider cards, text wraps inside */
+.lgl-file-row { cursor: pointer; }
+.lgl-file-row .doc-info { min-width: 0; flex: 1; }
+.lgl-file-row .doc-name { word-break: break-word; white-space: normal; line-height: 1.4; }
+.lgl-fsize { font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums; margin-left: auto; padding-right: 4px; flex-shrink: 0; }
+.lgl-file-menu, .lgl-file-dl {
+  background: none; border: none; padding: 6px; border-radius: 6px;
+  cursor: pointer; color: var(--dim); display: flex; transition: all var(--dur);
+}
+.lgl-file-menu:hover, .lgl-file-dl:hover { background: var(--glass-hover); color: var(--text); }
+.lgl-file-menu svg, .lgl-file-dl svg { width: 18px; height: 18px; }
+.lgl-upload-label.add-doc-btn { cursor: pointer; }
+
+/* Popover */
+.lgl-popover {
+  position: fixed; z-index: 10001; background: var(--bg);
+  border: 1px solid var(--glass-border); border-radius: 10px; box-shadow: var(--shadow2);
+  padding: 4px; min-width: 160px;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+}
+.lgl-popover button {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  padding: 8px 12px; background: none; border: none; font-size: 13px; color: var(--text);
+  text-align: left; border-radius: 6px; cursor: pointer; font-family: inherit;
+}
+.lgl-popover button:hover { background: var(--glass-hover); }
+.lgl-popover button.lgl-danger { color: #e53e3e; }
+.lgl-popover button svg { width: 16px; height: 16px; }
+popover button svg { width: 16px; height: 16px; }

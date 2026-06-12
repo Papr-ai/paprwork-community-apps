@@ -83,7 +83,7 @@ Based on synthesis of Blank (2013), Ries (2011), Osterwalder et al. (2014 — *V
 
 ## Part 3: Multi-Level Problem Decomposition by ICP Vertical
 
-### 🏦 AI CUSTOMER SUPPORT (Coda — current customer, $5K/mo)
+### 🏦 FINTECH (DeepTrust — current customer, $5K/mo)
 
 #### Level 1: Surface Symptom
 > "Our AI compliance agent gives inconsistent answers about regulatory requirements."
@@ -105,7 +105,7 @@ Based on synthesis of Blank (2013), Ries (2011), Osterwalder et al. (2014 — *V
 - Regulatory forcing function: Yes — FinCEN, OCC, EU AI Act for financial services
 - Quantified cost: $10M–$100M fines + $200K/week in delayed product launches
 - Active workarounds: Yes — companies hiring 10+ compliance analysts at $150K+ each
-- Customer already paying: Yes — Coda pays $5K/mo for Papr today
+- Customer already paying: Yes — DeepTrust pays $5K/mo for Papr today
 
 ---
 
@@ -135,7 +135,7 @@ Based on synthesis of Blank (2013), Ries (2011), Osterwalder et al. (2014 — *V
 
 ---
 
-### 🛒 AUTONOMOUS CODE REVIEW (AutoReview — current customer, $5K/mo)
+### 🛒 COMMERCE (joe.coffee — current customer, $5K/mo)
 
 #### Level 1: Surface Symptom
 > "Our demand forecasting is wrong 30% of the time. We either over-order (waste) or under-order (stockouts)."
@@ -157,7 +157,7 @@ Based on synthesis of Blank (2013), Ries (2011), Osterwalder et al. (2014 — *V
 - Competitive forcing function: Yes — Starbucks, Dutch Bros already use AI ops
 - Quantified cost: $3M–$5M/year margin disadvantage at 50 locations
 - Active workarounds: Yes — 3 FTEs running manual spreadsheets ($450K/year)
-- Customer already paying: Yes — AutoReview pays $5K/mo for Papr today
+- Customer already paying: Yes — joe.coffee pays $5K/mo for Papr today
 
 ---
 

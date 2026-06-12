@@ -133,8 +133,8 @@
     {
       "bundleId": "investor-data-room",
       "name": "Investor Data Room",
-      "description": "Full-featured investor data room template with 1,062 real VCs, portfolio intelligence, competitive analysis (2x2 + market map), moat & defensibility, GTM strategy, financial model, and one-click Vercel deployment. Pre-loaded with Sleep AI template data \u2014 type your company name and Pen builds your room in under a minute.",
-      "version": "1.0.0",
+      "description": "Full investor data room with VC directory (1100+ firms), portfolio intelligence, intro gap analysis, connector management, stage pipeline, FAQ editor, PDF one-pager, cap table viewer, legal section, and Vercel deployment. Liquid Glass design system.",
+      "version": "2.0.0",
       "author": "shawkatkabbara",
       "tags": [
         "fundraising",

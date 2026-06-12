@@ -1,0 +1,102 @@
+/* PDF One-Pager — Liquid Glass typography
+   Key: proper kerning, legible line-height, optical spacing.
+   US Letter single page (794x1056px @96dpi). */
+
+.pdfop-root {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", system-ui, sans-serif;
+  color: #14161a;
+  background: #fff;
+  width: 794px;
+  padding: 10px 48px 6px;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+  font-kerning: normal;
+  orphans: 3; widows: 3;
+}
+.pdfop-page-spacer { display: block; margin: 0!important; padding: 0!important; border: 0!important; }
+
+/* Header bar */
+.pdfop-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: 4px; margin-bottom: 5px;
+  border-bottom: 1px solid rgba(15,23,42,.10);
+}
+.pdfop-wm svg { height: 20px; width: auto; }
+.pdfop-date { font-size: 8.5px; color: #667085; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+
+/* Headline */
+.pdfop-hl {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
+  font-size: 16px; font-weight: 700; line-height: 1.18;
+  letter-spacing: -0.02em; color: #14161a; margin: 0 0 1px;
+}
+.pdfop-sub {
+  font-size: 9px; font-style: italic; color: #667085;
+  margin: 0 0 3px; line-height: 1.4; letter-spacing: 0.005em;
+}
+.pdfop-det {
+  font-size: 8.5px; color: #3a4150; margin-bottom: 5px;
+  letter-spacing: 0.01em;
+}
+.pdfop-det strong { color: #14161a; font-weight: 600; }
+
+/* TL;DR */
+.pdfop-tldr { margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid rgba(15,23,42,.08); }
+.pdfop-tldr-label {
+  font-size: 8px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; color: #0161E0; margin-bottom: 2px;
+}
+.pdfop-tldr-body {
+  font-size: 9.2px; line-height: 1.48; color: #3a4150;
+  letter-spacing: 0.005em; word-spacing: 0.01em;
+}
+.pdfop-tldr-body p { margin: 0 0 3px; }
+.pdfop-tldr-body strong { color: #14161a; font-weight: 600; }
+
+/* Body */
+.pdfop-body {
+  font-size: 9.2px; line-height: 1.48; color: #14161a;
+  letter-spacing: 0.005em; word-spacing: 0.01em;
+}
+.pdfop-sec { margin-bottom: 4px; }
+.pdfop-body h1 { display: none; }
+.pdfop-body h2 {
+  font-size: 8.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: #0161E0;
+  margin: 0 0 2px; padding: 0;
+}
+.pdfop-body h3 {
+  font-size: 8.5px; font-weight: 600; color: #14161a;
+  margin: 3px 0 2px; letter-spacing: 0.02em;
+}
+.pdfop-body p { margin: 0 0 3px; color: #3a4150; }
+.pdfop-body ul, .pdfop-body ol { margin: 1px 0 3px; padding-left: 14px; }
+.pdfop-body li { margin-bottom: 1.5px; color: #3a4150; }
+.pdfop-body strong { color: #14161a; font-weight: 600; }
+.pdfop-body em { color: #667085; }
+.pdfop-body blockquote {
+  border-left: 2px solid #0161E0; margin: 3px 0; padding: 3px 10px;
+  color: #3a4150; background: rgba(1,97,224,.03);
+  border-radius: 0 6px 6px 0; font-size: 9.2px;
+}
+.pdfop-body a { color: #0161E0; text-decoration: none; }
+.pdfop-body table { width: 100%; border-collapse: collapse; margin: 3px 0; font-size: 9.2px; }
+.pdfop-body th, .pdfop-body td { padding: 3px 6px; border: 1px solid rgba(15,23,42,.08); text-align: left; }
+.pdfop-body th { background: rgba(1,97,224,.05); font-weight: 600; }
+.pdfop-body hr { border: 0; border-top: 1px solid rgba(15,23,42,.06); margin: 5px 0; }
+
+/* Intro fallback */
+.pdfop-intro { font-size: 12px; line-height: 1.55; color: #3a4150; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(15,23,42,.08); }
+.pdfop-intro p { margin: 0 0 6px; }
+.pdfop-intro strong { color: #14161a; font-weight: 600; }
+
+/* Footer */
+.pdfop-ft {
+  margin-top: 4px; padding-top: 3px;
+  border-top: 1px solid rgba(15,23,42,.10);
+  font-size: 7.5px; color: #a0aec0; letter-spacing: 0.03em; text-align: center;
+}
+.pdfop-ft .dt { display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: #0161E0; margin: 0 7px; vertical-align: middle; }
