@@ -2,7 +2,7 @@
 """
 Community Data Room DB Setup
 Creates a fresh database for the Investor Data Room template.
-Copies public VC data, strips Papr proprietary info, seeds fake company.
+Copies public VC data, strips company proprietary info, seeds fake company.
 """
 import sqlite3
 import os
@@ -13,11 +13,11 @@ import uuid
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 JOB_DIR = os.path.dirname(SCRIPT_DIR)
 NEW_DB = os.path.join(JOB_DIR, "data", "data.db")
-PAPR_DB = os.path.join(os.path.expanduser("~"), "Papr", "Jobs",
+PAPR_DB = os.path.join(os.path.expanduser("~"), "[Company]", "Jobs",
                        "b6d2f0ea-6a97-495a-8d69-3582d31a670f", "data", "data.db")
 
-# Safety: verify Papr DB exists but we ONLY read from it
-assert os.path.exists(PAPR_DB), f"Papr DB not found: {PAPR_DB}"
+# Safety: verify Source DB exists but we ONLY read from it
+assert os.path.exists(PAPR_DB), f"Source DB not found: {PAPR_DB}"
 
 # Remove old community DB if exists (fresh start)
 if os.path.exists(NEW_DB):
@@ -292,7 +292,7 @@ for table, expected_min in [
     status = "✅" if count >= expected_min else "⚠️"
     print(f"  {status} {table}: {count} rows")
 
-# Verify NO Papr-specific data leaked
+# Verify NO company-specific data leaked
 papr_check = dst.execute("SELECT name FROM company_info WHERE id='papr'").fetchone()
 assert papr_check[0] == 'NovaMind AI', f"Company name should be NovaMind AI, got: {papr_check[0]}"
 
@@ -310,4 +310,4 @@ dst.close()
 db_size = os.path.getsize(NEW_DB)
 print(f"\n🎉 Community DB created: {db_size / 1024 / 1024:.1f}MB")
 print(f"   Path: {NEW_DB}")
-print(f"   Papr DB: UNTOUCHED ✅")
+print(f"   Source DB: UNTOUCHED ✅")

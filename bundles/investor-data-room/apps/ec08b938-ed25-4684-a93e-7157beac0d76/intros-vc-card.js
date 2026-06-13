@@ -13,11 +13,11 @@ function _vcPersonCard(p) {
 }
 
 function buildVCMailLink(p) {
-  var sub = 'Intro Request: Papr - Context Intelligence Platform';
+  var sub = 'Intro Request: [Your Company]';
   var body = 'Hi '+p.via_person.split(' ')[0]+',\n\n'+
     'I wanted to introduce you to Alex and Sarah, co-founders of Sleep AI.\n\n'+
-    'Papr is building the structured memory layer for AI - they achieved state-of-the-art '+
-    'on the STaRK benchmark, have $72K ARR with 23 customers, and are backed by Techstars.\n\n'+
+    '[Company] is building the structured memory layer for AI - they achieved state-of-the-art '+
+    'on the [Benchmark] benchmark, have $XXK ARR with XX customers, and are backed by [Accelerator].\n\n'+
     'Would love to connect you all.\n\nBest';
   return 'mailto:?cc='+encodeURIComponent(window.FOUNDER_EMAILS||'')+
     '&subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(body);

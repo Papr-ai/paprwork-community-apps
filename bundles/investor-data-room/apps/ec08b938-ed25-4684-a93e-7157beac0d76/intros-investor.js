@@ -11,8 +11,8 @@ async function renderInvestorIntrosTab(link) {
     hasPaths = paths.length > 0;
   }
   // Visibility rules:
-  //   Investors: Customer Intros always visible, VC Intros HIDDEN unless closed (e14/Techstars)
-  //   Closed investors (e14, Techstars): see both Customer Intros and VC Intros
+  //   Investors: Customer Intros always visible, VC Intros HIDDEN unless closed (e14/[Accelerator])
+  //   Closed investors (e14, [Accelerator]): see both Customer Intros and VC Intros
   var isPostClose = link.commit_mode === 'post_close';
   var showCust = true;
   var showVC = isPostClose && hasPaths;
@@ -101,8 +101,8 @@ async function renderCustomerIntrosSection(link) {
     + '<span class="section-label">Portfolio Companies · ICP Matches</span>'
     + '<span class="ic-count">' + topList.length + ' ' + topLabel + '</span></div>'
     + '<p style="font-size:13px;color:var(--muted);margin:0 0 16px">'
-    + 'Companies ' + pFirst + ' has invested in that could benefit from Papr · '
-    + '<em>one click opens your mail app with Papr CC\'d</em></p>'
+    + 'Companies ' + pFirst + ' has invested in that could benefit from [Your Company] · '
+    + '<em>one click opens your mail app with [Company] CC\'d</em></p>'
     + vCards + uCards + '</div>';
 }
 

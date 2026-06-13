@@ -16,8 +16,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--vercel-key', required=True)
 args = parser.parse_args()
 
-DB_PATH = os.path.expanduser("~/Papr/Jobs/5bebc6e1-7cbc-465b-a020-1f7e8dfcb63f/data/data.db")
-APP_DIR = os.path.expanduser("~/PAPR/apps/ec08b938-ed25-4684-a93e-7157beac0d76")
+DB_PATH = os.path.expanduser("~/Jobs/5bebc6e1-7cbc-465b-a020-1f7e8dfcb63f/data/data.db")
+APP_DIR = os.path.expanduser("~/apps/ec08b938-ed25-4684-a93e-7157beac0d76")
 APP_DB = os.path.join(APP_DIR, "database.db")
 TEAM_ID = "team_PiNRym1Tdw3hjmQkAFxfzUrk"
 # Dynamic project name from company in DB
@@ -67,7 +67,7 @@ JS_FILES = [
     "db-queries.js",           # DB query helpers
     "utils.js",                # Utility functions
     "logos.js",                # SVG wordmark logos
-    "shawkat-b64.js",         # Shawkat's photo base64
+    "ceo-photo-b64.js",         # CEO photo base64
     "icons.js",                # SVG icon registry
     "components.js",           # Shared render functions
     "share-mode.js",           # Share mode picker (pre/post-commit)
@@ -496,7 +496,7 @@ def build_html(room_data):
     json_ld = json.dumps({
         "@context": "https://schema.org",
         "@type": "Organization",
-        "name": c.get("name", "Papr"),
+        "name": c.get("name", "[Your Company]"),
         "description": c.get("overview", ""),
         "url": c.get("website", ""),
         "foundingDate": "2024",
@@ -506,7 +506,7 @@ def build_html(room_data):
     faq_items = room_data.get("faq", [])
     faq_text = "".join(f"<h3>{q.get('question','')}</h3><p>{q.get('answer','')[:200]}...</p>" for q in faq_items)
     one_pager_text = (room_data.get("one_pager", "") or "")[:2000]
-    company_name = c.get("name", "Papr")
+    company_name = c.get("name", "[Your Company]")
     company_tagline = c.get("tagline", "")
     company_overview = c.get("overview", "")
     company_website = c.get("website", "")
@@ -516,10 +516,10 @@ def build_html(room_data):
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Papr · Data Room</title>
-  <meta name="description" content="Papr, Inc. — Context Intelligence Infrastructure. Predictive Memory and Holographic Neural Embeddings for AI agents.">
+  <title>Investor Data Room</title>
+  <meta name="description" content="[Your Company] — [Your product description]">
   <meta name="robots" content="noindex">
-  <meta property="og:title" content="Papr · Investor Data Room">
+  <meta property="og:title" content="Investor Data Room">
   <meta property="og:description" content="Context Intelligence Infrastructure — Predictive Memory for AI Agents">
   <meta property="og:type" content="website">
   <style>{all_css}</style>
@@ -666,15 +666,15 @@ module.exports = function(req, res) {{
 }};
 
 function landing() {{
-  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Papr Data Room</title>' +
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Investor Data Room</title>' +
     '<style>body{{font-family:-apple-system,sans-serif;background:#050a12;color:rgba(255,255,255,.92);' +
     'display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center}}' +
     'h1{{font-size:32px;font-weight:700;margin-bottom:8px}}p{{color:rgba(255,255,255,.5);font-size:16px}}</style></head>' +
-    '<body><div><h1>Papr</h1><p>Data Room</p></div></body></html>';
+    '<body><div><h1>[Company]</h1><p>Data Room</p></div></body></html>';
 }}
 
 function errorPage(title, msg) {{
-  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Papr Data Room</title>' +
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Investor Data Room</title>' +
     '<style>body{{font-family:-apple-system,sans-serif;background:#050a12;color:rgba(255,255,255,.92);' +
     'display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center}}' +
     'h2{{font-size:24px;margin-bottom:8px}}p{{color:rgba(255,255,255,.5)}}</style></head>' +
@@ -693,9 +693,9 @@ def deploy(vercel_key, function_js, html_content):
     vercel_json_str = json.dumps({
         "rewrites": [{"source": "/((?!deck\\.html$|deck-print\\.html$|assets/).*)", "destination": "/api/room"}],
         "headers": [
-            # Deck: allow framing from Paprwork localhost + dataroom.papr.ai (no X-Frame-Options → CSP wins)
+            # Deck: allow framing from Paprwork localhost + dataroom.example.com (no X-Frame-Options → CSP wins)
             {"source": "/deck.html", "headers": [
-                {"key": "Content-Security-Policy", "value": "frame-ancestors 'self' http://localhost:* https://dataroom.papr.ai https://*.vercel.app"},
+                {"key": "Content-Security-Policy", "value": "frame-ancestors 'self' http://localhost:* https://dataroom.example.com https://*.vercel.app"},
                 {"key": "X-Content-Type-Options", "value": "nosniff"},
                 {"key": "Cache-Control", "value": "public, max-age=300"}
             ]},
@@ -828,7 +828,7 @@ if __name__ == "__main__":
     # Save deploy URL to DB
     conn = sqlite3.connect(DB_PATH)
     conn.execute("CREATE TABLE IF NOT EXISTS config (key TEXT PRIMARY KEY, value TEXT)")
-    conn.execute("INSERT OR REPLACE INTO config (key, value) VALUES ('vercel_url', ?)", ("https://dataroom.papr.ai",))
+    conn.execute("INSERT OR REPLACE INTO config (key, value) VALUES ('vercel_url', ?)", ("https://dataroom.example.com",))
     conn.commit()
     conn.close()
     print(f"   Saved deploy URL to config table")

@@ -8,7 +8,7 @@ async function loadFAQ() {
 }
 
 function faqToMarkdown(items) {
-  var md = '# Papr — Frequently Asked Questions\n\n';
+  var md = '# [Your Company] — Frequently Asked Questions\n\n';
   var cat = '';
   items.forEach(function(q) {
     if (q.category !== cat) { cat = q.category; md += '## ' + cat + '\n\n'; }

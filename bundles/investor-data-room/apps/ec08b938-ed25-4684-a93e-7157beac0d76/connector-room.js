@@ -69,7 +69,7 @@ async function renderConnectorRoom(el, conn) {
     + (totalP > 0 ? '<div id="tab-inv-intros" class="tab-content"></div>' : '')
     + '</div>'
     + '<footer class="footer"><span class="footer-text">Confidential</span>'
-    + '<a href="https://papr.ai" target="_blank" class="footer-badge"><svg class="footer-badge-icon" width="16" height="16" viewBox="0 0 512 512" fill="none"><path d="M171.096 395.341C31.7049 595.509 96.9894 216.431 225.445 250.088C422.668 301.763 478.75 109.362 367.589 65.0769C214.395 4.04686 255.79 266.03 171.096 395.341Z" stroke="url(#papr-g2)" stroke-width="37" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="papr-g2" x1="133.058" y1="352.55" x2="316.156" y2="163.438" gradientUnits="userSpaceOnUse"><stop stop-color="#0161E0"/><stop offset="0.6" stop-color="#0CCDFF"/><stop offset="1" stop-color="#00FEFE"/></linearGradient></defs></svg>Built on Paprwork</a></footer>';
+    + '<a href="https://example.com" target="_blank" class="footer-badge"><svg class="footer-badge-icon" width="16" height="16" viewBox="0 0 512 512" fill="none"><path d="M171.096 395.341C31.7049 595.509 96.9894 216.431 225.445 250.088C422.668 301.763 478.75 109.362 367.589 65.0769C214.395 4.04686 255.79 266.03 171.096 395.341Z" stroke="url(#papr-g2)" stroke-width="37" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="papr-g2" x1="133.058" y1="352.55" x2="316.156" y2="163.438" gradientUnits="userSpaceOnUse"><stop stop-color="#0161E0"/><stop offset="0.6" stop-color="#0CCDFF"/><stop offset="1" stop-color="#00FEFE"/></linearGradient></defs></svg>Built on Paprwork</a></footer>';
   bindInvestorViewEvents(el, fakeLink);
   bindBlurbEvents(el, false);
 }

@@ -11,7 +11,7 @@ Runs automatically after each publish. Validates:
 import json, re, sys, sqlite3, os
 import urllib.request
 
-DB_PATH = os.path.expanduser("~/PAPR/Jobs/b6d2f0ea-6a97-495a-8d69-3582d31a670f/data/data.db")
+DB_PATH = os.path.expanduser("~/Jobs/b6d2f0ea-6a97-495a-8d69-3582d31a670f/data/data.db")
 
 class TestResult:
     def __init__(self):
@@ -36,7 +36,7 @@ class TestResult:
         return self.failed == 0
 
 def fetch_page(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "PaprVerifyBot/1.0"})
+    req = urllib.request.Request(url, headers={"User-Agent": "VerifyBot/1.0"})
     with urllib.request.urlopen(req, timeout=15) as resp:
         return resp.read().decode("utf-8"), dict(resp.headers)
 

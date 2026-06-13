@@ -1,4 +1,4 @@
-# Deep Problem Definition — Papr, Inc.
+# Deep Problem Definition — [Your Company], Inc.
 
 **For:** Pitch deck, investor conversations, ICP alignment
 **Date:** April 17, 2026
@@ -7,9 +7,9 @@
 
 ## Part 1: Problem Definition Rubric — Research-Backed
 
-### The Techstars Problem Severity Framework (Level 1–5)
+### The [Accelerator] Problem Severity Framework (Level 1–5)
 
-The framework Amir has been using classifies customer problems on a 1–5 severity scale. Only Level 5 problems justify venture-scale companies. Here's the framework mapped against academic research:
+The framework Alex has been using classifies customer problems on a 1–5 severity scale. Only Level 5 problems justify venture-scale companies. Here's the framework mapped against academic research:
 
 | Level | Label | Customer Behavior | Research Basis | Startup Implication |
 |-------|-------|-------------------|---------------|-------------------|
@@ -21,7 +21,7 @@ The framework Amir has been using classifies customer problems on a 1–5 severi
 
 ### What Makes a Problem "Level 5"
 
-Based on synthesis of Blank (2013), Ries (2011), Osterwalder et al. (2014 — *Value Proposition Design*), and Techstars mentor methodology:
+Based on synthesis of Blank (2013), Ries (2011), Osterwalder et al. (2014 — *Value Proposition Design*), and [Accelerator] mentor methodology:
 
 1. **Board-level visibility** — The problem is discussed in board meetings, not just engineering standups
 2. **Existential framing** — "If we don't solve this, we lose to competitors who do"
@@ -47,24 +47,24 @@ Based on synthesis of Blank (2013), Ries (2011), Osterwalder et al. (2014 — *V
 
 ## Part 2: Problem Validation — Evidence from the Wild
 
-### What We Found on Reddit (r/RAG — 70K+ members, Amir's community)
+### What We Found on Reddit ([Community Forum] — XXK+ members, Alex's community)
 
-**Thread: "RAG performance degradation at scale" (r/RAG)**
+**Thread: "RAG performance degradation at scale" ([Community Forum])**
 > *"Retrieval quality degrades when the knowledge base grows beyond a certain threshold. Context windows get flooded with marginally relevant documents. Hallucination rates increase dramatically with document diversity."*
 > — Enterprise developer processing 50K+ documents
 
 **Thread: "Companies need to stop applauding vanilla RAG" (194 upvotes)**
 > *"As the document set grew, the answers weren't as reliable. Some weren't using the most up to date policy section, or they were mixing information when it shouldn't be... If you want your setup to reason about the task, RAG is not enough. It's retrieval, not orchestration."*
 
-**Thread: "After Building Multiple Production RAGs — No One Really Wants Just a RAG" (r/RAG)**
+**Thread: "After Building Multiple Production RAGs — No One Really Wants Just a RAG" ([Community Forum])**
 > *"No one actually wants a simple RAG. What they really want is something that feels like ChatGPT but with the accuracy and reliability of a RAG — which leads to the concept of Agentic RAG... A basic RAG often fails to retrieve the right context."*
 
-**Comment (2 upvotes, matches Papr's thesis exactly):**
+**Comment (2 upvotes, matches [Your Company]'s thesis exactly):**
 > *"The standard chunk/embed RAG system is a demo. PoC quality. It will always fall down at scale."*
 
 **Thread: "I got tired of RAG and spent a year implementing neuroscience of memory" (186 upvotes)**
 > *"Most memory systems treat memory like a database. Store a fact, retrieve a fact. Done. But that's not how memory actually works."*
-> — Developer who built Mímir, a cognitive memory system. This is exactly the gap Papr fills with schema-conditioned embeddings.
+> — Developer who built Mímir, a cognitive memory system. This is exactly the gap [Company] fills with [proprietary] embeddings.
 
 ### What We Found on r/fintech
 
@@ -77,7 +77,7 @@ Based on synthesis of Blank (2013), Ries (2011), Osterwalder et al. (2014 — *V
 - **Gartner (2025)**: 85% of AI projects fail to reach production. Primary cause: data quality and retrieval accuracy at scale.
 - **McKinsey (2024)**: Companies spend $3–5M per AI use case in internal build costs. Average time to production: 12–18 months.
 - **Forrester (2025)**: 72% of enterprise AI teams report "retrieval accuracy degradation" as their #1 blocker to scaling RAG systems.
-- **Stanford HAI (2025)**: Only 8% of vector database deployments achieve >80% accuracy on complex multi-hop queries (vs. Papr's 92% on STaRK).
+- **Stanford HAI (2025)**: Only 8% of vector database deployments achieve >80% accuracy on complex multi-hop queries (vs. [Your Company]'s 92% on [Benchmark]).
 
 ---
 
@@ -105,7 +105,7 @@ Based on synthesis of Blank (2013), Ries (2011), Osterwalder et al. (2014 — *V
 - Regulatory forcing function: Yes — FinCEN, OCC, EU AI Act for financial services
 - Quantified cost: $10M–$100M fines + $200K/week in delayed product launches
 - Active workarounds: Yes — companies hiring 10+ compliance analysts at $150K+ each
-- Customer already paying: Yes — Coda pays $5K/mo for Papr today
+- Customer already paying: Yes — Coda pays $5K/mo for [Company] today
 
 ---
 
@@ -121,7 +121,7 @@ Based on synthesis of Blank (2013), Ries (2011), Osterwalder et al. (2014 — *V
 > "Insurance data is inherently relational: Policy → Endorsement → Rider → Claim → Claimant → Provider → Precedent. A vector database stores each document as an independent embedding. It cannot traverse the relationship chain: 'This claim is for water damage. The base policy covers water damage. But Endorsement #7 excludes water damage from flooding. And the claimant's property is in a flood zone per FEMA Zone A designation.' This requires multi-hop relational reasoning, not similarity search."
 
 #### Level 4: Systemic Failure
-> "False approvals cost $50K–$500K per incident in payouts that should have been denied. False denials trigger regulatory complaints, lawsuits ($100K+ per bad faith claim), and customer churn. The claims team has to manually review every AI-touched decision, making the AI a $500K/year cost center with negative ROI."
+> "False approvals cost $XXK–$500K per incident in payouts that should have been denied. False denials trigger regulatory complaints, lawsuits ($100K+ per bad faith claim), and customer churn. The claims team has to manually review every AI-touched decision, making the AI a $500K/year cost center with negative ROI."
 
 #### Level 5: Existential / Business Impact
 > "Insurance combined ratios are already above 100% industry-wide (meaning insurers lose money on underwriting). The companies that can automate claims accurately — reducing loss adjustment expenses (LAE) by even 5% — gain 5+ points of combined ratio advantage. That's the difference between profitability and insolvency. **State insurance regulators are now requiring explainability for AI-driven decisions (Colorado SB 21-169, NY DFS Circular Letter 2024). Insurers who can't prove their AI decisions are accurate and explainable will lose their license to operate.**"
@@ -129,7 +129,7 @@ Based on synthesis of Blank (2013), Ries (2011), Osterwalder et al. (2014 — *V
 **Severity Score: Level 5** ✅
 - Board-level: Yes — combined ratio is the #1 metric in board meetings
 - Regulatory forcing function: Yes — state regulators mandating AI explainability
-- Quantified cost: $50K–$500K per false approval; 5+ points combined ratio
+- Quantified cost: $XXK–$500K per false approval; 5+ points combined ratio
 - Active workarounds: Yes — companies building $2M+ internal "AI validation" teams
 - CEO sponsor: Yes — CEO/COO owns combined ratio improvement
 
@@ -147,17 +147,17 @@ Based on synthesis of Blank (2013), Ries (2011), Osterwalder et al. (2014 — *V
 > "Commerce data is a graph: Product → Category → Supplier → Store Location → Weather Zone → Customer Segment → Purchase History → Seasonality Pattern. Current vector databases embed each data point independently. They can answer 'what products are similar to X' but not 'given this store's location, weather forecast, current inventory, supplier lead times, and historical cannibalization patterns, how much of product Y should we order for next Tuesday.'"
 
 #### Level 4: Systemic Failure
-> "30% forecast error means 15% overstock (food waste, markdown losses) and 15% stockouts (lost sales, customer churn). For a 50-location coffee chain, that's $2M–$5M/year in preventable losses. The ops team runs manual spreadsheet models for each location — 3 FTEs doing work that should be automated."
+> "30% forecast error means 15% overstock (food waste, markdown losses) and 15% stockouts (lost sales, customer churn). For a 50-location coffee chain, that's $2M–$XM/year in preventable losses. The ops team runs manual spreadsheet models for each location — 3 FTEs doing work that should be automated."
 
 #### Level 5: Existential / Business Impact
-> "Gross margins in specialty coffee are 60–65%. Forecast errors eat 8–12% of that margin. Competitors using accurate demand intelligence (Starbucks Deep Brew, Dutch Bros' AI ops) operate at 5–8% higher net margins. **At a 50-location scale, that's $3M–$5M/year in margin disadvantage — enough to make the difference between Series A fundable and unfundable. In a 2025–2026 market where consumer brands need to show margin expansion to raise, companies that can't automate intelligence into their operations will not survive the next funding cycle.**"
+> "Gross margins in specialty coffee are 60–65%. Forecast errors eat 8–12% of that margin. Competitors using accurate demand intelligence (Starbucks Deep Brew, Dutch Bros' AI ops) operate at 5–8% higher net margins. **At a 50-location scale, that's $3M–$XM/year in margin disadvantage — enough to make the difference between Series A fundable and unfundable. In a 2025–2026 market where consumer brands need to show margin expansion to raise, companies that can't automate intelligence into their operations will not survive the next funding cycle.**"
 
 **Severity Score: Level 5** ✅
 - Board-level: Yes — unit economics and margin expansion are board metrics
 - Competitive forcing function: Yes — Starbucks, Dutch Bros already use AI ops
-- Quantified cost: $3M–$5M/year margin disadvantage at 50 locations
+- Quantified cost: $3M–$XM/year margin disadvantage at 50 locations
 - Active workarounds: Yes — 3 FTEs running manual spreadsheets ($450K/year)
-- Customer already paying: Yes — AutoReview pays $5K/mo for Papr today
+- Customer already paying: Yes — AutoReview pays $5K/mo for [Company] today
 
 ---
 
@@ -169,7 +169,7 @@ Based on synthesis of Blank (2013), Ries (2011), Osterwalder et al. (2014 — *V
 |-----------|---------|-----------|----------|
 | **Data structure** | Relational (regulations, entities, temporal versions) | Relational (policies, endorsements, claims, claimants) | Relational (products, locations, suppliers, weather, customers) |
 | **Why vector DBs fail** | Can't distinguish regulation versions or traverse cross-references | Can't do multi-hop reasoning across policy chains | Can't connect disparate data sources into a unified prediction |
-| **Cost of failure** | $10M–$100M fines | $50K–$500K per false decision | $3M–$5M/year margin loss |
+| **Cost of failure** | $10M–$100M fines | $XXK–$500K per false decision | $3M–$XM/year margin loss |
 | **What they're building internally** | Compliance review teams (10+ analysts) | AI validation teams ($2M+/year) | Manual forecasting (3 FTEs) |
 | **What they actually need** | Intelligence that understands regulatory structure | Intelligence that reasons across policy graphs | Intelligence that predicts from connected data |
 
@@ -177,17 +177,17 @@ Based on synthesis of Blank (2013), Ries (2011), Osterwalder et al. (2014 — *V
 
 ---
 
-## Part 5: Problem Definition Rubric Score — Papr
+## Part 5: Problem Definition Rubric Score — [Company]
 
 | Dimension | Score (1-5) | Evidence |
 |-----------|-------------|----------|
-| **Quantified Cost of Inaction** | 5 | $10M–$100M (fintech fines), $50K–$500K (insurance false decisions), $3M–$5M (commerce margin loss) |
+| **Quantified Cost of Inaction** | 5 | $10M–$100M (fintech fines), $XXK–$500K (insurance false decisions), $3M–$XM (commerce margin loss) |
 | **Specificity to ICP** | 5 | Three named verticals, two paying customers, specific workflows described |
 | **Multi-Level Depth** | 5 | 5 levels deep for each vertical: symptom → cause → root cause → systemic failure → existential impact |
 | **Evidence of Active Workarounds** | 5 | Companies hiring compliance analysts, building AI validation teams, running manual spreadsheets |
 | **Competitive/Existential Framing** | 5 | "Companies that can't automate intelligence will not survive the next funding cycle" |
 | **Regulatory Forcing Function** | 5 | EU AI Act, FinCEN, state insurance AI mandates, SOC2 for AI systems |
-| **Customer Voice Validation** | 5 | Reddit r/RAG threads (6,329 upvotes), industry reports, paying customer behavior |
+| **Customer Voice Validation** | 5 | Reddit [Community Forum] threads (6,329 upvotes), industry reports, paying customer behavior |
 | **Up-Level to Customer Impact** | 5 | Maps directly to revenue, margin, regulatory survival, competitive position |
 
 **Overall Score: 5.0/5.0 — Level 5 Problem** ✅
@@ -204,13 +204,13 @@ Boards are demanding AI transformation. Klarna replaced 700 agents. Shopify's CE
 
 Enterprise data is relational — regulations reference other regulations, insurance policies chain through endorsements and riders, commerce demand connects products to locations to weather to customer behavior. But the $25B vector database ecosystem stores all of it flat. Cosine similarity works for "find me a similar document." It fails catastrophically for "given this customer's KYC history, current regulatory requirements, and cross-border transaction patterns, should we approve this wire transfer?" — the kind of structured reasoning that actually runs a business.
 
-The result is measurable: a single compliance error costs fintech companies $10M–$100M in fines. Insurance false approvals cost $50K–$500K per incident. Commerce forecast errors eat 8–12% of gross margin. Companies are spending $2M–$5M per use case hiring ML teams to build custom intelligence that takes 6+ months and never generalizes beyond one workflow.
+The result is measurable: a single compliance error costs fintech companies $10M–$100M in fines. Insurance false approvals cost $XXK–$500K per incident. Commerce forecast errors eat 8–12% of gross margin. Companies are spending $2M–$XM per use case hiring ML teams to build custom intelligence that takes 6+ months and never generalizes beyond one workflow.
 
 **The gap between flat retrieval and structured intelligence is where enterprises lose money, face regulatory penalties, and fall behind competitors who figure it out first.**
 
 ### Version B — Concise (for conversations / newsletter)
 
-Enterprise AI fails at the exact moment it matters: when data is relational and decisions are high-stakes. A fintech compliance agent can't distinguish between 2023 and 2025 AML regulations because vector databases collapse temporal and hierarchical relationships into flat embeddings. An insurance claims AI approves $500K payouts it should deny because it can't traverse the chain from policy to endorsement to rider to exclusion. A commerce forecasting model misses 30% of demand because it can't connect products to locations to weather to customer behavior. Companies are spending $2M–$5M and 6+ months per use case to build intelligence that never generalizes — while competitors who solve this first capture the margin advantage that determines who survives.
+Enterprise AI fails at the exact moment it matters: when data is relational and decisions are high-stakes. A fintech compliance agent can't distinguish between 2023 and 2025 AML regulations because vector databases collapse temporal and hierarchical relationships into flat embeddings. An insurance claims AI approves $500K payouts it should deny because it can't traverse the chain from policy to endorsement to rider to exclusion. A commerce forecasting model misses 30% of demand because it can't connect products to locations to weather to customer behavior. Companies are spending $2M–$XM and 6+ months per use case to build intelligence that never generalizes — while competitors who solve this first capture the margin advantage that determines who survives.
 
 ### Version C — One-Liner (for cold outreach)
 

@@ -27,26 +27,26 @@ function buildPortCards(list, link, pFirst, canIntro) {
 function buildMailBtn(p, link, pFirst) {
   var who = p.founder_name && p.founder_name !== '(Unverified)'
     ? 'the team at '+p.company_name : 'the '+p.company_name+' team';
-  var sub = 'Intro? '+p.company_name+' <> Papr';
+  var sub = 'Intro? '+p.company_name+' <> [Your Company]';
   var body = 'Hi '+pFirst+',\n\n'
     + 'Would you be open to a quick intro to '+who+'?\n\n'
-    + 'We\'re building Papr — the memory layer that turns a team\'s data into working intelligence '
+    + 'We\'re building [Your Company] — the memory layer that turns a team\'s data into working intelligence '
     + '(no ML engineers required). #1 on Stanford STARK, and we\'ve seen real pull from teams like '
     + p.company_name+' that are already shipping AI products and running into memory/context limits.\n\n'
     + 'Happy to share a 2-min Loom or a one-pager you can forward — whatever\'s easiest. '
-    + 'I\'ve CC\'d the Papr team so they can take it from here.\n\n'
+    + 'I\'ve CC\'d the [Company] team so they can take it from here.\n\n'
     + 'Thanks!\n[Your name]';
   var href='mailto:?cc='+encodeURIComponent(window.FOUNDER_EMAILS||'')
     +'&subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(body);
   var mailIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>';
-  return '<a href="'+href+'" class="ic-email-btn" title="Opens your mail app with Papr CC\'d">'
+  return '<a href="'+href+'" class="ic-email-btn" title="Opens your mail app with [Company] CC\'d">'
     + mailIcon + '<span>Email Intro</span></a>';
 }
 
 function buildIntroStatsBanner(pFirst, matchCount, avgIntros) {
   var avgTxt = avgIntros > 0
     ? '<strong>' + avgIntros + '</strong> · avg intros other VCs have sent us'
-    : 'One-click intro · Papr team CC\'d automatically';
+    : 'One-click intro · [Company] team CC\'d automatically';
   return '<div class="ic-stats-banner glass">'
     + '<div class="ic-stat"><span class="ic-stat-num">' + matchCount + '</span>'
     + '<span class="ic-stat-lbl">ICP matches in ' + esc(pFirst) + '\'s portfolio</span></div>'

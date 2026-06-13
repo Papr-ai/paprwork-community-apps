@@ -1,4 +1,4 @@
-// Papr Data Room — One job: investor evaluates this company.
+// Investor Data Room — One job: investor evaluates this company.
 declare const DARK_WORDMARK: string;
 declare const LIGHT_WORDMARK: string;
 declare const ROOM_DATA: {
@@ -58,7 +58,7 @@ function render() {
     </div>
     <footer class="footer">
       <span>Confidential · ${esc(c.name)}</span>
-      <span>Powered by Papr</span>
+      <span>Powered by Paprwork</span>
     </footer>
     <div id="toast" class="toast"></div>
   </div>`;

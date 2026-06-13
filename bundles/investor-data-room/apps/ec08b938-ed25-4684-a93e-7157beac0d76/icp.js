@@ -1,4 +1,4 @@
-// ICP viewer — schema-conditioned intelligence layer
+// ICP viewer — [proprietary] intelligence layer
 function getIcpData() {
   var base = window.ICP_DATA || {};
   var stored = localStorage.getItem('dr-icp-data');

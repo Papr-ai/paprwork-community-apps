@@ -80,7 +80,7 @@ function renderOnePagerViewer(isFounder) {
   if (viewerOverlay) closeViewer(true);
   var bodyHtml = '';
   if (opEditMode) {
-    bodyHtml = '<textarea class="op-editor" id="op-textarea" placeholder="# Papr One-Pager&#10;&#10;Write in markdown...">' +
+    bodyHtml = '<textarea class="op-editor" id="op-textarea" placeholder="# Company One-Pager&#10;&#10;Write in markdown...">' +
       esc(opContent) + '</textarea>';
   } else if (!opContent) {
     bodyHtml = '<div style="text-align:center;padding:60px 20px;color:var(--text-secondary,rgba(255,255,255,.4))">' +

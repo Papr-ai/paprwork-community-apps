@@ -1,11 +1,11 @@
 // Room data — edit this file with your company's real content
 (window as any).ROOM_DATA = {
   company: {
-    name: 'Papr Memory',
-    overview: 'Context intelligence infrastructure for AI agents. Memory that improves with scale — not degrades. 92% Stanford STaRK retrieval accuracy, <150ms latency. Power-law scaling where every other system breaks down.',
+    name: 'Acme AI',
+    overview: '[EDIT ME] Describe your product in 1-2 sentences. What problem do you solve? What makes you different? Include your best traction metric.',
     stage: 'Pre-Seed',
-    raised: '$1.2M',
-    ask: '$5M',
+    raised: '$500K',
+    ask: '$3M',
   },
   sections: [
     { label: 'Company Overview', docs: [
@@ -35,12 +35,12 @@
     ]},
   ],
   team: [
-    { name: 'Shawkat Kabbara', role: 'CEO & Co-Founder', bio: 'AI memory researcher. Inventor of schema-conditioned embedding. Techstars NYC \'26.', linkedin: 'https://linkedin.com/in/shawkatkabbara' },
-    { name: 'Amir Kabbara', role: 'CTO & Co-Founder', bio: 'Systems engineer and co-inventor on Papr\'s core patents. Builds the infrastructure that makes memory scale.', linkedin: 'https://linkedin.com/in/amirkabbara' },
-    { name: 'Rony Ferzli', role: 'Technology Advisor', bio: 'Technical Fellow at General Motors. Co-inventor on Papr\'s adaptive reranking patent. Deep AI systems expertise.', linkedin: 'https://linkedin.com/in/ronyferzli' },
+    { name: 'Jane Smith', role: 'CEO & Co-Founder', bio: '[EDIT ME] Your CEO bio. Background, key achievements, why they are the right person.', linkedin: 'https://linkedin.com/in/example-ceo' },
+    { name: 'Alex Johnson', role: 'CTO & Co-Founder', bio: '[EDIT ME] Your CTO bio. Technical background, what they built, relevant expertise.', linkedin: 'https://linkedin.com/in/example-cto' },
+    { name: 'Pat Williams', role: 'Advisor', bio: '[EDIT ME] Advisor bio. Industry expertise and how they add value.', linkedin: 'https://linkedin.com/in/example-advisor' },
   ],
   links: [
-    { label: 'Website', url: 'https://papr.ai' },
-    { label: 'LinkedIn', url: 'https://linkedin.com/company/papr-ai' },
+    { label: 'Website', url: 'https://example.com' },
+    { label: 'LinkedIn', url: 'https://linkedin.com/company/example' },
   ],
 };

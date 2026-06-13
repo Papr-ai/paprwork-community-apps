@@ -30,7 +30,7 @@ function buildVerticalCard(v) {
   h += '</div></div>';
   h += '<div class="dm-two-col">';
   h += buildMoatSide(v.customer + ' keeps', v.keeps, 'keeps', v.color);
-  h += buildMoatSide('Papr learns', v.learns, 'learns', '#0161E0');
+  h += buildMoatSide('[Company] learns', v.learns, 'learns', '#0161E0');
   h += '</div></div>';
   return h;
 }

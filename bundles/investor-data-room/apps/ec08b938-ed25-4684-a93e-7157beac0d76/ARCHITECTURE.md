@@ -1,7 +1,7 @@
-# Papr Data Room — Architecture & Design
+# Investor Data Room — Architecture & Design
 
 ## Design Brief
-- **App name:** Papr Data Room
+- **App name:** Investor Data Room
 - **Primary persona:** VC / Angel investor receiving a data room link
 - **Job-to-be-done:** "When I receive a data room link, I want to quickly evaluate this company, so I can decide whether to invest."
 - **Primary outcome:** Investor forms conviction faster
@@ -17,7 +17,7 @@ index.html → loads logos.js, data.js, utils.js, app.js
 data.js    → all room content (company, sections, team, links)
 app.js     → renders the single-page data room
 utils.js   → helpers (toast, escape, photo upload, doc rendering)
-logos.js   → Papr brand SVG wordmarks (dark + light)
+logos.js   → brand SVG wordmarks (dark + light)
 style.css  → Liquid Glass design system
 ```
 Everything is client-side. No backend. No database. Data is hardcoded in `data.js`.
@@ -27,7 +27,7 @@ Photos persist via `localStorage` (click-to-upload on team cards).
 ```
 ┌─────────────────────────────────────────────┐
 │                  Founder View                │
-│  (Paprwork mini-app — edit content, manage   │
+│  ([Company]work mini-app — edit content, manage   │
 │   investors, generate links, track views)    │
 └──────────────────┬──────────────────────────┘
                    │ writes to
@@ -56,7 +56,7 @@ Photos persist via `localStorage` (click-to-upload on team cards).
 ┌─────────────────────────────────────────────┐
 │              Investor View                   │
 │  (Vercel-hosted page — tokenized URL)        │
-│  e.g. room.papr.ai/e14?token=abc123         │
+│  e.g. room.example.com/[Angel]?token=abc123         │
 │                                              │
 │  - Passcode gate on first visit              │
 │  - Per-investor logo + subtle personalization│
@@ -71,15 +71,15 @@ Photos persist via `localStorage` (click-to-upload on team cards).
 ### `raise_tracker` (single row, founder updates manually)
 | Column | Type | Description |
 |--------|------|-------------|
-| target | TEXT | Total raise target, e.g. "$5M" |
-| raised | TEXT | Already received (closed), e.g. "$270K" |
+| target | TEXT | Total raise target, e.g. "$XM" |
+| raised | TEXT | Already received (closed), e.g. "$2XXK" |
 | committed | TEXT | Soft commits not yet wired, e.g. "$500K" |
 | remaining | TEXT | Auto-calculated: target - raised - committed |
 | stage | TEXT | Pre-Seed, Seed, Series A |
 | updated_at | INTEGER | Last manual update timestamp |
 
 **Raised vs Committed:**
-- **Raised** = money received, in the bank. e14 Fund ($50K) + Techstars ($220K) = $270K raised.
+- **Raised** = money received, in the bank. [Angel Fund] ($XXK) + [Accelerator] ($XXXK) = $2XXK raised.
 - **Committed** = verbal/written commit, not yet wired. Could change.
 - **Remaining** = target - raised - committed = what's still needed.
 - All three show on the investor-facing room.
@@ -88,8 +88,8 @@ Photos persist via `localStorage` (click-to-upload on team cards).
 | Column | Type | Description |
 |--------|------|-------------|
 | id | TEXT | UUID |
-| name | TEXT | "e14 Fund" |
-| fund_url | TEXT | "http://e14.vc" |
+| name | TEXT | "[Angel Fund]" |
+| fund_url | TEXT | "http://[Angel].vc" |
 | logo_url | TEXT | Auto-fetched via `logo.clearbit.com/{domain}` or Google |
 | contact_name | TEXT | Partner name |
 | contact_email | TEXT | For passcode delivery |
@@ -125,7 +125,7 @@ Photos persist via `localStorage` (click-to-upload on team cards).
 
 ## Integration Plan
 
-### 1. SQLite (Papr Job)
+### 1. SQLite (Job)
 - One job: `data-room-db` — creates tables, seeds from current `data.js`
 - Mini-app reads/writes via `/api/db/query` and `/api/db/write`
 - Founder edits content in-app → writes to DB → investor sees updated room
@@ -134,13 +134,13 @@ Photos persist via `localStorage` (click-to-upload on team cards).
 - **What we need:** `VERCEL_API_KEY` (or project token)
 - **Purpose:** Host the investor-facing page as a Vercel serverless function
 - **Flow:**
-  1. Founder creates investor in Papr → generates token + passcode
-  2. Founder shares URL: `room.papr.ai/{investor-slug}?token={uuid}`
+  1. Founder creates investor in the app → generates token + passcode
+  2. Founder shares URL: `room.example.com/{investor-slug}?token={uuid}`
   3. Investor visits → passcode gate → room renders from DB
   4. Room content auto-updates (no re-sharing needed)
-- **Alternative (simpler v2.1):** Use Papr's own mini-app URL with token param
+- **Alternative (simpler v2.1):** Use [Your Company]'s own mini-app URL with token param
   - No Vercel needed initially
-  - Just: `papr.ai/room/{token}` → renders from SQLite
+  - Just: `example.com/room/{token}` → renders from SQLite
 
 ### 3. Attio CRM Sync
 - **Key available:** `ATTIO_API_KEY` ✅
@@ -151,8 +151,8 @@ Photos persist via `localStorage` (click-to-upload on team cards).
   - Syncs stage changes bidirectionally
   - Auto-fetches logos via domain
 - **Existing investors to seed:**
-  - e14 Fund → $50K raised (closed)
-  - Techstars → $220K raised (closed)
+  - [Angel Fund] → $XXK raised (closed)
+  - [Accelerator] → $XXXK raised (closed)
 
 ### 4. Per-Investor Personalization
 - When VC visits their room link:
@@ -163,7 +163,7 @@ Photos persist via `localStorage` (click-to-upload on team cards).
 - Logo fetching: `https://logo.clearbit.com/{domain}` (free, no key needed)
   - Fallback: Google Favicon API `https://www.google.com/s2/favicons?domain={domain}&sz=128`
 
-## Techstars Best Practices (Encoded)
+## [Accelerator] Best Practices (Encoded)
 
 ### Progressive Disclosure by Stage
 | Stage | What's Visible |
@@ -205,7 +205,7 @@ Photos persist via `localStorage` (click-to-upload on team cards).
 - Mission/BHAG blocks: 32px gap
 
 ### Color
-- Accent: `#0161E0` (Papr blue)
+- Accent: `#0161E0` (brand blue)
 - Glass: `rgba(255,255,255,0.06)` on dark
 - Text primary: `rgba(255,255,255,0.92)`
 - Text secondary: `rgba(255,255,255,0.55)`
@@ -222,7 +222,7 @@ Photos persist via `localStorage` (click-to-upload on team cards).
 ```
 index.html          — shell, loads scripts
 style.css           — Liquid Glass tokens + components
-logos.js            — Papr SVG wordmarks
+logos.js            — SVG wordmarks
 data.js             — static fallback data (seed)
 utils.js            — helpers, photo upload, doc rendering
 app.js              — main render (founder view)

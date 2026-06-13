@@ -1,6 +1,6 @@
 # Data Room Community App — Publishing Plan
 
-> **Goal:** Publish the Papr Data Room as a reusable community app template. Strip all Papr-proprietary data, keep the full design/UX, seed with example data, and provide a chat-first onboarding so any startup can build their own investor data room.
+> **Goal:** Publish the Investor Data Room as a reusable community app template. Strip all proprietary data, keep the full design/UX, seed with example data, and provide a chat-first onboarding so any startup can build their own investor data room.
 
 ---
 
@@ -9,7 +9,7 @@
 ### Current System
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  Mini-App: Papr · Data Room (b0a164c2)                  │
+│  Mini-App: Investor Data Room (b0a164c2)                  │
 │  60+ JS/CSS files, Liquid Glass design                  │
 │                                                         │
 │  ┌─────────────┐  ┌──────────────┐  ┌────────────────┐ │
@@ -57,17 +57,17 @@
 
 ## 2. Data Classification: Strip vs Keep vs Seed
 
-### 🔴 STRIP — Papr Proprietary (must remove)
+### 🔴 STRIP — [Company] Proprietary (must remove)
 
 | Data | Location | Action |
 |------|----------|--------|
-| Company info (Papr, Inc.) | `company_info` table | Replace with fake company |
+| Company info ([Your Company], Inc.) | `company_info` table | Replace with fake company |
 | Documents content (moat, GTM, financials) | `documents` table | Replace with template docs |
-| Team members (Shawkat, Amir, etc.) | `team_members` table | Replace with fake founders |
+| Team members (Jane, Alex, etc.) | `team_members` table | Replace with fake founders |
 | Team photos (DSC00841-50.jpg) | App image files | Replace with placeholder avatars |
-| FAQ answers (Papr-specific) | `faq` table | Replace with template FAQs |
+| FAQ answers (company-specific) | `faq` table | Replace with template FAQs |
 | Pitch deck | `pitch_deck` table + HTML file | Remove, add placeholder |
-| ICP criteria (Papr's ICP) | `icp_criteria` table + `icp-data.js` | Replace with fake ICP |
+| ICP criteria ([Your Company]'s ICP) | `icp_criteria` table + `icp-data.js` | Replace with fake ICP |
 | Customer data | `customers` table | Replace with fake customers |
 | Case studies | `case_studies` table | Replace with template |
 | Raise tracker (amount, terms) | `raise_tracker` table | Replace with example raise |
@@ -77,9 +77,9 @@
 | Connector data (names, photos) | `connectors` table | Clear (user adds own) |
 | Intro pathways (manually curated) | `intro_pathways` table | Clear (user adds own) |
 | Config (calendly URL, etc.) | `config` table | Reset to defaults |
-| Papr logos (SVG wordmarks) | `logos.js` | Replace with placeholder |
+| Company logos (SVG wordmarks) | `logos.js` | Replace with placeholder |
 | Hardcoded emails | `intros-vc-card.js`, `inv-share.js` | Make dynamic from DB |
-| Hardcoded domain (`dataroom.papr.ai`) | `inv-add-person.js`, `inv-share.js` | Make configurable |
+| Hardcoded domain (`dataroom.example.com`) | `inv-add-person.js`, `inv-share.js` | Make configurable |
 
 ### 🟢 KEEP — Valuable Public Data (ship with bundle)
 
@@ -96,17 +96,17 @@
 | Field | Current | Community Default |
 |-------|---------|-------------------|
 | `investors.stage` | Mixed (Lead/closed/verbal_commit/etc.) | All → `'Lead'` |
-| `investors.fit_score` | Papr-specific scores (0-100) | All → `null` |
-| `investors.fit_breakdown` | JSON with Papr thesis match | All → `null` |
-| `investors.thesis_alignment_score` | Papr-specific | All → `null` |
-| `investors.adjusted_fit_score` | Papr-specific | All → `null` |
-| `investors.portfolio_status` | Papr-specific overlap | All → `null` |
-| `investors.invested_amount` | Papr-specific | All → `0` |
-| `investors.committed_amount` | Papr-specific | All → `0` |
-| `investors.notes` | Papr-specific notes | All → `''` |
-| `investors.investor_status` | Papr-specific | All → `null` |
-| `investors.attio_record_id` | Papr CRM integration | All → `null` |
-| `investors.passcode` | Papr-specific | All → `null` |
+| `investors.fit_score` | company-specific scores (0-100) | All → `null` |
+| `investors.fit_breakdown` | JSON with company thesis match | All → `null` |
+| `investors.thesis_alignment_score` | company-specific | All → `null` |
+| `investors.adjusted_fit_score` | company-specific | All → `null` |
+| `investors.portfolio_status` | company-specific overlap | All → `null` |
+| `investors.invested_amount` | company-specific | All → `0` |
+| `investors.committed_amount` | company-specific | All → `0` |
+| `investors.notes` | company-specific notes | All → `''` |
+| `investors.investor_status` | company-specific | All → `null` |
+| `investors.attio_record_id` | CRM integration | All → `null` |
+| `investors.passcode` | company-specific | All → `null` |
 
 ### 🔵 SEED — Fake Example Data
 
@@ -240,7 +240,7 @@ Pen: "Got it! I've set up your company profile.
 
 ## 4. Liquid Glass Design System — Data Room Patterns
 
-### Foundation (from Paprwork Design System)
+### Foundation (from [Company]work Design System)
 
 ```css
 /* ── Color Tokens ── */
@@ -400,7 +400,7 @@ Pen: "Got it! I've set up your company profile.
 #### 5.1 `intros-vc-card.js` — Hardcoded CC emails
 ```javascript
 // BEFORE (line ~20):
-var ml = 'mailto:?cc=shawkat%40papr.ai%2Camir%40papr.ai&subject=...'
+var ml = 'mailto:?cc=jane%40example.com%2Calex%40example.com&subject=...'
 
 // AFTER: Read from company_info or config
 var founders = await dbQuery("SELECT email FROM config WHERE key='founder_emails'");
@@ -412,7 +412,7 @@ var ml = 'mailto:?cc=' + encodeURIComponent(cc) + '&subject=...'
 #### 5.2 `inv-share.js` / `inv-add-person.js` — Hardcoded domain
 ```javascript
 // BEFORE:
-var base = 'https://dataroom.papr.ai';
+var base = 'https://dataroom.example.com';
 
 // AFTER: Read from config
 var domainRow = await dbQuery("SELECT value FROM config WHERE key='deploy_domain'");
@@ -420,11 +420,11 @@ var base = domainRow.length ? domainRow[0].value : 'https://your-dataroom.vercel
 ```
 **Effort:** Small — 2 files, 1 line each
 
-#### 5.3 `logos.js` — Papr SVG wordmarks
+#### 5.3 `logos.js` — SVG wordmarks
 ```javascript
-// BEFORE: Hardcoded Papr SVG paths
-window.PAPR_LOGO_DARK = '<svg>...Papr wordmark...</svg>';
-window.PAPR_LOGO_LIGHT = '<svg>...Papr wordmark...</svg>';
+// BEFORE: Hardcoded SVG paths
+window.PAPR_LOGO_DARK = '<svg>...wordmark...</svg>';
+window.PAPR_LOGO_LIGHT = '<svg>...wordmark...</svg>';
 
 // AFTER: Load from company_info or config
 // Rename to COMPANY_LOGO_DARK / COMPANY_LOGO_LIGHT
@@ -433,9 +433,9 @@ window.PAPR_LOGO_LIGHT = '<svg>...Papr wordmark...</svg>';
 ```
 **Effort:** Medium — need to update `logos.js` + `app.js` + `connector-room.js` + `components.js`
 
-#### 5.4 `icp-data.js` — Hardcoded ICP for Papr
+#### 5.4 `icp-data.js` — Hardcoded ICP for [Company]
 ```javascript
-// BEFORE: Static window.ICP_DATA with Papr-specific filters
+// BEFORE: Static window.ICP_DATA with company-specific filters
 // AFTER: Load from DB (already partially done — merges DB overrides)
 // Just need to change the DEFAULTS to generic template data
 ```
@@ -443,7 +443,7 @@ window.PAPR_LOGO_LIGHT = '<svg>...Papr wordmark...</svg>';
 
 #### 5.5 `demos.js` — Product demos
 ```javascript
-// Currently loads Papr-specific demo videos/links
+// Currently loads company-specific demo videos/links
 // AFTER: Load from config table, show empty state if none
 ```
 **Effort:** Small
@@ -451,7 +451,7 @@ window.PAPR_LOGO_LIGHT = '<svg>...Papr wordmark...</svg>';
 ### Priority 2: DB Setup Job Modifications (1 job)
 
 #### `Data Room DB Setup` (b6d2f0ea)
-Modify the seed data script to insert NovaMind AI template data instead of Papr data:
+Modify the seed data script to insert NovaMind AI template data instead of app data:
 
 ```python
 # Changes needed in the setup job:
@@ -483,11 +483,11 @@ Modify the seed data script to insert NovaMind AI template data instead of Papr 
 #### `Data Room Publish` (686d5ffa)
 ```python
 # Changes needed:
-# 1. Read deploy_domain from config instead of hardcoding dataroom.papr.ai
+# 1. Read deploy_domain from config instead of hardcoding dataroom.example.com
 # 2. Read founder_emails from config for CC in intro mailto links
 # 3. Pitch deck: handle missing deck gracefully (show upload prompt)
 # 4. Logo: use COMPANY_LOGO_DARK/LIGHT instead of PAPR_LOGO
-# 5. Remove Papr-specific pitch deck HTML file from bundle
+# 5. Remove company-specific pitch deck HTML file from bundle
 ```
 **Effort:** Small — 5 string replacements in main.py
 
@@ -593,7 +593,7 @@ bundles/data-room-template/
 - [ ] Write README with setup instructions
 
 ### Phase 5: Publish
-- [ ] Fork `Papr-ai/paprwork-community-apps`
+- [ ] Fork `example-company/paprwork-community-apps`
 - [ ] Add bundle to `bundles/data-room-template/`
 - [ ] Add entry to `registry.json`
 - [ ] Open PR
@@ -612,4 +612,4 @@ bundles/data-room-template/
 | **Total** | **8 files** | **3 new** | **~8-10 hours** |
 
 ### Key Principle
-> **Minimal refactoring.** The app is already well-structured. We're not rewriting — we're swapping ~200 lines of hardcoded Papr data for config-driven values, adding 1 onboarding component, and scrubbing the seed data. The entire Liquid Glass design system, investor rendering, and Vercel deployment pipeline ship as-is.
+> **Minimal refactoring.** The app is already well-structured. We're not rewriting — we're swapping ~200 lines of hardcoded app data for config-driven values, adding 1 onboarding component, and scrubbing the seed data. The entire Liquid Glass design system, investor rendering, and Vercel deployment pipeline ship as-is.

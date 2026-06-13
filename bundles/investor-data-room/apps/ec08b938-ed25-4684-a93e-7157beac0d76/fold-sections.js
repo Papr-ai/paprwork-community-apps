@@ -44,7 +44,7 @@ function s5() {
     '<span class="fold-tcard-path">Stanford Sleep Lab \u00b7 Anthropic \u00b7 Bain \'26</span></div>' +
     '<div class="fold-tcard"><div class="fold-tcard-photo-ring">' + cofounderPhoto + '</div>' +
     '<span class="fold-tcard-name">Kai Nakamura</span><span class="fold-tcard-role">COO & Co-founder</span>' +
-    '<span class="fold-tcard-edge">70K+ r/RAG Community</span>' +
+    '<span class="fold-tcard-edge">XXK+ [Community Forum] Community</span>' +
     '<span class="fold-tcard-path">Bain \u00b7 Harvard MBA \'26</span></div>' +
     '<div class="fold-tcard"><div class="fold-tcard-photo-ring">' +
     '<div class="fold-card-avatar" style="background:linear-gradient(135deg,#10b981,#0CF)">RF</div></div>' +

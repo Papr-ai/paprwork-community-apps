@@ -74,7 +74,7 @@ function renderBenchmarks(meta) {
       '</div></div>';
   }).join('');
   var legend = '<div class="bench-leg"><span><span class="bl-dot base"></span>Baseline</span>' +
-    '<span><span class="bl-dot lgp"></span>Papr SCE</span></div>';
+    '<span><span class="bl-dot lgp"></span>[Company] SCE</span></div>';
   var insight = meta.key_insight ? '<div class="bench-ins">' + esc(meta.key_insight) + '</div>' : '';
   return legend + bars + insight;
 }

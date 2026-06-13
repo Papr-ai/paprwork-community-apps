@@ -4,9 +4,9 @@
 
 ## Installation
 
-### Option 1: Import via Papr Work Agent
+### Option 1: Import via Paprwork Agent
 ```
-Agent: "Import the bundle from /Users/shawkatkabbara/Papr/bundles/investor-data-room"
+Agent: "Import the bundle from ~/Papr/bundles/investor-data-room"
 ```
 
 ### Option 2: Import from GitHub
@@ -26,7 +26,7 @@ Agent: "Import the bundle from /Users/shawkatkabbara/Papr/bundles/investor-data-
 
 ## Requirements
 
-- Papr Work v2.0.0 or later
+- Paprwork v2.0.0 or later
 - Python 3.8+ for Python jobs
 
 

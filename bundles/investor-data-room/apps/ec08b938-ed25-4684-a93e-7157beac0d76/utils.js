@@ -10,7 +10,7 @@ async function syncPhotosToDb() {
   });
 }
 
-// Open a linked document — fetches from Papr docs and opens in viewer
+// Open a linked document — fetches from Company docs and opens in viewer
 function openDocLink(docId) {
   fetch('/api/documents/' + docId).then(function(r) {
     if (!r.ok) throw new Error('Document not found');

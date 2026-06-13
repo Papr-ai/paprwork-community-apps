@@ -78,7 +78,7 @@ function buildMoatMarkdown(d) {
     md += '*' + v.tagline + '*\n\n';
     md += '**' + v.customer + ' keeps:**\n';
     v.keeps.forEach(function(k) { md += '- **' + k.label + '** — ' + k.desc + '\n'; });
-    md += '\n**Papr learns:**\n';
+    md += '\n**[Company] learns:**\n';
     v.learns.forEach(function(l) { md += '- **' + l.label + '** — ' + l.desc + '\n'; });
     md += '\n';
   });

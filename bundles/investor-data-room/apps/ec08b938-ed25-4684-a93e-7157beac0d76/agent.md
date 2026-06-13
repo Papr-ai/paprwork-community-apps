@@ -1,10 +1,10 @@
 # Investor Data Room — Agent Guide
 
 ## What This App Is
-This is the **community-publishable version** of the Papr Data Room. It's a full duplicate
+This is the **community-publishable version** of the Investor Data Room. It's a full duplicate
 of the production data room, intended to be modified for community release.
 
-**DO NOT** modify the original Papr Data Room (b0a164c2-cfe0-415f-88d1-de867d96d337).
+**DO NOT** modify the original Investor Data Room (b0a164c2-cfe0-415f-88d1-de867d96d337).
 All community publishing changes happen HERE in this app (ec08b938).
 
 ## Key References
@@ -18,7 +18,7 @@ All community publishing changes happen HERE in this app (ec08b938).
 - **Connector View** — Intro helper view for people facilitating warm intros
 
 ## Data Sources
-Currently wired to the same Papr data (shared data-sources.json).
+Currently wired to the same app data (shared data-sources.json).
 When implementing community changes, create a fresh DB with template seed data.
 
 ## Jobs Pipeline
