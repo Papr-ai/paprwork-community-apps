@@ -110,7 +110,7 @@
       "bundleId": "x-action-engine",
       "name": "X Action Engine",
       "description": "AI-powered X/Twitter engagement engine. Fetches your timeline, scores tweets with Papr Memory context, generates draft replies and quote tweets in your voice, and learns from your edits over time.",
-      "version": "1.2.1",
+      "version": "1.2.3",
       "author": "amirkabbara",
       "tags": [
         "twitter",

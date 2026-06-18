@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "bundleId": "x-action-engine",
   "name": "X Action Engine",
-  "version": "1.2.1",
+  "version": "1.2.3",
   "createdAt": "2026-04-18T06:45:54.712Z",
   "minPaprworkVersion": "2.0.0",
   "requirements": [
@@ -15,7 +15,7 @@
   "app": {
     "id": "3e08bfb2-23f1-4173-b76f-f1910bdc31fd",
     "name": "X Action Engine",
-    "version": "1.2.1",
+    "version": "1.2.3",
     "entryFile": "index.html",
     "appPath": "apps/3e08bfb2-23f1-4173-b76f-f1910bdc31fd",
     "description": "Focus feed with Papr memory context and 80/20 scoring"

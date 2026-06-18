@@ -5,6 +5,7 @@ let settingsOpen = false;
 let currentTopics: string[] = [];
 let companyName = '';
 let companyDesc = '';
+let yourHandle = '';
 let settingsLoading = false;
 
 async function settingsQuery<T = any>(sql: string, params: any[] = []): Promise<T[]> {
@@ -75,11 +76,20 @@ async function loadCompany(): Promise<{name: string; desc: string}> {
   return { name, desc };
 }
 
+async function loadYourHandle(): Promise<string> {
+  const raw = await loadSetting('your_handle', '');
+  // Normalize: strip leading @, trim, lowercase, drop anything non-handle
+  return raw.trim().replace(/^@+/, '').replace(/[^A-Za-z0-9_]/g, '').toLowerCase();
+}
+
 async function saveAllSettings() {
   const filtered = currentTopics.map(t => t.trim()).filter(t => t.length > 0);
   await saveSetting('topics', JSON.stringify(filtered));
   await saveSetting('company_name', companyName.trim());
   await saveSetting('company_desc', companyDesc.trim());
+  const cleanHandle = yourHandle.trim().replace(/^@+/, '').replace(/[^A-Za-z0-9_]/g, '');
+  await saveSetting('your_handle', cleanHandle);
+  yourHandle = cleanHandle;
   currentTopics = filtered;
 }
 
@@ -91,6 +101,7 @@ async function openSettings() {
   const co = await loadCompany();
   companyName = co.name;
   companyDesc = co.desc;
+  yourHandle = await loadYourHandle();
   settingsLoading = false;
   renderSettings();
 }
@@ -120,8 +131,16 @@ function updateTopicAt(i: number, val: string) {
 async function handleSaveSettings() {
   await saveAllSettings();
   if (typeof toast === 'function') toast('✓ Settings saved — refresh feed to apply', 3000);
+  // Notify app that settings changed so it can refresh things like the user's avatar
+  try {
+    const cb = (window as any).onSettingsSaved;
+    if (typeof cb === 'function') await cb();
+  } catch {}
   closeSettings();
 }
+
+// Expose for module-scoped app.ts to call
+(window as any).loadYourHandle = loadYourHandle;
 
 function renderSettings() {
   let overlay = document.getElementById('settings-overlay');
@@ -173,11 +192,25 @@ function renderSettings() {
           </svg>
         </button>
       </div>
+      <div class="settings-body">
       ${companyHtml}
+      ${settingsLoading ? '' : `
+      <div class="settings-section">
+        <h4>Your X profile</h4>
+        <p class="settings-desc">Used to show your real profile picture in the reply composer. No login needed — just your @handle.</p>
+        <div style="padding:0 2px;display:flex;align-items:center;gap:8px">
+          <span style="color:var(--muted);font-size:14px">@</span>
+          <input class="topic-input" type="text" value="${yourHandle.replace(/"/g,'&quot;')}"
+            placeholder="yourhandle"
+            oninput="yourHandle=this.value"
+            style="flex:1"/>
+        </div>
+      </div>`}
       <div class="settings-section">
         <h4>Search Topics</h4>
         <p class="settings-desc">Topics to search on X. The fetcher finds tweets matching these.</p>
         <div class="topics-list" style="padding:0 2px">${topicRows}</div>
+      </div>
       </div>
       <div class="settings-actions">
         <button class="action-btn-ghost" onclick="addTopicRow()">+ Add topic</button>
