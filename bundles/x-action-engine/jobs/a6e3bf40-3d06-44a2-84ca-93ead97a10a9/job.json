@@ -1,0 +1,26 @@
+{
+  "id": "a6e3bf40-3d06-44a2-84ca-93ead97a10a9",
+  "name": "X Feed Fetcher",
+  "type": "python",
+  "folder": "x-action-engine",
+  "command": "python3 code/main.py --auth-token ${X_AUTH_TOKEN} --ct0 ${X_CT0}",
+  "requirements": [
+    "twitter-api-client",
+    "httpx"
+  ],
+  "dependsOn": [],
+  "retries": {
+    "maxAttempts": 1,
+    "backoffMs": 1000
+  },
+  "retentionDays": 14,
+  "schedule": {
+    "enabled": true,
+    "cron": "0 9 * * *"
+  },
+  "outputMode": "natural",
+  "memoryPolicy": "none",
+  "status": "pending",
+  "createdAt": "2026-06-24T20:29:21.628Z",
+  "updatedAt": "2026-06-24T20:29:21.628Z"
+}

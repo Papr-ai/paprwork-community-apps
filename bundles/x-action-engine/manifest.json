@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "1.0.0",
+  "bundleId": "x-action-engine",
+  "name": "X Action Engine",
+  "version": "1.0.0",
+  "createdAt": "2026-06-24T20:29:30.827Z",
+  "minPaprworkVersion": "2.0.0",
+  "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"14\" height=\"14\"><path d=\"M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z\" fill=\"currentColor\"/></svg>",
+  "requirements": [
+    "ANTHROPIC_API_KEY",
+    "ANTHROPIC_DIRECT_KEY",
+    "GOOGLE_API_KEY",
+    "GROQ_API_KEY",
+    "OPENAI_PLATFORM_KEY",
+    "PAPR_API_KEY",
+    "X_AUTH_TOKEN"
+  ],
+  "platform": [
+    "macos",
+    "windows"
+  ],
+  "app": {
+    "id": "3e08bfb2-23f1-4173-b76f-f1910bdc31fd",
+    "name": "X Action Engine",
+    "version": "1.0.0",
+    "entryFile": "index.html",
+    "appPath": "apps/3e08bfb2-23f1-4173-b76f-f1910bdc31fd",
+    "description": "X/Twitter Action Engine - Feed, Score, Reply. One focused workflow."
+  },
+  "jobs": [
+    {
+      "id": "a6e3bf40-3d06-44a2-84ca-93ead97a10a9",
+      "name": "X Feed Fetcher",
+      "type": "python",
+      "command": "python3 code/main.py --auth-token ${X_AUTH_TOKEN} --ct0 ${X_CT0}",
+      "schedule": {
+        "enabled": true,
+        "cron": "0 9 * * *"
+      },
+      "dependsOn": [],
+      "env": {},
+      "outputTables": [],
+      "requirements": [
+        "twitter-api-client",
+        "httpx"
+      ],
+      "folder": "x-action-engine",
+      "retries": {
+        "maxAttempts": 1,
+        "backoffMs": 1000
+      },
+      "outputMode": "natural",
+      "memoryPolicy": "none",
+      "runtimeCalls": []
+    },
+    {
+      "id": "76c428ec-e5d9-44f2-ac86-4ce9112d476c",
+      "name": "X Action Engine Scorer",
+      "type": "agent",
+      "command": "You are the X Action Engine Scorer. Pick the best 10 tweets to engage with and write sharp draft replies.\n\n## STEP 0: Load Company Settings\nRun:\n```\nsqlite3 ~/Papr/jobs/a6e3bf40-3d06-44a2-84ca-93ead97a10a9/data/data.db \"SELECT key, value FROM settings WHERE key IN ('company_name','company_desc')\"\n```\nUse these values for the 2 \"mention\" slots below. If no company is set, default to: Papr.ai = predictive memory for AI agents.\n\n## STEP 1: Load Candidates (ranked by research-backed viral_score_v2)\nviral_score_v2 uses log-transformed engagement + piecewise time decay + reply ratio + early-spike bonus (refs: Cheng WWW 2014, Zhao SEISMIC KDD 2015, Cao DeepHawkes CIKM 2017). Tweets >48h old are auto-zeroed.\n\nRun:\n```\nsqlite3 ~/Papr/jobs/a6e3bf40-3d06-44a2-84ca-93ead97a10a9/data/data.db \"\nSELECT id, substr(text,1,180) as text, author_username, like_count, retweet_count, reply_count,\n       search_topic,\n       round(viral_score_v2,1) as viral_score_v2,\n       round(viral_score,1) as viral_score_v1,\n       round((julianday('now') - julianday(created_at_iso)) * 24, 1) as real_hours_old\nFROM tweets WHERE status='new' AND created_at_iso IS NOT NULL\n  AND created_at_iso > datetime('now', '-14 days')\nORDER BY COALESCE(viral_score_v2, 0) DESC,\n         (reply_count * 3 + retweet_count * 2 + like_count * 0.5) DESC\nLIMIT 20\n\"\n```\nIf no rows, print `{\"scored\": 0}` and STOP.\n\n## STEP 2: Load Style Examples\nRun:\n```\nsqlite3 ~/Papr/jobs/a6e3bf40-3d06-44a2-84ca-93ead97a10a9/data/data.db \"\nSELECT substr(text,1,160) as text, tweet_type, engagement, substr(quoted_tweet_text,1,80) as ref\nFROM my_style_tweets WHERE LENGTH(TRIM(text)) > 20\nORDER BY CASE tweet_type WHEN 'reply' THEN 3 WHEN 'quote' THEN 2 ELSE 1 END DESC, engagement DESC\nLIMIT 15\n\"\n```\n\n## STEP 3: Score & Draft\nFor each candidate, decide:\n- **score 0-100**: how interesting + relevant + has-something-to-say\n- **score_type**: 'give_value' (just be useful) OR 'papr_mention' (organic Papr fit) — at most 2 of 10 are papr_mention\n- **draft_reply**: <250 chars, in user's style, no hype/emojis/hashtags\n- **draft_quote**: <240 chars\n- **score_reason**: 1 short sentence\n\nPick the TOP 10 by interest×fit. Write SQL UPDATEs for each:\n\n```\nUPDATE tweets SET score=?, score_type=?, score_reason=?, draft_reply=?, draft_quote=?,\n                 status='scored', scored_at=datetime('now')\nWHERE id=?\n```\n\nThen output `{\"scored\": N}` where N is how many you scored.",
+      "dependsOn": [
+        {
+          "jobId": "a6e3bf40-3d06-44a2-84ca-93ead97a10a9",
+          "onStatus": [
+            "completed"
+          ]
+        }
+      ],
+      "env": {},
+      "outputTables": [],
+      "requirements": [],
+      "folder": "x-action-engine",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-6",
+      "retries": {
+        "maxAttempts": 1,
+        "backoffMs": 1000
+      },
+      "outputMode": "natural",
+      "memoryPolicy": "none",
+      "runtimeCalls": []
+    },
+    {
+      "id": "b768c137-c0e1-4f56-ad5b-c6d4b035065c",
+      "name": "X Action Engine Scorer",
+      "type": "python",
+      "command": "python3 code/main.py --groq-key ${GROQ_API_KEY} --anthropic-key ${ANTHROPIC_API_KEY} --anthropic-direct-key ${ANTHROPIC_DIRECT_KEY} --openai-key ${OPENAI_PLATFORM_KEY} --papr-key ${PAPR_API_KEY} --google-key ${GOOGLE_API_KEY}",
+      "schedule": {
+        "enabled": false
+      },
+      "dependsOn": [],
+      "env": {},
+      "outputTables": [],
+      "requirements": [
+        "anthropic",
+        "requests"
+      ],
+      "folder": "x-action-engine",
+      "retries": {
+        "maxAttempts": 1,
+        "backoffMs": 1000
+      },
+      "outputMode": "natural",
+      "memoryPolicy": "none",
+      "runtimeCalls": []
+    }
+  ],
+  "sqlite": [],
+  "deploymentProfiles": [
+    {
+      "id": "local-default",
+      "name": "Local Default",
+      "runtimeTarget": "local",
+      "environment": {}
+    }
+  ],
+  "sync": {
+    "preferredRoot": "~/Papr",
+    "bundleSubpath": "bundles",
+    "cloudReady": true
+  }
+}

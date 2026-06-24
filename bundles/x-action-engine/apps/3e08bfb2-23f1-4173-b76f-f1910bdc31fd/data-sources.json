@@ -1,0 +1,46 @@
+[
+  {
+    "id": "b768c137-c0e1-4f56-ad5b-c6d4b035065c:auto-discovered",
+    "type": "sqlite",
+    "jobId": "b768c137-c0e1-4f56-ad5b-c6d4b035065c",
+    "alias": "X Action Engine Scorer",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-06-11T20:21:55.090Z"
+  },
+  {
+    "id": "76c428ec-e5d9-44f2-ac86-4ce9112d476c:scorer",
+    "type": "sqlite",
+    "jobId": "76c428ec-e5d9-44f2-ac86-4ce9112d476c",
+    "alias": "scorer",
+    "dbPath": "",
+    "tables": [],
+    "linkedAt": "2026-06-11T20:21:30.000Z"
+  },
+  {
+    "id": "a6e3bf40-3d06-44a2-84ca-93ead97a10a9:default",
+    "type": "sqlite",
+    "jobId": "a6e3bf40-3d06-44a2-84ca-93ead97a10a9",
+    "alias": "default",
+    "dbPath": "",
+    "tables": [
+      "tweets",
+      "mentions",
+      "my_style_tweets",
+      "draft_feedback"
+    ],
+    "linkedAt": "2026-06-11T20:21:30.000Z"
+  },
+  {
+    "id": "a6e3bf40-3d06-44a2-84ca-93ead97a10a9:feed",
+    "type": "sqlite",
+    "jobId": "a6e3bf40-3d06-44a2-84ca-93ead97a10a9",
+    "alias": "feed",
+    "dbPath": "",
+    "tables": [
+      "tweets",
+      "mentions"
+    ],
+    "linkedAt": "2026-02-22T15:42:09.285Z"
+  }
+]
