@@ -1,0 +1,9 @@
+{
+  "id": "b14c4bc6-dd31-4448-8edd-58831d5dea39",
+  "name": "Meeting Monitor",
+  "type": "bash",
+  "command": "bash monitor.sh",
+  "status": "pending",
+  "createdAt": "2026-05-13T16:39:36.213Z",
+  "updatedAt": "2026-05-13T16:39:36.213Z"
+}

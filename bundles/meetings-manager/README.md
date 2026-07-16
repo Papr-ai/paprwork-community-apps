@@ -1,4 +1,4 @@
-# undefined
+# Meetings Manager
 
 
 
@@ -6,7 +6,7 @@
 
 ### Option 1: Import via Papr Work Agent
 ```
-Agent: "Import the bundle from /Users/amirkabbara/Papr/bundles/bundle-1775613081749"
+Agent: "Import the bundle from /Users/shawkatkabbara/Papr/bundles/meetings-manager"
 ```
 
 ### Option 2: Import from GitHub
@@ -16,18 +16,20 @@ Agent: "Import the bundle from /Users/amirkabbara/Papr/bundles/bundle-1775613081
 
 ## Contents
 
-- **App**: Meetings Manager (ea6d8d7c-a15e-4c02-8273-117450b498f4)
-- **Jobs**: 10 job(s)
+- **App**: Meetings Manager (6e432b37-6cf2-45f1-9ad8-ec70a56d4a3c)
+- **Jobs**: 12 job(s)
   - Meeting Memory Sync (agent)
   - Meeting Summarizer (agent)
-  - Whisper Transcriber (python)
-  - Stop Recorder (bash)
   - Calendar Reader (bash)
   - Meeting Monitor (bash)
   - Meeting Prep Agent (agent)
   - System Audio Recorder (bash)
+  - Stop Recorder (bash)
+  - Whisper Transcriber (python)
   - Check Screen Recording Permission (bash)
   - Location Background Generator (python)
+  - Calendar Reader (bash)
+  - List Audio Devices (bash)
 
 ## Requirements
 
@@ -37,4 +39,4 @@ Agent: "Import the bundle from /Users/amirkabbara/Papr/bundles/bundle-1775613081
 
 ## Version
 
-1.0.0 - Created 2026-04-08
+1.0.0 - Created 2026-05-13

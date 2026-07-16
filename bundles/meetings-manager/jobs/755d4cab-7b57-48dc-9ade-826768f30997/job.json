@@ -1,0 +1,17 @@
+{
+  "id": "755d4cab-7b57-48dc-9ade-826768f30997",
+  "name": "List Audio Devices",
+  "type": "bash",
+  "command": "#!/bin/bash\n# List audio input devices via ffmpeg and store in meetings DB\n\n# Find meetings DB\nMEETINGS_DB=$(for db in ~/Papr/jobs/*/data/data.db; do sqlite3 \"$db\" \"SELECT name FROM sqlite_master WHERE name='meetings'\" 2>/dev/null | grep -q meetings && echo \"$db\" && break; done)\nif [ -z \"$MEETINGS_DB\" ]; then echo \"ERROR: meetings DB not found\"; exit 1; fi\n\n# Create audio_devices table if not exists\nsqlite3 \"$MEETINGS_DB\" \"CREATE TABLE IF NOT EXISTS audio_devices (\n  id INTEGER PRIMARY KEY,\n  device_index INTEGER,\n  name TEXT,\n  is_input BOOLEAN DEFAULT 1,\n  updated_at INTEGER DEFAULT (strftime('%s','now'))\n)\"\n\n# Create audio_settings table if not exists\nsqlite3 \"$MEETINGS_DB\" \"CREATE TABLE IF NOT EXISTS audio_settings (\n  id INTEGER PRIMARY KEY CHECK (id = 1),\n  selected_device_index INTEGER DEFAULT -1,\n  selected_device_name TEXT DEFAULT '',\n  updated_at INTEGER DEFAULT (strftime('%s','now'))\n)\"\n\n# Insert default settings row if empty\nsqlite3 \"$MEETINGS_DB\" \"INSERT OR IGNORE INTO audio_settings (id) VALUES (1)\"\n\n# Parse ffmpeg audio device list\nffmpeg -f avfoundation -list_devices true -i '' 2>&1 | python3 -c \"\nimport sys, re, sqlite3, os\n\ndb_path = '$MEETINGS_DB'\nconn = sqlite3.connect(db_path)\nconn.execute('DELETE FROM audio_devices')\n\nin_audio = False\nfor line in sys.stdin:\n    if 'AVFoundation audio devices' in line:\n        in_audio = True\n        continue\n    if in_audio:\n        m = re.match(r'\\[AVFoundation.*\\]\\s*\\[(\\d+)\\]\\s*(.*)', line)\n        if m:\n            idx, name = int(m.group(1)), m.group(2).strip()\n            conn.execute('INSERT INTO audio_devices (device_index, name) VALUES (?, ?)', (idx, name))\n            print(f'  [{idx}] {name}')\n        elif '[' not in line:\n            break\nconn.commit()\nprint(f'Devices stored in {db_path}')\nconn.close()\n\"",
+  "dependsOn": [],
+  "retries": {
+    "maxAttempts": 1,
+    "backoffMs": 1000
+  },
+  "retentionDays": 14,
+  "outputMode": "natural",
+  "memoryPolicy": "none",
+  "status": "pending",
+  "createdAt": "2026-05-13T16:39:39.076Z",
+  "updatedAt": "2026-05-13T16:39:39.076Z"
+}

@@ -26,7 +26,7 @@ def load_state():
 def save_state(s):
     with open(STATE_FILE, 'w') as f: json.dump(s, f)
 
-APP_ID = 'ea6d8d7c-a15e-4c02-8273-117450b498f4'
+APP_ID = '6e432b37-6cf2-45f1-9ad8-ec70a56d4a3c'
 
 def notify(title, msg, subtitle='', meeting_id=None):
     open_url = f'paprwork://app/{APP_ID}?meeting={meeting_id}' if meeting_id else f'paprwork://app/{APP_ID}'

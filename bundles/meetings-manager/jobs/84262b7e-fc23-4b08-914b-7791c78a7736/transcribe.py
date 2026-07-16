@@ -7,7 +7,7 @@ from pathlib import Path
 from openai import OpenAI
 
 # Paths
-RECORDER_JOB_DIR = os.path.expanduser("~/PAPR/jobs/54837f40-1e64-4810-a387-f81151d014af")
+RECORDER_JOB_DIR = os.path.expanduser("~/PAPR/jobs/095b6dbf-6096-433c-83d9-e7a66b8e459b")
 
 def find_meetings_db():
     for root, _, files in os.walk(os.path.expanduser("~/PAPR/jobs")):
