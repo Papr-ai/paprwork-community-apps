@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#050a12"/>
+      <stop offset="100%" stop-color="#0a1628"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="rgba(108,142,239,0.25)"/>
+      <stop offset="50%" stop-color="rgba(108,142,239,0.08)"/>
+      <stop offset="100%" stop-color="rgba(108,142,239,0.15)"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#6C8EEF" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#6C8EEF" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="blur1" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="20"/>
+    </filter>
+    <filter id="blur2" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+    <clipPath id="roundRect">
+      <rect width="512" height="512" rx="112" ry="112"/>
+    </clipPath>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" ry="112" fill="url(#bg)"/>
+  
+  <!-- Ambient glow -->
+  <ellipse cx="256" cy="220" rx="140" ry="100" fill="#6C8EEF" opacity="0.08" filter="url(#blur1)"/>
+  
+  <!-- Vault body - glass effect -->
+  <g clip-path="url(#roundRect)">
+    <!-- Main vault rectangle -->
+    <rect x="116" y="160" width="280" height="220" rx="24" ry="24" 
+          fill="url(#glass)" stroke="rgba(108,142,239,0.3)" stroke-width="1.5"/>
+    
+    <!-- Glass highlight on top -->
+    <rect x="116" y="160" width="280" height="110" rx="24" ry="24" 
+          fill="rgba(255,255,255,0.04)"/>
+    
+    <!-- Vault handle/lock - circular -->
+    <circle cx="256" cy="270" r="36" fill="none" stroke="rgba(108,142,239,0.5)" stroke-width="2.5"/>
+    <circle cx="256" cy="270" r="36" fill="rgba(108,142,239,0.06)"/>
+    
+    <!-- Lock keyhole -->
+    <circle cx="256" cy="264" r="8" fill="#6C8EEF" opacity="0.7"/>
+    <rect x="252" y="264" width="8" height="16" rx="3" fill="#6C8EEF" opacity="0.7"/>
+    
+    <!-- Lock glow -->
+    <circle cx="256" cy="270" r="24" fill="#6C8EEF" opacity="0.12" filter="url(#blur2)"/>
+    
+    <!-- Vault top bar / handle -->
+    <rect x="186" y="136" width="140" height="24" rx="12" ry="12"
+          fill="rgba(108,142,239,0.15)" stroke="rgba(108,142,239,0.25)" stroke-width="1"/>
+    
+    <!-- Document lines inside vault (behind lock) -->
+    <rect x="156" y="200" width="60" height="3" rx="1.5" fill="rgba(255,255,255,0.08)"/>
+    <rect x="156" y="212" width="45" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
+    <rect x="156" y="224" width="52" height="3" rx="1.5" fill="rgba(255,255,255,0.06)"/>
+    
+    <rect x="300" y="200" width="56" height="3" rx="1.5" fill="rgba(255,255,255,0.08)"/>
+    <rect x="300" y="212" width="40" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
+    <rect x="300" y="224" width="48" height="3" rx="1.5" fill="rgba(255,255,255,0.06)"/>
+    
+    <!-- Bottom accent line -->
+    <rect x="156" y="340" width="200" height="2" rx="1" fill="rgba(108,142,239,0.2)"/>
+    
+    <!-- Chart bars at bottom (data room = data) -->
+    <rect x="170" y="320" width="14" height="18" rx="3" fill="rgba(52,211,153,0.3)"/>
+    <rect x="192" y="310" width="14" height="28" rx="3" fill="rgba(52,211,153,0.4)"/>
+    <rect x="214" y="315" width="14" height="23" rx="3" fill="rgba(108,142,239,0.4)"/>
+    <rect x="236" y="305" width="14" height="33" rx="3" fill="rgba(108,142,239,0.5)"/>
+    <rect x="258" y="312" width="14" height="26" rx="3" fill="rgba(108,142,239,0.4)"/>
+    <rect x="280" y="318" width="14" height="20" rx="3" fill="rgba(52,211,153,0.35)"/>
+    <rect x="302" y="308" width="14" height="30" rx="3" fill="rgba(52,211,153,0.45)"/>
+    <rect x="324" y="322" width="14" height="16" rx="3" fill="rgba(108,142,239,0.3)"/>
+  </g>
+  
+  <!-- Subtle border on the whole icon -->
+  <rect width="512" height="512" rx="112" ry="112" fill="none" 
+        stroke="rgba(108,142,239,0.12)" stroke-width="2"/>
+</svg>

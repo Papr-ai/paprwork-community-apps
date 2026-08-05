@@ -61,20 +61,6 @@
       "runtimeCalls": []
     },
     {
-      "id": "0a93a300-d958-4439-9d78-957f47865821",
-      "name": "Calendar Reader",
-      "type": "bash",
-      "command": "bash run_calendar.sh",
-      "dependsOn": [],
-      "env": {},
-      "outputTables": [],
-      "requirements": [],
-      "appIds": [
-        "6e432b37-6cf2-45f1-9ad8-ec70a56d4a3c"
-      ],
-      "runtimeCalls": []
-    },
-    {
       "id": "b14c4bc6-dd31-4448-8edd-58831d5dea39",
       "name": "Meeting Monitor",
       "type": "bash",

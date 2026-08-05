@@ -1,0 +1,53 @@
+/* Unified hover-to-show edit button — Liquid Glass */
+.hover-edit-btn {
+  position: absolute; top: 10px; right: 10px;
+  background: var(--glass-2, rgba(255,255,255,0.55));
+  border: 1px solid var(--glass-border, rgba(15,23,42,0.10));
+  border-radius: 999px; padding: 4px 14px; height: 28px;
+  cursor: pointer; font-size: 12px; font-weight: 600;
+  font-family: inherit; color: var(--muted, #667085);
+  letter-spacing: 0.3px;
+  opacity: 0; transition: opacity 0.2s, background 0.2s;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  z-index: 2;
+}
+.hover-edit-btn:hover {
+  background: var(--accent, #0161E0); color: #fff;
+  border-color: transparent;
+}
+.company-hero:hover > .hover-edit-btn,
+.team-card:hover > .hover-edit-btn,
+.doc-row:hover > .hover-edit-btn,
+.section:hover > .hover-edit-btn { opacity: 1; }
+/* Doc row edit — position inline right */
+.doc-row { position: relative; }
+.doc-row > .hover-edit-btn { top: 50%; right: 12px; transform: translateY(-50%); }
+/* Edit modal form */
+.sm-ed-wrap { display: flex; flex-direction: column; gap: 12px; padding: 8px 0; }
+.sm-ed-label {
+  font-size: 12px; font-weight: 600; color: var(--muted, #667085);
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.sm-ed-input, .sm-ed-textarea {
+  width: 100%; padding: 10px 14px; border-radius: 10px;
+  border: 1px solid var(--glass-border, rgba(15,23,42,0.12));
+  background: var(--glass, rgba(255,255,255,0.65));
+  font-size: 15px; font-family: inherit; color: var(--text, #14161a);
+  box-sizing: border-box;
+}
+.sm-ed-textarea { resize: vertical; min-height: 72px; }
+.sm-ed-actions { display: flex; gap: 10px; margin-top: 8px; }
+.sm-ed-save {
+  padding: 10px 24px; border-radius: 999px; border: none;
+  background: linear-gradient(135deg, #0161E0, #4f46e5);
+  color: #fff; font-weight: 650; font-size: 15px; cursor: pointer;
+}
+.sm-ed-cancel {
+  padding: 10px 24px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--glass-border, rgba(15,23,42,0.12));
+  background: var(--glass, rgba(255,255,255,0.65));
+  font-size: 15px; color: var(--muted, #667085);
+}
+@media (prefers-color-scheme: light) {
+  .hover-edit-btn { background: var(--glass); color: #475569; }
+}

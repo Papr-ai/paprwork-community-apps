@@ -1,0 +1,53 @@
+/* Moat Editor — card-based tabbed design matching viewer */
+.mt-ed-wrap { padding: 8px 0; }
+.mt-ed-header { margin-bottom: 20px; }
+.mt-ed-label { font-size: 13px; font-weight: 600; color: var(--muted); margin: 12px 0 6px; display: block; }
+.mt-ed-ta {
+  width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--glass-border);
+  background: var(--glass-2, var(--bg2)); font-size: 14px; color: var(--text); resize: vertical;
+  font-family: inherit;
+}
+.mt-ed-tq {
+  width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--glass-border);
+  background: var(--glass-2, var(--bg2)); font-size: 13px; color: var(--text); font-family: inherit;
+}
+.mt-ed-page.hidden { display: none; }
+.mt-ed-row-card { position: relative; padding: 16px; margin-bottom: 10px; }
+.mt-ed-row-card .mt-ed-tq,
+.mt-ed-row-card .mt-ed-ta { margin-bottom: 6px; }
+.mt-ed-row-card .mt-ed-rm {
+  position: absolute; top: 8px; right: 8px; background: none; border: none;
+  color: var(--muted); font-size: 18px; cursor: pointer; opacity: 0;
+  transition: opacity 150ms;
+}
+.mt-ed-row-card:hover .mt-ed-rm { opacity: 1; }
+/* Flywheel edit cards — horizontal strip like viewer */
+.mt-ed-flys { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.mt-ed-flys .mt-ed-row-card {
+  min-width: 160px; flex: 1; text-align: center; flex-direction: column;
+  display: flex; align-items: center; gap: 4px;
+}
+.mt-fly-num-ed { font-size: 18px !important; font-weight: 700; color: #0161E0 !important; text-align: center; }
+.mt-fly-name-ed { font-weight: 600; text-align: center; text-transform: uppercase; font-size: 12px !important; }
+/* Layer edit cards — vertical stack */
+.mt-ed-layers .mt-ed-row-card { margin-bottom: 12px; }
+.mt-layer-name-ed { font-size: 15px !important; font-weight: 600; }
+/* Competitor edit cards */
+.mt-ed-comps .mt-ed-row-card { margin-bottom: 8px; }
+.mt-gap-who-ed { font-weight: 600; }
+.mt-ed-add {
+  margin: 8px 0; padding: 8px 16px; border-radius: 8px;
+  border: 1px dashed var(--glass-border); background: none;
+  font-size: 13px; color: var(--accent); cursor: pointer; width: 100%;
+}
+.mt-ed-add:hover { background: var(--glass-hover); }
+.mt-ed-actions { display: flex; gap: 10px; margin-top: 20px; }
+.mt-ed-save {
+  padding: 10px 24px; border-radius: 10px; border: none;
+  background: var(--accent); color: #fff; font-weight: 600; cursor: pointer;
+}
+.mt-ed-save:hover { opacity: 0.9; }
+.mt-ed-cancel {
+  padding: 10px 24px; border-radius: 10px; border: 1px solid var(--glass-border);
+  background: var(--glass-2, var(--bg2)); color: var(--text); cursor: pointer;
+}

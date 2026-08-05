@@ -1,0 +1,20 @@
+[
+  {
+    "id": "33f9e34c-1dad-4997-a893-a6e8caafeb84:google-connector-oauth",
+    "type": "sqlite",
+    "jobId": "33f9e34c-1dad-4997-a893-a6e8caafeb84",
+    "alias": "google-connector-oauth"
+  },
+  {
+    "id": "1b1fd68b-f25a-4433-a5cf-359b34b4147e:google-connector-schema",
+    "type": "sqlite",
+    "jobId": "1b1fd68b-f25a-4433-a5cf-359b34b4147e",
+    "alias": "google-connector-schema"
+  },
+  {
+    "id": "da1217af-079c-4c38-add4-3112428449f2:google-connector-refresh",
+    "type": "sqlite",
+    "jobId": "da1217af-079c-4c38-add4-3112428449f2",
+    "alias": "google-connector-refresh"
+  }
+]

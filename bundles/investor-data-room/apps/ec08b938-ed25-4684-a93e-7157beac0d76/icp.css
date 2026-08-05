@@ -1,0 +1,36 @@
+/* ICP — Schema-conditioned intelligence layer */
+.icp-section { margin-bottom: 20px; }
+.icp-sec-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted, #667085); margin-bottom: 10px; padding-left: 2px; }
+.icp-filters { display: flex; flex-direction: column; gap: 1px; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border, rgba(15,23,42,0.08)); }
+.icp-filter { display: flex; align-items: center; gap: 10px; padding: 11px 16px; background: var(--glass, rgba(255,255,255,0.65)); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.icp-filter-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: #0161E0; }
+.icp-filter-lbl { font-size: 13px; font-weight: 650; color: var(--text, #14161a); min-width: 140px; flex-shrink: 0; }
+.icp-filter-val { font-size: 13px; color: var(--muted, #667085); line-height: 1.4; }
+/* Buyer journey */
+.icp-buyers { display: flex; flex-direction: column; align-items: stretch; }
+.icp-buyer { padding: 14px 16px; border-radius: 12px; background: var(--glass, rgba(255,255,255,0.65)); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border, rgba(15,23,42,0.08)); }
+.icp-buyer-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.icp-buyer-role { font-size: 15px; font-weight: 700; color: var(--text, #14161a); }
+.icp-buyer-badge { font-size: 11px; font-weight: 650; padding: 2px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
+.icp-buyer-deal { font-size: 12px; font-weight: 600; color: var(--muted, #667085); margin-left: auto; }
+.icp-buyer-desc { font-size: 13px; color: var(--muted, #667085); margin: 6px 0 0; line-height: 1.5; }
+.icp-arrow { display: flex; justify-content: center; padding: 4px 0; opacity: 0.5; }
+/* Graph signal */
+.icp-signal { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; background: rgba(1,97,224,0.04); border: 1px solid rgba(1,97,224,0.10); }
+.icp-signal svg { flex-shrink: 0; margin-top: 2px; }
+.icp-signal span { font-size: 13px; color: var(--text, #14161a); line-height: 1.5; font-style: italic; }
+/* Vertical tabs */
+.icp-vtabs { display: flex; gap: 2px; margin-bottom: 12px; background: var(--glass-border, rgba(15,23,42,0.06)); border-radius: 10px; padding: 3px; overflow-x: auto; }
+.icp-vtab { flex: 1; padding: 8px 12px; border: none; background: none; font-size: 13px; font-weight: 600; border-radius: 8px; color: var(--muted, #667085); cursor: pointer; transition: all 160ms ease; white-space: nowrap; }
+.icp-vtab.active { background: var(--glass, rgba(255,255,255,0.88)); color: var(--text, #14161a); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.icp-vtab:hover:not(.active) { color: var(--text, #14161a); }
+.icp-vpanel { display: none; }
+.icp-vpanel.active { display: flex; flex-direction: column; gap: 1px; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border, rgba(15,23,42,0.08)); }
+.icp-vrow { display: flex; align-items: baseline; gap: 12px; padding: 11px 16px; background: var(--glass, rgba(255,255,255,0.65)); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.icp-vl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted, #667085); min-width: 90px; flex-shrink: 0; }
+.icp-vv { font-size: 13px; color: var(--text, #14161a); line-height: 1.5; font-weight: 500; }
+/* Legacy compat */
+.icp-criteria { display: flex; flex-direction: column; gap: 1px; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border, rgba(15,23,42,0.08)); margin-top: 8px; }
+.icp-row { display: flex; align-items: baseline; gap: 16px; padding: 14px 20px; background: var(--glass, rgba(255,255,255,0.65)); backdrop-filter: blur(12px); }
+.icp-row-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted, #667085); flex-shrink: 0; min-width: 100px; }
+.icp-row-value { font-size: 14px; font-weight: 500; line-height: 1.5; color: var(--text, #14161a); }

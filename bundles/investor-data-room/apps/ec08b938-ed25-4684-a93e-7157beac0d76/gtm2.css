@@ -1,0 +1,100 @@
+/* GTM Pricing */
+.gtm-price-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.gtm-price {
+  padding: 18px 16px; border-radius: 14px;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0,0,0,0.06);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.gtm-price-hl {
+  background: rgba(1,97,224,0.06);
+  border-color: rgba(1,97,224,0.2);
+}
+.gtm-price-tier {
+  font-size: 13px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  color: #888;
+}
+.gtm-price-amt {
+  font-size: 28px; font-weight: 700; color: #1a1a2e;
+}
+.gtm-price-per { font-size: 14px; font-weight: 400; color: #888; }
+.gtm-price-desc { font-size: 12px; color: #666; }
+.gtm-price-list {
+  list-style: none; padding: 0; margin: 6px 0 0;
+}
+.gtm-price-list li {
+  font-size: 12px; color: #555; padding: 3px 0;
+  border-top: 1px solid rgba(0,0,0,0.04);
+}
+.gtm-price-list li::before {
+  content: '\2713 '; color: #0161E0; font-weight: 600;
+}
+/* Growth */
+.gtm-growth {
+  display: flex; align-items: stretch; gap: 0;
+}
+.gtm-phase {
+  flex: 1; padding: 16px 14px; border-radius: 14px;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0,0,0,0.06);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.gtm-phase-tag {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: #0161E0;
+}
+.gtm-phase-label { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+.gtm-phase-desc { font-size: 12px; color: #666; line-height: 1.4; }
+.gtm-phase-metric {
+  font-size: 12px; font-weight: 600; color: #0161E0;
+  margin-top: auto; padding-top: 6px;
+  border-top: 1px solid rgba(1,97,224,0.15);
+}
+.gtm-phase-arrow {
+  display: flex; align-items: center;
+  font-size: 20px; color: #0161E0; padding: 0 6px;
+  font-weight: 300;
+}
+/* Enterprise proof line */
+.gtm-price-proof {
+  display: block; font-size: 11px; color: #0161E0;
+  margin-top: 8px; padding-top: 8px;
+  border-top: 1px solid rgba(1,97,224,0.15);
+  line-height: 1.4; font-weight: 500;
+}
+/* Use of Funds cross-link */
+.gtm-funds-link { margin-top: 8px; }
+.gtm-funds-card {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-radius: 14px;
+  background: rgba(1,97,224,0.04);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(1,97,224,0.12);
+  cursor: pointer; transition: all 0.2s ease;
+}
+.gtm-funds-card:hover {
+  background: rgba(1,97,224,0.08);
+  border-color: rgba(1,97,224,0.25);
+}
+.gtm-funds-left { display: flex; flex-direction: column; gap: 2px; }
+.gtm-funds-label {
+  font-size: 14px; font-weight: 600; color: #0161E0;
+}
+.gtm-funds-sub {
+  font-size: 12px; color: #666;
+}
+.gtm-funds-arrow {
+  font-size: 24px; color: #0161E0; font-weight: 300;
+}
+@media(prefers-color-scheme:light){
+.gtm-phase-name{color:#1a1a1a}
+.gtm-phase-detail{color:#374151}
+.gtm-phase-metric{color:#667085}
+}
