@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "1.0.0",
+  "requirements": [
+    {
+      "name": "APOLLO_API_KEY",
+      "service": "Apollo",
+      "category": "other",
+      "description": "Server-side key for app backend handlers (synced from backend/manifest.json)",
+      "required": true,
+      "credentialScope": "owner",
+      "clientAccess": "server"
+    },
+    {
+      "name": "DEVICE_INDEX",
+      "service": "Device Index",
+      "category": "other",
+      "description": "Server-side key for app backend handlers (synced from backend/manifest.json)",
+      "required": true,
+      "credentialScope": "owner",
+      "clientAccess": "server"
+    },
+    {
+      "name": "EXA_API_KEY",
+      "service": "Exa",
+      "category": "other",
+      "description": "Server-side key for app backend handlers (synced from backend/manifest.json)",
+      "required": true,
+      "credentialScope": "owner",
+      "clientAccess": "server"
+    },
+    {
+      "name": "GOOGLE_API_KEY",
+      "service": "Google",
+      "category": "other",
+      "description": "Server-side key for app backend handlers (synced from backend/manifest.json)",
+      "required": true,
+      "credentialScope": "owner",
+      "clientAccess": "server"
+    },
+    {
+      "name": "GROQ_API_KEY",
+      "service": "Groq",
+      "category": "other",
+      "description": "Server-side key for app backend handlers (synced from backend/manifest.json)",
+      "required": true,
+      "credentialScope": "owner",
+      "clientAccess": "server"
+    },
+    {
+      "name": "MEETING_ID",
+      "service": "Meeting Id",
+      "category": "other",
+      "description": "Server-side key for app backend handlers (synced from backend/manifest.json)",
+      "required": true,
+      "credentialScope": "owner",
+      "clientAccess": "server"
+    },
+    {
+      "name": "MIC_SIZE",
+      "service": "Mic Size",
+      "category": "other",
+      "description": "Server-side key for app backend handlers (synced from backend/manifest.json)",
+      "required": true,
+      "credentialScope": "owner",
+      "clientAccess": "server"
+    },
+    {
+      "name": "OPENAI_PLATFORM_KEY",
+      "service": "Openai Platform Key",
+      "category": "ai",
+      "description": "Server-side key for app backend handlers (synced from backend/manifest.json)",
+      "required": true,
+      "credentialScope": "owner",
+      "clientAccess": "server"
+    },
+    {
+      "name": "SYS_SIZE",
+      "service": "Sys Size",
+      "category": "other",
+      "description": "Server-side key for app backend handlers (synced from backend/manifest.json)",
+      "required": true,
+      "credentialScope": "owner",
+      "clientAccess": "server"
+    }
+  ],
+  "updatedAt": "2026-07-28T18:45:00.571Z"
+}

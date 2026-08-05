@@ -11,23 +11,79 @@ from Foundation import NSDate
 import glob
 import os
 
+def _has_meetings(db_path):
+    try:
+        conn = sqlite3.connect(db_path)
+        tables = [r[0] for r in conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table'").fetchall()]
+        conn.close()
+        return "meetings" in tables
+    except Exception:
+        return False
+
+
 def find_meetings_db():
-    """Find the meetings database dynamically (works on any machine)."""
-    for db_path in sorted(glob.glob(os.path.expanduser("~/PAPR/jobs/*/data/data.db"))):
-        try:
-            conn = sqlite3.connect(db_path)
-            tables = [r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()]
-            conn.close()
-            if "meetings" in tables:
-                return db_path
-        except Exception:
-            continue
+    """Locate the meetings database.
+
+    Order of preference:
+      1. This job's own data/data.db (canonical location — sits next to this
+         script, so it follows the workspace wherever it lives).
+      2. APP_DB / JOB_DB env vars injected by the runner.
+      3. Legacy ~/Papr/orgs/Y8D4H7Yp3Z/namespaces/85ZIB7mD1V/Jobs/*/data/data.db glob (pre-workspace layout).
+    """
+    here = os.path.dirname(os.path.abspath(__file__))
+    candidates = [os.path.join(here, "data", "data.db")]
+    for var in ("APP_DB", "JOB_DB", "PAPR_DB_PRIMARY"):
+        val = os.environ.get(var)
+        if val:
+            candidates.append(val)
+    candidates.extend(sorted(glob.glob(
+        os.path.expanduser("~/Papr/orgs/Y8D4H7Yp3Z/namespaces/85ZIB7mD1V/Jobs/*/data/data.db"))))
+
+    for db_path in candidates:
+        if db_path and os.path.exists(db_path) and _has_meetings(db_path):
+            return db_path
+
+    # Fall back to the job-local DB even if the meetings table is missing —
+    # it is the correct file and the table can be created on demand.
+    local = os.path.join(here, "data", "data.db")
+    if os.path.exists(local):
+        return local
     raise RuntimeError("Could not find meetings database")
 
 DB_PATH = find_meetings_db()
 
+def ensure_calendar_access(store):
+    """Request Calendar permission if needed and fail loudly if denied."""
+    status = EventKit.EKEventStore.authorizationStatusForEntityType_(EventKit.EKEntityTypeEvent)
+    if status == 0:
+        result = {"done": False, "granted": False, "error": None}
+        def handler(granted, error):
+            result["done"] = True
+            result["granted"] = bool(granted)
+            result["error"] = str(error) if error else None
+        if hasattr(store, "requestFullAccessToEventsWithCompletion_"):
+            store.requestFullAccessToEventsWithCompletion_(handler)
+        else:
+            store.requestAccessToEntityType_completion_(EventKit.EKEntityTypeEvent, handler)
+        import time
+        for _ in range(60):
+            if result["done"]:
+                break
+            time.sleep(0.5)
+        status = EventKit.EKEventStore.authorizationStatusForEntityType_(EventKit.EKEntityTypeEvent)
+        if not result["granted"]:
+            raise RuntimeError(f"Calendar access was not granted: {result['error'] or 'status=' + str(status)}")
+    if status not in (3, 4):
+        raise RuntimeError(f"Calendar access unavailable. Authorization status={status}")
+    return status
+
 def main():
     store = EventKit.EKEventStore.alloc().init()
+    status = ensure_calendar_access(store)
+    calendars = list(store.calendarsForEntityType_(EventKit.EKEntityTypeEvent) or [])
+    print(f"Calendar authorization status: {status}")
+    print(f"Visible calendars: {len(calendars)}")
 
     now = datetime.datetime.now()
     start_of_today = now.replace(hour=0, minute=0, second=0, microsecond=0)

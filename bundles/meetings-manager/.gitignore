@@ -23,6 +23,9 @@
 # Data directories
 **/data/
 
+# Paprwork editor backups
+**/*.backup.*
+
 # OS files
 .DS_Store
 Thumbs.db
