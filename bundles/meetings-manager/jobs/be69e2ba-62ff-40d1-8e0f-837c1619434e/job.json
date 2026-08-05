@@ -1,0 +1,9 @@
+{
+  "id": "be69e2ba-62ff-40d1-8e0f-837c1619434e",
+  "name": "Check Screen Recording Permission",
+  "type": "bash",
+  "command": "#!/bin/bash\nset -u\nMEETINGS_DB=\"$PAPR_HOME/Jobs/40407339-ca0b-4650-a009-426201025e81/data/data.db\"\nRECORDER=\"$PAPR_HOME/Jobs/095b6dbf-6096-433c-83d9-e7a66b8e459b/recorder\"\nif [ ! -f \"$MEETINGS_DB\" ]; then echo \"ERROR: meetings DB not found at $MEETINGS_DB\"; exit 1; fi\nif [ ! -x \"$RECORDER\" ]; then echo \"ERROR: recorder binary not found at $RECORDER\"; exit 1; fi\nRESULT=$(\"$RECORDER\" --check-permission 2>&1)\necho \"$RESULT\"\nsqlite3 \"$MEETINGS_DB\" \"DELETE FROM permission_checks; INSERT INTO permission_checks (check_time, result) VALUES (datetime('now'), '$RESULT');\"\necho \"Written to DB: $RESULT\"",
+  "status": "pending",
+  "createdAt": "2026-08-05T15:41:36.754Z",
+  "updatedAt": "2026-08-05T15:41:36.754Z"
+}
