@@ -40,9 +40,11 @@ import_app_bundle source:https://github.com/Papr-ai/paprwork-community-apps/bund
 
 ---
 
-## Contributing
+## Sharing your own app
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting your own app bundles.
+To list your app in **Community Apps** for other Paprwork users, use **Share → Public in Community Apps** inside Paprwork (cloud publish). This repo is for official starter templates only.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ---
 
