@@ -21,26 +21,17 @@ See the Paprwork docs: [Cloud Runtime Plan — Community Catalog](https://github
 
 ---
 
-## This repository (starter templates only)
+## This repository
 
-`paprwork-community-apps` now hosts **official starter templates** only:
+`paprwork-community-apps` no longer lists community apps. The registry is empty; all pre-cloud OSS bundles (including Hello World and Expense Tracker) have been removed.
 
-- **Hello World** — minimal app template
-- **Expense Tracker** — sample app with charts and local DB
+**Do not open PRs here to list your app in Community Apps** — use cloud publish instead.
 
-We no longer accept community app submissions via pull request here. Legacy OSS bundles added before cloud publish have been removed.
-
-### When to use OSS bundles
-
-- You want a **portable template** users can import without Papr Cloud
-- You're contributing an **official Paprwork starter** (maintainer-approved only)
-- Cloud publish is unavailable and you need offline distribution
-
-For everything else, use **Share → Public in Community Apps** in Paprwork.
+Maintainers may occasionally add curated OSS templates here for offline import. That requires explicit approval before opening a PR.
 
 ---
 
-## Submitting an official starter template (maintainers)
+## Submitting a maintainer-curated OSS template (rare)
 
 ### Prerequisites
 
