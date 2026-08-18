@@ -1,25 +1,45 @@
 # Contributing App Bundles
 
-Thank you for contributing to the Paprwork community! This guide explains how to submit your own app bundles.
+Thank you for contributing to the Paprwork community!
 
 ---
 
-## Prerequisites
+## Share your app in Community Apps (recommended)
+
+**Use Papr Cloud publish**, not this GitHub repo, to list your app in the **Community Apps** tab for other users.
+
+Inside Paprwork:
+
+1. Open your mini-app and click **Share**
+2. Choose **Anyone with the link** or **Anyone in my workspace** for access
+3. Enable **Public in Community Apps** (requires `codeAccess: install`)
+4. Publish to Papr Cloud
+
+Apps published this way appear in Community Apps with rich metadata, fork/track install, and change requests — without a manual GitHub PR.
+
+See the Paprwork docs: [Cloud Runtime Plan — Community Catalog](https://github.com/Papr-ai/paprwork-v2/blob/main/docs/PAPR_CLOUD_RUNTIME_PLAN.md#milestone-3f-community-catalog--forktrack-install-1-week--done-2026-06-30).
+
+---
+
+## This repository
+
+`paprwork-community-apps` no longer lists community apps. The registry is empty; all pre-cloud OSS bundles (including Hello World and Expense Tracker) have been removed.
+
+**Do not open PRs here to list your app in Community Apps** — use cloud publish instead.
+
+Maintainers may occasionally add curated OSS templates here for offline import. That requires explicit approval before opening a PR.
+
+---
+
+## Submitting a maintainer-curated OSS template (rare)
+
+### Prerequisites
 
 - [Paprwork](https://github.com/Papr-ai/paprwork) installed and running
 - Git and a GitHub account
+- Maintainer approval before opening a PR
 
----
-
-## Step 1: Create Your App Bundle
-
-The easiest way to create a bundle is inside Paprwork:
-
-1. Build your mini-app in Paprwork
-2. Ask the AI agent: *"Export this app as a bundle"*
-3. The agent uses `export_app_bundle` to create a bundle at `~/PAPR/bundles/{your-bundle-id}/`
-
-Your bundle will have this structure:
+### Bundle structure
 
 ```
 your-bundle-id/
@@ -31,16 +51,9 @@ your-bundle-id/
 │       ├── app.ts     # Your app logic
 │       └── style.css  # Your styles
 └── jobs/              # Optional: automation jobs
-    └── your-job-id/
-        ├── job.json
-        └── code/
 ```
 
----
-
-## Step 2: Prepare Your Submission
-
-### Bundle Checklist
+### Checklist
 
 - [ ] `manifest.json` is valid and complete
 - [ ] `schemaVersion` is `"1.0.0"`
@@ -49,78 +62,28 @@ your-bundle-id/
 - [ ] No API keys, secrets, or personal data in any files
 - [ ] README.md describes what the app does
 
-### manifest.json Requirements
+### Pull request steps
 
-Your manifest must include at minimum:
-
-```json
-{
-  "schemaVersion": "1.0.0",
-  "bundleId": "your-unique-id",
-  "name": "Your App Name",
-  "version": "1.0.0",
-  "createdAt": "2026-01-01T00:00:00.000Z",
-  "minPaprworkVersion": "2.0.0",
-  "description": "Brief description of your app",
-  "icon": "<svg ...>your app icon</svg>",
-  "requirements": ["OpenAI API key"],
-  "app": {
-    "id": "your-app-id",
-    "name": "Your App Name",
-    "version": "1.0.0",
-    "entryFile": "index.html",
-    "appPath": "apps/your-app-id"
-  },
-  "jobs": [],
-  "sqlite": [],
-  "deploymentProfiles": [],
-  "sync": {
-    "preferredRoot": "~/PAPR",
-    "bundleSubpath": "bundles",
-    "cloudReady": true
-  }
-}
-```
-
-**Fields to note:**
-- `icon` — Inline SVG string displayed in the app card. Keep it simple (24x24 viewBox, stroke-only).
-- `requirements` — Array of API keys or external dependencies needed. Use `[]` if no keys are needed. Examples: `["OpenAI API key"]`, `["Stripe API key", "SendGrid API key"]`.
-
----
-
-## Step 3: Submit a Pull Request
-
-1. **Fork** this repository
-2. Copy your bundle folder into `bundles/your-bundle-id/`
-3. Regenerate the registry (this reads all manifests and builds `registry.json` automatically):
+1. Fork this repository
+2. Copy your bundle into `bundles/your-bundle-id/`
+3. Regenerate the registry:
 
 ```bash
 node scripts/generate-registry.mjs
 ```
 
-4. Open a pull request with:
-   - A clear title (e.g., "Add: Expense Tracker app bundle")
-   - A description of what your app does
-   - A screenshot if possible
+4. Open a PR with a clear title (e.g. "Add: Starter template — …") and a screenshot
 
 ---
 
 ## Guidelines
 
-- **One app per bundle** - keep bundles focused
-- **No external dependencies** - apps should work offline
-- **No secrets** - never include API keys, tokens, or credentials
-- **Keep it small** - avoid large assets (images > 500KB, videos, etc.)
-- **Test before submitting** - import your own bundle to verify it works
-- **Use descriptive IDs** - `expense-tracker` not `app1`
-
----
-
-## Review Process
-
-1. A maintainer will review your PR
-2. We check: valid manifest, no secrets, app loads correctly
-3. If approved, your app appears in Paprwork's Community tab on merge
+- **One app per bundle** — keep bundles focused
+- **No external dependencies** — apps should work offline
+- **No secrets** — never include API keys, tokens, or credentials
+- **Keep it small** — avoid large assets (images > 500KB, videos, etc.)
+- **Test before submitting** — import your own bundle to verify it works
+- **Use descriptive IDs** — `expense-tracker` not `app1`
 
 ---
 

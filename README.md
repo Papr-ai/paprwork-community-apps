@@ -1,48 +1,27 @@
 # Paprwork Community Apps
 
-A curated collection of shareable app bundles for [Paprwork](https://github.com/Papr-ai/paprwork).
-
-Browse and install these apps directly from the **Community Apps** tab inside Paprwork, or import them manually using the `import_app_bundle` tool.
+Legacy GitHub registry for OSS app bundles. **Community Apps in Paprwork now come from cloud publish**, not this repository.
 
 ---
 
-## Available Apps
+## Share your app
 
-| App | Description | Tags |
-|-----|-------------|------|
-| **Hello World** | Minimal starter template for building your own apps | `template`, `starter` |
-| **Expense Tracker** | Track daily expenses with category breakdowns and charts | `finance`, `charts`, `data` |
+To list an app in the **Community Apps** tab:
 
----
+1. Open your mini-app in Paprwork and click **Share**
+2. Set who can access the app (link, workspace, etc.)
+3. Enable **Public in Community Apps**
+4. Publish to Papr Cloud
 
-## Installing an App
-
-### From Inside Paprwork (Recommended)
-
-1. Open the **Apps** view
-2. Switch to the **Community** tab
-3. Browse available apps
-4. Click **Import** on any app you want
-
-### Via the AI Agent
-
-Ask the agent:
-
-> Import the expense tracker app from the community repo
-
-The agent will use the `import_app_bundle` tool to clone and install it.
-
-### Manual Import
-
-```
-import_app_bundle source:https://github.com/Papr-ai/paprwork-community-apps/bundles/expense-tracker
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ---
 
-## Contributing
+## This repo
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting your own app bundles.
+The `registry.json` in this repo is intentionally empty. Bundles that were listed here before cloud publish (including Hello World and Expense Tracker) have been removed. New community apps should be shared via Papr Cloud only.
+
+The repo structure remains for historical `import_app_bundle` URLs and any future maintainer-curated OSS templates.
 
 ---
 
