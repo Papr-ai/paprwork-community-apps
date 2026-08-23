@@ -37,6 +37,29 @@ def _get_project_name():
 PROJECT = _get_project_name()
 print(f"Vercel project: {PROJECT}")
 
+_APP_ID = "ec08b938-ed25-4684-a93e-7157beac0d76"
+
+
+def _bytes_from_app_files(file_id):
+    """Read an App Files object. Local path first; signed URL if already evicted."""
+    os.environ.setdefault("APP_ID", _APP_ID)
+    try:
+        from papr_files import local_path, url
+    except ImportError:
+        print(f"  ⚠ papr_files helper missing — cannot fetch {file_id}", flush=True)
+        return None
+    try:
+        path = local_path(file_id, app_id=_APP_ID)
+        if path and os.path.isfile(path):
+            with open(path, "rb") as handle:
+                return handle.read()
+        remote = url(file_id, app_id=_APP_ID)
+        if remote and remote.startswith("http"):
+            return requests.get(remote, timeout=120).content
+    except Exception as err:
+        print(f"  ⚠ App Files fetch failed for {file_id}: {err}", flush=True)
+    return None
+
 # CSS files in order (matching index.html)
 CSS_FILES = [
     "style.css",
@@ -50,7 +73,8 @@ CSS_FILES = [
     "fin.css", "fin2.css", "fin3.css", "fin-funds.css",
     "moat-edit2.css", "onepager.css", "vc-personalize.css", "inv-expand.css",
     "locked-section.css",
-    "ctx-intel-style.css"
+    "ctx-intel-style.css",
+    "legal-section.css"
 ]
 
 # JS files in order (matching index.html)
@@ -70,6 +94,9 @@ JS_FILES = [
     # Founder photo base64 (add your own)
     "icons.js",                # SVG icon registry
     "components.js",           # Shared render functions
+    "legal-section.js",        # Legal docs UI
+    "legal-files.js",          # App Files upload/download (no SQLite blobs)
+    "legal-events.js",         # Legal overlay events
     "share-mode.js",           # Share mode picker (pre/post-commit)
     "modals.js",               # Edit modals (founder only)
     "publish.js",              # Publish to Vercel
@@ -157,7 +184,21 @@ def load_room():
     company = dict(c.execute("SELECT * FROM company_info LIMIT 1").fetchone())
     raise_data = dict(c.execute("SELECT * FROM raise_tracker WHERE id='current'").fetchone())
     sections = [dict(r) for r in c.execute("SELECT * FROM sections ORDER BY sort_order").fetchall()]
-    documents = [dict(r) for r in c.execute("SELECT * FROM documents ORDER BY section_id, sort_order").fetchall()]
+    # Pointers only — never bake file_data into ROOM_DATA. Bytes live in App Files.
+    try:
+        documents = [dict(r) for r in c.execute(
+            "SELECT id, section_id, name, description, file_url, file_type, sort_order, "
+            "file_id, file_data, file_size, mime_type, uploaded_at FROM documents "
+            "ORDER BY section_id, sort_order"
+        ).fetchall()]
+    except sqlite3.OperationalError:
+        documents = [dict(r) for r in c.execute(
+            "SELECT id, section_id, name, description, file_url, file_type, sort_order, "
+            "file_data, file_size, mime_type, uploaded_at FROM documents "
+            "ORDER BY section_id, sort_order"
+        ).fetchall()]
+        for doc in documents:
+            doc.setdefault("file_id", None)
     team = [dict(r) for r in c.execute("SELECT * FROM team_members ORDER BY sort_order").fetchall()]
     # Only include investors with active share links (not all 1000+) to stay under Vercel 10MB limit
     linked_ids = [r[0] for r in c.execute("SELECT DISTINCT investor_id FROM investor_links WHERE revoked=0").fetchall()]
@@ -339,6 +380,9 @@ def load_room():
     # Read blurb BEFORE closing connection (cursor dies after conn.close())
     blurb = _load_setting(c, "blurb")
     conn.close()
+    for doc in documents:
+        doc["_leftover_file_data"] = doc.get("file_data")
+        doc["file_data"] = None
     return {
         "company": company, "raise": raise_data, "sections": sections,
         "documents": documents, "team": team, "investors": investors,
@@ -488,8 +532,16 @@ def build_html(room_data):
     # The static data shim
     db_shim = build_db_static_shim()
 
-    # Baked data
-    data_json = json.dumps(room_data, default=str)
+    # Baked data — never inline leftover blobs or App Files bytes
+    bake = dict(room_data)
+    bake_docs = []
+    for doc in bake.get("documents") or []:
+        slim = dict(doc)
+        slim.pop("file_data", None)
+        slim.pop("_leftover_file_data", None)
+        bake_docs.append(slim)
+    bake["documents"] = bake_docs
+    data_json = json.dumps(bake, default=str)
 
     # Agent-friendly structured data
     c = room_data.get("company", {})
@@ -614,14 +666,51 @@ def build_serverless_function(html_content):
     
     links_json = json.dumps(links_by_token, default=str)
     connectors_json = json.dumps(connectors_by_token, default=str)
+
+    doc_data_map = {}
+    for doc in room.get("documents") or []:
+        leftover = doc.get("_leftover_file_data") or doc.get("file_data")
+        if leftover:
+            doc_data_map[doc["id"]] = {
+                "file_data": leftover,
+                "mime_type": doc.get("mime_type", "application/octet-stream"),
+                "name": doc.get("name", "file"),
+            }
+            continue
+        file_id = doc.get("file_id")
+        if not file_id:
+            continue
+        fetched = _bytes_from_app_files(file_id)
+        if fetched:
+            doc_data_map[doc["id"]] = {
+                "file_data": base64.b64encode(fetched).decode("ascii"),
+                "mime_type": doc.get("mime_type", "application/octet-stream"),
+                "name": doc.get("name", "file"),
+            }
+    print(f"  Doc download map: {len(doc_data_map)} documents (App Files + leftover blobs)", flush=True)
+    doc_data_json = json.dumps(doc_data_map, default=str)
     
     return f"""
 const fs = require('fs');
 const path = require('path');
 const LINKS = {links_json};
 const CONNECTORS = {connectors_json};
+const DOC_DATA = {doc_data_json};
 
 module.exports = function(req, res) {{
+  const urlPath = (req.url || '').split('?')[0];
+  const docMatch = urlPath.match(/^\\/doc\\/([^/]+)$/);
+  if (docMatch) {{
+    const docEntry = DOC_DATA[docMatch[1]];
+    if (!docEntry || !docEntry.file_data) {{
+      return res.status(404).send('Document not found');
+    }}
+    const buf = Buffer.from(docEntry.file_data, 'base64');
+    res.setHeader('Content-Type', docEntry.mime_type || 'application/octet-stream');
+    res.setHeader('Content-Disposition', 'attachment; filename="' + (docEntry.name || 'file') + '"');
+    return res.status(200).send(buf);
+  }}
+
   const token = req.query.token || '';
   
   if (!token) {{

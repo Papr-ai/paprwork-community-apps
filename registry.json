@@ -134,7 +134,7 @@
       "bundleId": "investor-data-room",
       "name": "Investor Data Room",
       "description": "Full investor data room with VC directory (1100+ firms), portfolio intelligence, intro gap analysis, connector management, stage pipeline, FAQ editor, PDF one-pager, cap table viewer, legal section, and Vercel deployment. Liquid Glass design system.",
-      "version": "2.0.0",
+      "version": "2.0.1",
       "author": "shawkatkabbara",
       "tags": [
         "fundraising",

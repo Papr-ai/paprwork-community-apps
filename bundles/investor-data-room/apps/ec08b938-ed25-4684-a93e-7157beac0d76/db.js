@@ -66,13 +66,28 @@ async function loadSections() {
   return [];
 }
 
+var DOC_LIST_COLS = "id,section_id,name,description,file_url,file_type,file_size,mime_type,uploaded_at,sort_order";
+var DOC_LIST_COLS_WITH_FILE_ID = DOC_LIST_COLS.replace("file_type,", "file_type,file_id,");
+
 async function loadDocs(sectionId) {
-  return dbQuery("SELECT * FROM documents WHERE section_id=? ORDER BY sort_order", [sectionId]);
+  try {
+    return await dbQuery("SELECT " + DOC_LIST_COLS_WITH_FILE_ID + " FROM documents WHERE section_id=? ORDER BY sort_order", [sectionId]);
+  } catch (e) {
+    return dbQuery("SELECT " + DOC_LIST_COLS + " FROM documents WHERE section_id=? ORDER BY sort_order", [sectionId]);
+  }
 }
 
 async function loadAllDocs() {
   try {
-    var rows = await dbQuery("SELECT * FROM documents ORDER BY section_id, sort_order");
+    if (typeof ensureDocumentsFileIdColumn === "function") {
+      await ensureDocumentsFileIdColumn();
+    }
+    var rows;
+    try {
+      rows = await dbQuery("SELECT " + DOC_LIST_COLS_WITH_FILE_ID + " FROM documents ORDER BY section_id, sort_order");
+    } catch (colErr) {
+      rows = await dbQuery("SELECT " + DOC_LIST_COLS + " FROM documents ORDER BY section_id, sort_order");
+    }
     if (rows.length) return rows;
   } catch(e) {}
   if (window.ROOM_DATA && window.ROOM_DATA.sections) {

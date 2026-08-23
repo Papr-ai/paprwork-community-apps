@@ -53,6 +53,12 @@ for row in schema_sql:
             print(f"  ⚠️  Schema error: {e}")
 
 dst.commit()
+try:
+    dst.execute("ALTER TABLE documents ADD COLUMN file_id TEXT")
+    dst.commit()
+    print("  ✅ Added documents.file_id (App Files pointer)")
+except sqlite3.OperationalError:
+    pass
 tables = [r[0] for r in dst.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()]
 print(f"  ✅ Created {len(tables)} tables")
 
