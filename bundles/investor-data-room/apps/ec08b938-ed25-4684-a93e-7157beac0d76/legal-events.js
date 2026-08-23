@@ -1,56 +1,6 @@
 // Legal events — overlay open/close, upload, download, delete, rename, add section
-function _lglUuid() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random()*16|0; return (c=='x'?r:(r&0x3|0x8)).toString(16);
-  });
-}
-function _lglFileToB64(file) {
-  return new Promise(function(ok, fail) {
-    var r = new FileReader();
-    r.onload = function(){ ok(r.result.split(',')[1]); };
-    r.onerror = fail;
-    r.readAsDataURL(file);
-  });
-}
-async function _lglUpload(subId, file) {
-  var b64 = await _lglFileToB64(file);
-  await dbWrite(
-    'INSERT INTO documents (id,section_id,name,description,file_type,file_data,file_size,mime_type,uploaded_at,sort_order) VALUES (?,?,?,?,?,?,?,?,?,?)',
-    [_lglUuid(), subId, file.name, '', 'file', b64, file.size, file.type||'application/octet-stream', new Date().toISOString(), Date.now()]
-  );
-}
-async function _lglDownload(docId) {
-  try {
-    var rows = await dbQuery('SELECT name,file_data,mime_type FROM documents WHERE id=?',[docId]);
-    if (!rows||!rows[0]) { toast('Document not found'); return; }
-    var d = rows[0];
-    // If file_data is available locally (Paprwork app), use data: URI
-    if (d.file_data) {
-      var dataUri = 'data:' + (d.mime_type||'application/octet-stream') + ';base64,' + d.file_data;
-      var a = document.createElement('a');
-      a.href = dataUri; a.download = d.name;
-      a.style.display = 'none'; document.body.appendChild(a);
-      a.click();
-      setTimeout(function(){ a.remove(); }, 2000);
-      toast('Downloading ' + d.name);
-      return;
-    }
-    // On Vercel (file_data stripped), fetch from /doc/{id} API endpoint
-    toast('Downloading ' + d.name + '...');
-    var a2 = document.createElement('a');
-    a2.href = '/doc/' + docId; a2.download = d.name;
-    a2.style.display = 'none'; document.body.appendChild(a2);
-    a2.click();
-    setTimeout(function(){ a2.remove(); }, 2000);
-  } catch(e) {
-    toast('Download failed: ' + (e.message||e));
-  }
-}
-async function _lglDelete(docId) {
-  if (!confirm('Delete this file?')) return false;
-  await dbWrite('DELETE FROM documents WHERE id=?',[docId]);
-  return true;
-}
+// Upload/download/delete live in legal-files.js (App Files). Do not put
+// file bytes in SQLite or the app directory.
 async function _lglRename(docId, cur) {
   var name = prompt('Rename file', cur);
   if (!name||name===cur) return false;
@@ -117,7 +67,6 @@ function _bindOverlayEvents(o, sub, allDocs, editable, refreshParent) {
         if(!files.length) return;
         toast('Uploading '+files.length+' file'+(files.length===1?'':'s')+'…');
         for(var i=0;i<files.length;i++){
-          if(files[i].size>8*1024*1024){toast('Skipped '+files[i].name+' (>8MB)');continue;}
           await _lglUpload(sub.id, files[i]);
         }
         toast('Uploaded ✓'); refreshOverlay();
@@ -182,4 +131,9 @@ async function handleLegalAddSection() {
 function bindLegalEvents(rootEl, editable, refresh) {
   _lglEditable = editable;
   _lglRefresh = refresh;
+  if (editable && typeof migrateLegalBlobsToAppFiles === 'function') {
+    migrateLegalBlobsToAppFiles().catch(function(err) {
+      console.warn('[legal] blob migration skipped', err);
+    });
+  }
 }

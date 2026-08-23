@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "bundleId": "investor-data-room",
   "name": "Investor Data Room",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "createdAt": "2026-06-12T15:42:37.442Z",
   "minPaprworkVersion": "2.0.0",
   "icon": "\ud83d\udcbc",
